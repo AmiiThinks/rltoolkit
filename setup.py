@@ -23,7 +23,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/UARLAI/RLtoolkit',
+    url='https://bitbucket.org/UARLAI/rltoolkit',
 
     packages=find_packages(),
 
