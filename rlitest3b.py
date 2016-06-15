@@ -125,6 +125,6 @@ rli = RLinterface.RLinterface(agt, env)
 for i in range(30):
     eps = rli.RL_episode()
     print(eps)
-    print("Reward", eps[-1], "took", rli.RL_num_steps(), "steps")
+    print(("Reward", eps[-1], "took", rli.RL_num_steps(), "steps"))
     
     

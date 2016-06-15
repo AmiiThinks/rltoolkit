@@ -30,12 +30,12 @@ class CheckInputDimensionality:
 
     def faApproximate(self, input):
         if self.numinputs != len(input):
-            print("Input", str(input), "does not match dimentionality", fa.numinputs)
+            print(("Input", str(input), "does not match dimentionality", fa.numinputs))
         return 0
 
     def faLearnLastApproximation(self, input, output, target):
         if self.numinputs != len(input):
-            print("Input", str(input), "does not match dimentionality", fa.numinputs)
+            print(("Input", str(input), "does not match dimentionality", fa.numinputs))
 
 
 class FunctionApproximator (CheckInputDimensionality):

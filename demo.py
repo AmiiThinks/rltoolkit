@@ -143,20 +143,20 @@ def demos(d=None, do=None):
     global demoDoc, demoFn, demoHelp
     if d == None or d == 'help':
         for k, v in list(demoDoc.items()):
-            print(k, " \t", v)
+            print((k, " \t", v))
         print(" ")
         print("""For more information on any demo, use demos("demoname")""")
         print("""To run a demo, use demos("demoname", "run")""")
     elif do == "run":
         fn = demoFn.get(d)
         if fn == None:
-            print("There is no demo called", d)
+            print(("There is no demo called", d))
         else:
             apply(fn)
     else:
         info = demoHelp.get(d)
         if info == None:
-            print("Sorry, no more information for ", d)
+            print(("Sorry, no more information for ", d))
         else:
             print(info)
 

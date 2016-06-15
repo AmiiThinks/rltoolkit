@@ -5,16 +5,16 @@ class Agent:
     def agentChoose(self, s):
         "Chooses the next action"
         self.lasta += 1
-        print("Agent chose action", self.lasta)
+        print(("Agent chose action", self.lasta))
         return self.lasta
 
     def agentLearn(self, s, a, r, sp):
         "Learns from the last action done"
-        print("Learning from state", s, "action", a, "reward", r, "next s", sp)
+        print(("Learning from state", s, "action", a, "reward", r, "next s", sp))
 
     def agent_init(self, taskspec):
         """Initializes agent"""
-        print("Initializing agent, taskspec is", taskspec)
+        print(("Initializing agent, taskspec is", taskspec))
         self.lasta = 0
         self.lasts = 0
         
@@ -22,7 +22,7 @@ class Agent:
         "Return the first action"
         self.lasta = 0
         self.lasts = s
-        print("Agent starting with action", self.lasta)
+        print(("Agent starting with action", self.lasta))
         return self.lasta
 
     def agent_step(self, r, s):
@@ -46,7 +46,7 @@ class Environment:
     def env_start(self):
         "Returns the initial state"
         self.curstate = 0
-        print("Environment initializing state to", self.curstate)
+        print(("Environment initializing state to", self.curstate))
         return self.curstate
 
     def env_step(self, a):
@@ -57,7 +57,7 @@ class Environment:
             r = 1
         else:
             r = 0
-        print("Environment did action", a, "got new state", self.curstate, "and reward", r)
+        print(("Environment did action", a, "got new state", self.curstate, "and reward", r))
         return r, self.curstate
     
 
@@ -65,10 +65,10 @@ myagent = Agent()
 myenv = Environment()
 rli = RLinterface(myagent, myenv)
 #rli.RL_init()
-print(rli.RL_episode())
-print("reward .9", rli.RL_total_reward(.9))
-print("reward 1", rli.RL_total_reward(1))
-print("Used", rli.RL_num_steps(), "steps")
+print((rli.RL_episode()))
+print(("reward .9", rli.RL_total_reward(.9)))
+print(("reward 1", rli.RL_total_reward(1)))
+print(("Used", rli.RL_num_steps(), "steps"))
 """
 import profile
 def run1():

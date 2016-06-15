@@ -1270,7 +1270,7 @@ def gAddMenu (parent, menuname, menuitems=None):         #<a name="gAddMenu"</a>
             if i == 'separator' or i == '---':
                 m.add_separator()
             elif not isinstance(i, (tuple, list)):
-                print(i, "is not a legal menu item")
+                print((i, "is not a legal menu item"))
             elif i[0] == 'button':
                 # form is ['button', 'label', gVarname, onvalue, offvalue, command]
                 bcom, l, v, on, off, c= i

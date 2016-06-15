@@ -117,7 +117,7 @@ def addweight (fa, fromw, to, weightvalue, location=None):
                     fa.fromweights[fromw] = weights[:i] + [weight] + weights[i:]
             lastrest = 'rest'
     else:  # insert after location
-        print("location is ", location, "add after that")
+        print(("location is ", location, "add after that"))
     fa.toweights[to] = [weight] + fa.toweights[to]
     fa.numweights += 1
                 

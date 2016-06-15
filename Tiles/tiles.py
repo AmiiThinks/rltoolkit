@@ -91,8 +91,8 @@ class CollisionTable:
     
     def print_ (self):
         "Prints info about collision table"
-        print("usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
-                        "collisions", self.collisions, "safety", self.safety)
+        print(("usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
+                        "collisions", self.collisions, "safety", self.safety))
 
     def reset (self):
         "Reset Ctable values"

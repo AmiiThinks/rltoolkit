@@ -34,7 +34,7 @@ def mcEpisode (maxsteps=10000):
         rli = RLinterface(mountainAgent, mountainEnv)
     rli.episode(maxsteps)
     st, ep, epst = curStats()
-    print("Used", epst, "steps")
+    print(("Used", epst, "steps"))
     return epst
 	
 def mcEpisodes (numEpisodes, maxsteps=2000):
@@ -94,7 +94,7 @@ def mcTime(episodes=200):
     s=time.clock()
     mcEpisodes(episodes)
     e=time.clock()
-    print("Used", e-s, "seconds for", episodes, "episodes")
+    print(("Used", e-s, "seconds for", episodes, "episodes"))
     return e-s
 
 

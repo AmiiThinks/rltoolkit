@@ -40,7 +40,7 @@ def maintTest (n=10, p=.9, q=.9, alpha=.01, gamma=.99, epsilon=.1, init=0.0, \
     maintInit(n, p, q, alpha, gamma, epsilon, init, interval, verbose)
     maintSteps(steps)
     if verbose > 0:
-        print("n", n, "p", p, "q", q, "alpha", alpha, "gamma", gamma, "epsilon", epsilon)
+        print(("n", n, "p", p, "q", q, "alpha", alpha, "gamma", gamma, "epsilon", epsilon))
         printAgentQ(agt)
         
 def maintHelp():

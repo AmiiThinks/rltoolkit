@@ -73,7 +73,7 @@ class Dataview (Gview):
         gSetCursor(self, 'crosshair')
         
     def gClickEventHandler(self, x, y):
-        print("Clicked at", x, y)
+        print(("Clicked at", x, y))
             
     def gKeyEventHandler(self, key):
         graph = self.parent
@@ -327,7 +327,7 @@ def graphLess (colorkeyword=None, graph=None):       #<a name="graph"</a>[<a hre
             else:
                 linenum +=1
         else:
-            print("No such color used in this graph", colorkeyword)
+            print(("No such color used in this graph", colorkeyword))
     
                
 def subtractFromGraph (linenum=None, graph=None):    #<a name="subtractfromgraph"</a>[<a href="graph.html#subtractfromgraph">Doc</a>]
@@ -459,7 +459,7 @@ colorList = {'blue': gBlue, 'red': gRed, 'green': gGreen, 'black': gBlack, 'yell
 def ColorFromKeyword (colorkeyword):
     color = colorList.get(colorkeyword, None)
     if color == None:
-        print("Unrecognized color keyword:" ,colorkeyword)
+        print(("Unrecognized color keyword:" ,colorkeyword))
     return color
 
 def FirstUnusedColor (data):
@@ -500,7 +500,7 @@ def chooseGraph (graph=None):            #<a name="choosegraph"</a>[<a href="gra
         else:
             usegraph = Graph(graph)
     else:
-        print("Error: can't choose graph", graph)
+        print(("Error: can't choose graph", graph))
         usegraph = None
     return usegraph
 
@@ -604,7 +604,7 @@ def computeLimitsFromData (graph):
                         if x > graph.xmax:
                                 graph.xmax = x
         if graph.ymin == graph.ymax:
-            print("Warning: all lines are flat at", graph.ymin)
+            print(("Warning: all lines are flat at", graph.ymin))
             if graph.ymax > 0:
                 graph.ymin = 0
             else:
@@ -701,9 +701,9 @@ def histogram (data, numbins=None, minex=None, maxex=None, color=None, hist=None
             gdata.append([maxex, bins[numbins-1]])  #force the last bar to come out
             graph([gdata], color, hgraph)
             if numtoosmall != 0:
-                print(numtoosmall, "data points were below the range")
+                print((numtoosmall, "data points were below the range"))
             if numtoobig != 0:
-                print(numtoobig, "data points were above the range")
+                print((numtoobig, "data points were above the range"))
 
 
 def histogramMore  (data, numbins=None, minex=None, maxex=None, color=None, hist=None):  #<a name="histogramMore"</a>[<a href="graph.html#histogramMore">Doc</a>]
@@ -753,9 +753,9 @@ def histogramMore  (data, numbins=None, minex=None, maxex=None, color=None, hist
             hgraph.data = FillInColors (hgraph.data)
             hgraph.gDrawView()
             if numtoosmall != 0:
-                print(numtoosmall, "data points were below the range")
+                print((numtoosmall, "data points were below the range"))
             if numtoobig != 0:
-                print(numtoobig, "data points were above the range")
+                print((numtoobig, "data points were above the range"))
     
 
 #Testing stuff

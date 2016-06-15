@@ -32,7 +32,7 @@ class ERFA (FunctionApproximator):
         return self.finalfa.faApproximate(self.representation)
 
     def faLearnLastApproximation (self, input, output, target):
-        print("learn", input, output, target)
+        print(("learn", input, output, target))
         self.finalfa.faLearnLastApproximation(self.representation, output, target)
         self.representer.representerLearnLast(input, self.representation, 1)
 

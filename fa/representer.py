@@ -56,7 +56,7 @@ class CheckInputRange:
 
     def represent(self, input):
         if not inrangep(input, self.inputdescriptor):
-            print("Input", str(input), "out of range", str(self.inputdescriptor))
+            print(("Input", str(input), "out of range", str(self.inputdescriptor)))
         else:
             return input
 

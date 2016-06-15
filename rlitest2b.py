@@ -111,6 +111,6 @@ rli = RLinterface.RLinterface(agt.agentStart, agt.agentStep, \
 
 for i in range(20):
     eps = rli.episode()
-    print("Reward", eps[-2], "took", len(eps)//3, "steps")
+    print(("Reward", eps[-2], "took", len(eps)//3, "steps"))
     
     

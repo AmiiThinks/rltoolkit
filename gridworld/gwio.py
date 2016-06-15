@@ -19,7 +19,7 @@ def gwFilename (name):
 
 def readGridworld (filename):
     "reads a gridworld file into a dictionary list and returns it"
-    print("reading", filename)
+    print(("reading", filename))
     if filename != None and filename != '':
         input = open(filename, 'r')
         alist = input.readlines()
@@ -54,7 +54,7 @@ def prepareWrite(gridworld):
 
 def writeGridworld (dlist, filename):
     "writes a dictionary list to the filename"
-    print("writing to file", filename)
+    print(("writing to file", filename))
     if filename != None and filename != '':
         output = open(filename, 'w')
         gridout = ["{"]

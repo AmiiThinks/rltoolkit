@@ -94,7 +94,7 @@ class GridAgent (Agent):
             a = self.agentChoose(s) 
             lasts, lasta = s, a
             if verbose:
-                print("Agent chose action", a)
+                print(("Agent chose action", a))
             return a
         else:
             return None
@@ -117,19 +117,19 @@ class SarsaGridAgent(GridAgent):
         global lasts, lasta
         simcollect(self.sim, lasts, lasta, r, s)
         if debugmode():
-            print("agentfn", s, r)
+            print(("agentfn", s, r))
         if r != None:
             self.agentLearn(lasts, lasta, r, s) # does action choice as well
         else:
             self.agentStartEpisode(s)
             a = self.agentChoose(s)             # first action
             if debugmode():
-                print("st", self.recentsensations, "ac", self.recentactions)
+                print(("st", self.recentsensations, "ac", self.recentactions))
         if s != 'terminal':
             a = self.recentactions[0]
             lasts, lasta = s, a
             if verbose:
-                print("Agent chose action", a)
+                print(("Agent chose action", a))
             return a
         else:
             return None
@@ -146,10 +146,10 @@ class SarsaLambdaGridAgent(SarsaGridAgent):
             aprimeq = 0
         alphadelta = self.alpha * (r + (self.gamma * aprimeq) - self.Q[s1][a1])
         if debugmode():
-            print("states", senses)
-            print("actions", actions)
-            print("s1",s1, "a1",a1, "r",r, "sprime", sprime, "q s1 a1", self.Q[s1][a1], "aprimeq", aprimeq)
-            print('alphadelta', alphadelta)
+            print(("states", senses))
+            print(("actions", actions))
+            print(("s1",s1, "a1",a1, "r",r, "sprime", sprime, "q s1 a1", self.Q[s1][a1], "aprimeq", aprimeq))
+            print(('alphadelta', alphadelta))
         trace = 1   
         i = 0
         while trace > 0.01 and i < len(actions): #len(self.recentactions):
@@ -159,7 +159,7 @@ class SarsaLambdaGridAgent(SarsaGridAgent):
                 oldq = self.Q[s][a]
                 self.Q[s][a] += alphadelta * trace
                 if debugmode():
-                    print("updating s", s , "a", a, "old", oldq, "new",self.Q[s][a], "trace", trace)
+                    print(("updating s", s , "a", a, "old", oldq, "new",self.Q[s][a], "trace", trace))
                 if abs(self.Q[s][a] - oldq) > changeDiff:
                     self.agentchangestate(s)
             trace = trace * self.gamma * self.agentlambda
@@ -171,8 +171,8 @@ class QlambdaGridAgent(GridAgent):
         trace = 1
         i = 0
         if debugmode():
-            print("states", self.recentsensations)
-            print("actions", self.recentactions)
+            print(("states", self.recentsensations))
+            print(("actions", self.recentactions))
         alphadelta = self.alpha * (r + \
                                         (self.gamma * self.statevalue(sprime)) \
                                         - self.Q[s1][a1])
@@ -383,7 +383,7 @@ class PreloadedDynaGridAgent (DynaGridAgent):
 def changeAgentLearnMethod (sim, newlearn):
     env = sim.env
     # also need to reset agent before using new method
-    print("Setting up agent with new learning method:", newlearn)
+    print(("Setting up agent with new learning method:", newlearn))
     newagent = None
     if newlearn == 'qlambdareplace':                  # Q(lambda), replace traces
         newagent = QlambdaGridAgent(env.numactions(), env.numstates())
@@ -396,7 +396,7 @@ def changeAgentLearnMethod (sim, newlearn):
     elif newlearn == 'sarsa':             # Sarsa(lambda), replace traces
         newagent = SarsaGridAgent(env.numactions(), env.numstates())
     else:
-        print("Error: Learning method requested", newlearn, "not implemented")
+        print(("Error: Learning method requested", newlearn, "not implemented"))
     if newagent != None:
         sim.agent = newagent
         newagent.sim = sim
@@ -525,11 +525,11 @@ def displayParameters (agent=None):
     elif isinstance(agent, SarsaGridAgent):
         print("Sarsa grid agent")
     else:
-        print("Grid agent is of type", type(agent))
-    print("alpha:", agent.alpha, "  gamma:", agent.gamma, "  epsilon:", agent.epsilon)
-    print("lambda:", agent.agentlambda, "initial value:", agent.initialvalue)
+        print(("Grid agent is of type", type(agent)))
+    print(("alpha:", agent.alpha, "  gamma:", agent.gamma, "  epsilon:", agent.epsilon))
+    print(("lambda:", agent.agentlambda, "initial value:", agent.initialvalue))
     if isinstance(agent, DynaGridAgent):
-        print("exploration bonus:", agent.explorationbonus, "  num model steps:", agent.nummodelsteps)
+        print(("exploration bonus:", agent.explorationbonus, "  num model steps:", agent.nummodelsteps))
 
 def resetParameters (agent=None, alpha=None, gamma=None, epsilon=None, agentlambda=None, \
                      explorationbonus=None, initialvalue=None):

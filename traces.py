@@ -168,7 +168,7 @@ class TraceHolder (SimpleTraceHolder):
         """Try to make room for more traces by incrementing minTrace by 10%, culling
             any traces bewlow the new minimum"""
         self.minTrace += self.minTrace * 0.1
-        print("Changing minTrace to", self.minTrace)
+        print(("Changing minTrace to", self.minTrace))
         for loc in range(self.numNonZeroTraces - 1, -1, -1):        # go through trace list backwards
             f = self.nonZeroTraces[loc]
             if self.E[f] < self.minTrace:                           # check with new minTrace

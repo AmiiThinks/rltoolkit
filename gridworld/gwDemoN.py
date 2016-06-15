@@ -54,9 +54,9 @@ def gwWall(square, action):
             if int(square) and square < env.numsquares and square >= 0:
                 toggleWall(env, square, action)
             else:
-                print("Square", square, "is not a legal square")
+                print(("Square", square, "is not a legal square"))
         else:
-            print("Action", action, "is not a legal action")
+            print(("Action", action, "is not a legal action"))
     else:
         print("You have to set up your gridworld firswt. Use gwInit")
 
@@ -66,7 +66,7 @@ def gwBarrier(square):
         if int(square) and square < env.numsquares and square >= 0:
             toggleBarrier(env, square)
         else:
-            print("Square", square, "is not a legal square")
+            print(("Square", square, "is not a legal square"))
     else:
         print("You have to set up your gridworld firswt. Use gwInit")
 

@@ -176,7 +176,7 @@ class SimulationWindow (Gwindow, Simulation):
         gMakeVisible(self)
 
     def gKeyEventHandler(self, key):
-        print("got key", key)
+        print(("got key", key))
 
     def wholeView (self):
         self.dcount = 0

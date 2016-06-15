@@ -66,7 +66,7 @@ def do (env, verbose, a):
             comment = "(end)"
         else:
             comment = "(running)"
-        print("Environment returned sensation", sp, comment, "and reward", r)	
+        print(("Environment returned sensation", sp, comment, "and reward", r))	
     return sp, r
 
 def s0 (env, verbose):

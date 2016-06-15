@@ -49,7 +49,7 @@ class Tileview(graph.Dataview):
         pass
 
     def gClickEventHandler(self, x, y):
-        print("clicked at ", x, y)
+        print(("clicked at ", x, y))
         self.newExample(x, y)
 
     def newExample (self, x, y):
