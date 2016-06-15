@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="4"
+   name=""
+   committed-date="2005-01-27T19:03:33.208563Z"
+   url="http://rlai.cs.ualberta.ca:8080/RLtoolkit"
+   kind="dir"
+   uuid="bbcd0721-a0ee-0310-933b-e55960500d3f"
+   revision="4"/>
+<entry
+   committed-rev="1"
+   name="graph3d.py"
+   text-time="2005-01-28T19:51:31.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="a7ba97811c6512de3ce0f4404174dae7"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:31.000000Z"/>
+<entry
+   name="Tiles"
+   kind="dir"/>
+<entry
+   name="CTiles"
+   kind="dir"/>
+<entry
+   committed-rev="1"
+   name="traces.html"
+   text-time="2005-01-28T19:51:32.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="7f8cc118b62e7da8fcfb6007e626f073"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:32.000000Z"/>
+<entry
+   committed-rev="1"
+   name="RLinterface.py"
+   text-time="2005-01-28T19:51:32.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="a61e843cc2e7c5ab25af2b87347b80e1"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:32.000000Z"/>
+<entry
+   committed-rev="1"
+   name="basicclasses.py"
+   text-time="2005-01-28T19:51:32.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="f0dfb679ad1499c0499ae46404082b71"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:32.000000Z"/>
+<entry
+   committed-rev="1"
+   name="__init__.py"
+   text-time="2005-01-28T19:51:32.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="29245dc2db4019d22007e7835bd6521b"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:32.000000Z"/>
+<entry
+   name="fa"
+   kind="dir"/>
+<entry
+   name="G"
+   kind="dir"/>
+<entry
+   committed-rev="1"
+   name="graph.py"
+   text-time="2005-01-28T19:51:32.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="95b9adf4f180d78f38de781f611113aa"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:32.000000Z"/>
+<entry
+   name="gridworld"
+   kind="dir"/>
+<entry
+   name="Quickgraph"
+   kind="dir"/>
+<entry
+   committed-rev="1"
+   name="rlitest2a.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="dd5921ec69eca286b9c257ad4523e261"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="rlitest2b.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="1b06c7ddba9e815a6059858498b39c68"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="2"
+   name="rlitest3a.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T18:24:49.620125Z"
+   checksum="4f2a5ef3f5b08e74b9fbad30d3f1e2e4"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="RLinterface.html"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="dab410a1f1d8053a7cbaea875f00f768"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="rlitest3b.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="4824d4564a34652cb3bed06494dd06d7"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="utilities.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="f9a84d1dd6bd9220281eaff9ae80e1a7"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="guiwindow.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="503ba78d840bd822cfbb0896f946fe03"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="tiles.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="e2c9d4b8b0d98744578a2dcd7d946dd3"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="RLinterface2.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="6941175b1e420b6f801816e1f88050ef"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="RLinterface3.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="272477cbcfcfbebbc293366615e933d9"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="traces.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="4bb354e523584873472c12e08115c7ac"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="guiuser.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="3864569816a26a53136b0b9d612856c9"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="demo.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="2a0b113e082cd382cf7a9c57c943e9ea"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="4"
+   name="readme.txt"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T19:03:33.208563Z"
+   checksum="45be1f58eb52838b0c270489750d7b83"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   committed-rev="1"
+   name="g.py"
+   text-time="2005-01-28T19:51:33.000000Z"
+   committed-date="2005-01-27T03:32:29.819237Z"
+   checksum="0751769946381be32619ed52a8408b14"
+   last-author="root"
+   kind="file"
+   prop-time="2005-01-28T19:51:33.000000Z"/>
+<entry
+   name="examples"
+   kind="dir"/>
+</wc-entries>
