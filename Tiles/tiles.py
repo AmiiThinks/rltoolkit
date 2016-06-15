@@ -55,12 +55,12 @@ import operator
 _maxnumfloats = 20                      # maximum number of variables used in one grid
 _maxLongint = 2147483647                # maximum integer
 _maxLongintBy4 = _maxLongint // 4       # maximum integer divided by 4   
-_randomTable = [random.randrange(_maxLongintBy4) for i in xrange(2048)]   #table of random numbers
+_randomTable = [random.randrange(_maxLongintBy4) for i in range(2048)]   #table of random numbers
 #_randomTable = [random.randrange(65536) for i in xrange(2048)]   #table of random numbers
             
 # The following are temporary variables used by tiles.
-_qstate = [0 for i in xrange(_maxnumfloats)]
-_base = [0 for i in xrange(_maxnumfloats)]
+_qstate = [0 for i in range(_maxnumfloats)]
+_base = [0 for i in range(_maxnumfloats)]
 
 safteydict = {'unsafe':0,'safe':1,'super safe':2}
 _UNSAFE = 0
@@ -72,13 +72,13 @@ class CollisionTable:
     def __init__(self, sizeval=2048, safetyval='safe'):
         # if not power of 2 error
         if not powerOf2(sizeval):
-                print "error - size should be a power of 2"
+                print("error - size should be a power of 2")
         self.size = sizeval                        
         self.safety = safteydict[safetyval]            # one of 'safe', 'super safe' or 'unsafe'
         self.calls = 0
         self.clearhits = 0
         self.collisions = 0
-        self.data = [-1 for i in xrange(self.size)]
+        self.data = [-1 for i in range(self.size)]
 
     def __str__(self):
         "Prepares a string for printing whenever this object is printed"
@@ -91,15 +91,15 @@ class CollisionTable:
     
     def print_ (self):
         "Prints info about collision table"
-        print "usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
-                        "collisions", self.collisions, "safety", self.safety
+        print("usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
+                        "collisions", self.collisions, "safety", self.safety)
 
     def reset (self):
         "Reset Ctable values"
         self.calls = 0
         self.clearhits = 0
         self.collisions = 0
-        self.data = [-1 for i in xrange(self.size)]
+        self.data = [-1 for i in range(self.size)]
     
     def stats (self):
         "Return some statistics of the usage of the collision table"
@@ -130,7 +130,7 @@ def startTiles (coordinates, numtilings, floats, ints=[]):
 def fixcoord (coordinates, numtilings, numfloats, j):
     "Fiddles with _coordinates and _base - done once for each tiling"
     global _base, _qstate
-    for i in xrange(numfloats):          # for each real variable
+    for i in range(numfloats):          # for each real variable
         if _qstate[i] >= _base[i]:
             coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
         else:
@@ -144,7 +144,7 @@ def fixcoord (coordinates, numtilings, numfloats, j):
 def hashUNH (ints, numInts, m, increment=449):
     "Hashing of array of integers into below m, using random table"
     res = 0
-    for i in xrange(numInts):
+    for i in range(numInts):
         res += _randomTable[(ints[i] + i*increment) % 2048]
         #res += _randomTable[(ints[i] + i*increment) & 2047] 
 
@@ -176,7 +176,7 @@ def hash (ints, numInts, ct):
             ct.collisions += 1
             j = (j + h2) % memSize
             if i > memSize:             # or we run out of space 
-                print "Tiles: Collision table out of memory"
+                print("Tiles: Collision table out of memory")
                 return -1               # force it to stop if out of memory
             if ct.data[j] < 0:          
                 ct.data[j] = ccheck
@@ -195,7 +195,7 @@ def mod(num, by):
     
 def fixcoordwrap(coordinates, numtilings, numfloats, j, wrapwidths):
     global _widthxnumtilings, _qstate, _base
-    for i in xrange(numfloats):  # loop over each relevant dimension
+    for i in range(numfloats):  # loop over each relevant dimension
         # find coordinates of activated tile in tiling space 
         #if _qstate[i] >= _base[i]:
         coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
@@ -222,7 +222,7 @@ def tiles (numtilings, memctable, floats, ints=[]):
     _coordinates = [0]*numcoord
     startTiles (_coordinates, numtilings, floats, ints)
     tlist = [None] *numtilings
-    for j in xrange(numtilings):             # for each tiling
+    for j in range(numtilings):             # for each tiling
         fixcoord(_coordinates, numtilings, numfloats, j)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tlist[j] = hnum
@@ -241,7 +241,7 @@ def loadtiles (tiles, startelement, numtilings, memctable, floats, ints=[]):
     numcoord = 1 + numfloats + len(ints)
     _coordinates = [0]*numcoord
     startTiles (_coordinates, numtilings, floats, ints)
-    for j in xrange(numtilings):
+    for j in range(numtilings):
         fixcoord(_coordinates, numtilings, numfloats, j)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[startelement + j] = hnum
@@ -261,8 +261,8 @@ def tileswrap(numtilings, memctable, floats, wrapwidths, ints=[]):
     _coordinates = [0]*numcoord
     tiles = [None] * numtilings
     startTiles (_coordinates, numtilings, floats, ints)
-    _widthxnumtilings = [wrapwidths[i] * numtilings for i in xrange(numfloats)]
-    for j in  xrange(numtilings):
+    _widthxnumtilings = [wrapwidths[i] * numtilings for i in range(numfloats)]
+    for j in  range(numtilings):
         fixcoordwrap(_coordinates, numtilings, numfloats, j, wrapwidths)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[j] = hnum
@@ -282,8 +282,8 @@ def loadtileswrap(tiles, startelement, numtilings, memctable, floats, wrapwidths
     numcoord = 1 + numfloats + len(ints)
     _coordinates = [0]*numcoord
     startTiles (_coordinates, numtilings, floats, ints)
-    _widthxnumtilings = [wrapwidths[i] * numtilings for i in xrange(numfloats)]
-    for j in  xrange(numtilings):
+    _widthxnumtilings = [wrapwidths[i] * numtilings for i in range(numfloats)]
+    for j in  range(numtilings):
         fixcoordwrap(_coordinates, numtilings, numfloats, j, wrapwidths)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[startelement + j] = hnum

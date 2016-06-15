@@ -9,8 +9,8 @@
 # Converted to Python in April, 2004
 # Modified to use the RL interface in April 2004
 
-from mountainEnv import *
-from mountainAgent import *
+from .mountainEnv import *
+from .mountainAgent import *
 from RLtoolkit.RLinterface import RLinterface
 from RLtoolkit.guiwindow import *
 from RLtoolkit.G.g import *

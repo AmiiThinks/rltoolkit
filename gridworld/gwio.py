@@ -1,5 +1,6 @@
-from gwEnv import *
+from .gwEnv import *
 import os.path, inspect
+from functools import reduce
 
 # Make sure we can load gridworlds whether we start with demos or gridworld
 path = os.path.dirname(inspect.getfile(Gridworld))
@@ -18,7 +19,7 @@ def gwFilename (name):
 
 def readGridworld (filename):
     "reads a gridworld file into a dictionary list and returns it"
-    print "reading", filename
+    print("reading", filename)
     if filename != None and filename != '':
         input = open(filename, 'r')
         alist = input.readlines()
@@ -53,7 +54,7 @@ def prepareWrite(gridworld):
 
 def writeGridworld (dlist, filename):
     "writes a dictionary list to the filename"
-    print "writing to file", filename
+    print("writing to file", filename)
     if filename != None and filename != '':
         output = open(filename, 'w')
         gridout = ["{"]
@@ -64,7 +65,7 @@ def writeGridworld (dlist, filename):
         gridout.append("'squaresize':" + str(dlist['squaresize']) + ", \n")
         gridout.append("'startsquare':" + str(dlist['startsquare']) + ", \n")
         gridout.append("'goalsquare':" + str(dlist['goalsquare']) + ", \n")
-        for k, v in dlist.items():
+        for k, v in list(dlist.items()):
             if not k in ['width', 'height', 'squaresize', 'startsquare', 'goalsquare']:
                 gridout.append("'" + k + "'" + ':' + v + ", \n")
         gridout.append("'file': '" + str(filename) + "'}")  #just so that the last , is ok :)

@@ -22,7 +22,7 @@ gdOutlineRectR(v1, 100, 300, 60, 80, 'magenta')
 gdFillRect(v2, 10, 10, 50, 100, 'orange')
 gdFillRectR(v2, 40, 100, 40, 60, 'light blue')
 gdFillRect(v2, 0, 0, 10,10, 'white')
-print gdGetCS(v2)
+print(gdGetCS(v2))
 
 
 gStartEventLoop()

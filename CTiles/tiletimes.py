@@ -6,26 +6,26 @@ import tiles
 import timeit
 
 def runit (num=10, ct=2048, numt=1):
-    for i in xrange(num):
-        for j in xrange(num):
+    for i in range(num):
+        for j in range(num):
             t = tiles.tiles(numt, ct, [i*0.5, j*0.5])
 def runit2 (num=10, ct=2048, numt=1):
-    for i in xrange(num):
-        for j in xrange(num):
+    for i in range(num):
+        for j in range(num):
             t = tiles.tiles(numt, ct, [i*0.5, j*0.5, float(i+j)/2, float(i-j)/2], [i, j])
 def runitw (num=10, ct=2048, numt=1):
-    for i in xrange(num):
-        for j in xrange(num):
+    for i in range(num):
+        for j in range(num):
             t = tiles.tileswrap(numt, ct, [i*0.5, j*0.5], [10, 1])
 def runitl (num=10, ct=2048, numt=1):
     tlist = [None for i in range(num*num*numt)]
-    for i in xrange(num):
-        for j in xrange(num):
+    for i in range(num):
+        for j in range(num):
             t = tiles.loadtiles(tlist, i*num*numt+j, numt, ct, [i*0.5, j*0.5])
 def runitlw (num=10, ct=2048, numt=1):
     tlist = [None for i in range(num*num*numt)]
-    for i in xrange(num):
-        for j in xrange(num):
+    for i in range(num):
+        for j in range(num):
             tiles.loadtileswrap(tlist, i*num*numt+j, numt, ct, [i*0.5, j*0.5], [10, 1])
     return tlist
 
@@ -37,21 +37,21 @@ def initct(mem=16384):
 
 def timetest(command, info, info2='2 floats', num=100, numt=1, mem=16384):            
     initct(mem)
-    print " "
-    print info
-    print "Timing over", num*num, "calls to tiles,", numt, "tiling each for", info2
+    print(" ")
+    print(info)
+    print("Timing over", num*num, "calls to tiles,", numt, "tiling each for", info2)
     t= timeit.Timer(command + '('+str(num)+','+str(mem)+','+str(numt)+')', 'from __main__ import ' + command)
-    print "With no collision table", t.timeit(1), "seconds"
+    print("With no collision table", t.timeit(1), "seconds")
     t= timeit.Timer(command + '('+str(num)+', ctu'+','+str(numt)+')', 'from __main__ import ctu, ' + command)
-    print "With unsafe collision table", t.timeit(1), "seconds"
-    print ctu
+    print("With unsafe collision table", t.timeit(1), "seconds")
+    print(ctu)
     t= timeit.Timer(command + '('+str(num)+', cts'+','+str(numt)+')', 'from __main__ import cts, ' + command)
-    print "With safe collision table", t.timeit(1), "seconds"
-    print cts
+    print("With safe collision table", t.timeit(1), "seconds")
+    print(cts)
     t= timeit.Timer(command + '('+str(num)+', ctss'+','+str(numt)+')', 'from __main__ import ctss, ' + command)
-    print "With super safe collision table", t.timeit(1), "seconds"
-    print ctss
-    print " "
+    print("With super safe collision table", t.timeit(1), "seconds")
+    print(ctss)
+    print(" ")
     #print "Timing over", num*num, "calls to tiles, 16 tilings each for", info2
     #t= timeit.Timer(command + '('+str(num)+', 16384, 16)', 'from __main__ import ' + command)
     #print "With no collision table", t.timeit(1), "seconds"

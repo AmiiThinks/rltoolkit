@@ -3,8 +3,8 @@
 from RLtoolkit.G.g import *
 from RLtoolkit.Quickgraph.graph import *
 from math import *
-from fa import *
-from tilecoder import *
+from .fa import *
+from .tilecoder import *
 
 window = None
 black = gColorBlack(True)
@@ -97,25 +97,25 @@ class DemoWindow (Graph):
     def setResolutionHigher(self):
         global xresolution
         xresolution = int(round(1.5 * xresolution))
-        print "New xresolution is", str(xresolution)
+        print("New xresolution is", str(xresolution))
         self.updateLines()
         self.reDraw()
 
     def setResolutionLower(self):
         global xresolution
         xresolution = int(round(0.666667 * xresolution))
-        print "New xresolution is", str(xresolution)
+        print("New xresolution is", str(xresolution))
         self.updateLines()
         self.reDraw()
 
     def setAlpha(self, new=0.1):
         global functionapproximator
-        print "Setting alpha to", new
+        print("Setting alpha to", new)
         functionapproximator.setLearningrate(new)
 
     def setTilings(self, num = 8):
         global functionapproximator
-        print "Set number of tilings to ", num
+        print("Set number of tilings to ", num)
         functionapproximator = makeTileCoder([[0, 1.2, 6]], 1, num)
         self.initDemo()
 

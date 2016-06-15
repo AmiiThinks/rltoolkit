@@ -61,8 +61,8 @@ def collectData (agent, s, a, r, sp):
     agent.num_rewards += 1
     agent.sum_rewards += r
     if agent.num_rewards == agent.sum_interval:
-        print "Average reward over", agent.num_rewards, "steps is", \
-              (agent.sum_rewards / float(agent.num_rewards))
+        print("Average reward over", agent.num_rewards, "steps is", \
+              (agent.sum_rewards / float(agent.num_rewards)))
         agent.num_rewards = 0
         agent.sum_rewards = 0.0
 	
@@ -75,9 +75,9 @@ def choose (agent, verbose, s):
             comment = "(maint)"
         else: comment = "(run)"
         if verbose > 2:
-            print "Agent chose action", a, comment, "from action values", av
+            print("Agent chose action", a, comment, "from action values", av)
         else:
-            print "Agent chose action", a, comment
+            print("Agent chose action", a, comment)
     return a
     
 def maintenanceAgent(agent, verbose, s, r=None):
@@ -109,7 +109,7 @@ def printAgentQ (agent=None):
             comment = "prefer action 0"
         else:
             comment = "actions tied"
-        print "Q values for", "%2i" % i, " ", "%2.2f" % agt.Q[i][0], "    ", "%2.2f" % agt.Q[i][1], "    ",comment
+        print("Q values for", "%2i" % i, " ", "%2.2f" % agt.Q[i][0], "    ", "%2.2f" % agt.Q[i][1], "    ",comment)
 
 
     

@@ -1,1 +1,1 @@
-from Tiles.tiles import *
+from .Tiles.tiles import *

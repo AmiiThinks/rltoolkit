@@ -6,7 +6,7 @@ the square is redrawn for some other reason.
 """
 
 from RLtoolkit.g import *
-from gwguimain import *
+from .gwguimain import *
 import operator
 
 class ObjectGridworldView (ObjectGridworld, GridworldView):

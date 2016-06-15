@@ -47,7 +47,7 @@ class SimpleTraceHolder:
         
     def decayTraces (self, decayRate):
         "Decays all the (nonzero) traces by decay rate"
-        for loc in self.E.keys():
+        for loc in list(self.E.keys()):
             self.E[loc] = self.E[loc] * decayRate
     
     def setTrace (self, f, newTraceValue):
@@ -60,7 +60,7 @@ class SimpleTraceHolder:
         
     def getTraceIndices (self):
         "Gives a list of trace indexes"
-        return self.E.keys()
+        return list(self.E.keys())
     
     def replaceTraces (self, flist):
         "Replaces traces for the features given"
@@ -168,7 +168,7 @@ class TraceHolder (SimpleTraceHolder):
         """Try to make room for more traces by incrementing minTrace by 10%, culling
             any traces bewlow the new minimum"""
         self.minTrace += self.minTrace * 0.1
-        print "Changing minTrace to", self.minTrace
+        print("Changing minTrace to", self.minTrace)
         for loc in range(self.numNonZeroTraces - 1, -1, -1):        # go through trace list backwards
             f = self.nonZeroTraces[loc]
             if self.E[f] < self.minTrace:                           # check with new minTrace

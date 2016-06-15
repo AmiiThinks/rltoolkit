@@ -24,8 +24,8 @@
 # Modified to use the RL interface in April 2004
 
 from RLtoolkit.RLinterface import RLinterface
-from mountainEnv import *
-from mountainAgent import *
+from .mountainEnv import *
+from .mountainAgent import *
 
 def mcEpisode (maxsteps=10000):	
     "Runs one episode of mountain car"
@@ -34,7 +34,7 @@ def mcEpisode (maxsteps=10000):
         rli = RLinterface(mountainAgent, mountainEnv)
     rli.episode(maxsteps)
     st, ep, epst = curStats()
-    print "Used", epst, "steps"
+    print("Used", epst, "steps")
     return epst
 	
 def mcEpisodes (numEpisodes, maxsteps=2000):
@@ -63,7 +63,7 @@ def mcTest (numEpisodes, maxsteps=2000, epsil=0.01, alph=0.5):
 	return(mcEpisodes(numEpisodes, maxsteps))
 
 def mcHelp():
-    print """Mountain Car Demo:
+    print("""Mountain Car Demo:
    To run:
       mcInit(epsilon, alpha)
         Initializes the agent and gets things started
@@ -83,7 +83,7 @@ def mcHelp():
            maxsteps is the maximum number of steps per episode (default 2000)
            epsilon is the exploration rate (default is 0.01)
            alpha is the learning rate (default is 0.9)
-    """
+    """)
 
 mcHelp()
 
@@ -94,7 +94,7 @@ def mcTime(episodes=200):
     s=time.clock()
     mcEpisodes(episodes)
     e=time.clock()
-    print "Used", e-s, "seconds for", episodes, "episodes"
+    print("Used", e-s, "seconds for", episodes, "episodes")
     return e-s
 
 

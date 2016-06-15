@@ -6,18 +6,18 @@
 #   GUI demos will start immediately
 #   nonGUI demos print help information on how to run the demo
 
-import examples
-import gridworld
-import fa
+from . import examples
+from . import gridworld
+from . import fa
 import sys, os
 
 def mountainCarGuiDemo():
-    from examples.mountainDemoG import runDemo
+    from .examples.mountainDemoG import runDemo
     runDemo()
 
 def mountainCarNonGuiDemo():
     global mcTest, mcEpisodes, mcEpisode, mcInit, mcHelp
-    from examples.mountainDemoN import mcTest, mcEpisodes, mcEpisode, mcInit, mcHelp
+    from .examples.mountainDemoN import mcTest, mcEpisodes, mcEpisode, mcInit, mcHelp
     mcTest = examples.mountainDemoN.mcTest
     mcEpisodes = examples.mountainDemoN.mcEpisodes
     mcEpisode = examples.mountainDemoN.mcEpisode
@@ -25,17 +25,17 @@ def mountainCarNonGuiDemo():
     mcHelp = examples.mountainDemoN.mcHelp
 
 def gridworldGuiDemo():
-    from gridworld.gwDemoG import runDemo
+    from .gridworld.gwDemoG import runDemo
     runDemo()
 
 def gridworldObjGuiDemo():
-    from gridworld.gwDemoG import runObjDemo
+    from .gridworld.gwDemoG import runObjDemo
     runObjDemo()
 
 def gridworldNonGuiDemo():
     global gwEpisode, gwEpisodes, gwInit, gwWall, gwBarrier, gwRead, gwNewAgent, \
            gwDisplayPar, gwSetPar, gwObjRead
-    from gridworld.gwDemoN import gwEpisode, gwEpisodes, gwInit, gwWall, \
+    from .gridworld.gwDemoN import gwEpisode, gwEpisodes, gwInit, gwWall, \
          gwBarrier, gwHelp, gwRead, gwNewAgent, gwDisplayPar, gwSetPar, gwObjRead
     gwEpisode = gridworld.gwDemoN.gwEpisode
     gwEpisodes = gridworld.gwDemoN.gwEpisodes
@@ -50,12 +50,12 @@ def gridworldNonGuiDemo():
     gwObjRead = gridworld.gwDemoN.gwObjRead
 
 def functionApproximationDemo():
-    from fa.demo import faDemo
+    from .fa.demo import faDemo
     faDemo()
 
 def maintenanceEgDemo():
     global maintInit, maintSteps, maintTest, maintHelp
-    from examples.maintenanceDemoN import maintInit, maintSteps, maintTest, maintHelp
+    from .examples.maintenanceDemoN import maintInit, maintSteps, maintTest, maintHelp
     maintInit = examples.maintenanceDemoN.maintInit
     maintHelp = examples.maintenanceDemoN.maintHelp
     maintTest = examples.maintenanceDemoN.maintTest
@@ -142,23 +142,23 @@ def demos(d=None, do=None):
     "Print demo info o run specific demo"
     global demoDoc, demoFn, demoHelp
     if d == None or d == 'help':
-        for k, v in demoDoc.items():
-            print k, " \t", v
-        print " "
-        print """For more information on any demo, use demos("demoname")"""
-        print """To run a demo, use demos("demoname", "run")"""
+        for k, v in list(demoDoc.items()):
+            print(k, " \t", v)
+        print(" ")
+        print("""For more information on any demo, use demos("demoname")""")
+        print("""To run a demo, use demos("demoname", "run")""")
     elif do == "run":
         fn = demoFn.get(d)
         if fn == None:
-            print "There is no demo called", d
+            print("There is no demo called", d)
         else:
             apply(fn)
     else:
         info = demoHelp.get(d)
         if info == None:
-            print "Sorry, no more information for ", d
+            print("Sorry, no more information for ", d)
         else:
-            print info
+            print(info)
 
-print "To get a list of demos available, use demos()"
+print("To get a list of demos available, use demos()")
 

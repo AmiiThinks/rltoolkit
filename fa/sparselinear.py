@@ -1,6 +1,6 @@
 
-from fa import *
-from linear import *
+from .fa import *
+from .linear import *
 
 class Weight:
     def __init__(self, weightvalue, tov, fromv):
@@ -117,7 +117,7 @@ def addweight (fa, fromw, to, weightvalue, location=None):
                     fa.fromweights[fromw] = weights[:i] + [weight] + weights[i:]
             lastrest = 'rest'
     else:  # insert after location
-        print "location is ", location, "add after that"
+        print("location is ", location, "add after that")
     fa.toweights[to] = [weight] + fa.toweights[to]
     fa.numweights += 1
                 

@@ -176,7 +176,7 @@ class SimulationWindow (Gwindow, Simulation):
         gMakeVisible(self)
 
     def gKeyEventHandler(self, key):
-        print "got key", key
+        print("got key", key)
 
     def wholeView (self):
         self.dcount = 0
@@ -304,7 +304,7 @@ class SimulationWindow (Gwindow, Simulation):
 
     def readFile(self, filename):
         "open file - should be specialized for each application"
-        print "File not read - there is no readFile method"
+        print("File not read - there is no readFile method")
         pass
 
     def saveFile(self):
@@ -327,7 +327,7 @@ class SimulationWindow (Gwindow, Simulation):
 
     def writeFile(self, filename):
         "save current simulation info - should be specialized for each application"
-        print "File not saved - there is no writeFile method"
+        print("File not saved - there is no writeFile method")
         pass
 
     def printInfo(self):

@@ -21,7 +21,7 @@ class Tileview(graph.Dataview):
         pass
 
     def gClickEventHandler(self, x, y):
-        print "clicked at ", x, y
+        print("clicked at ", x, y)
         self.newExample(x, y)
 
     def newExample (self, x, y):
@@ -110,8 +110,8 @@ class TileDisplay(graph.Graph):
         csame = []
         psame = []
         total = int((self.end - self.start) * self.intervals)
-        for i in xrange(total):
-            for j in xrange(total):
+        for i in range(total):
+            for j in range(total):
                 x = float(i)/self.intervals + self.start
                 y = float(j)/self.intervals + self.start
                 newfloats = [x, y]
@@ -145,10 +145,10 @@ class TileDisplay(graph.Graph):
                     sametbd.append(newfloats)
                 elif tbdnew == tbd:
                     psame.append(newfloats)
-                    print "back diagonal tiles same in python but not c", x, y, tbd, tbdnew, ctbd, ctbdnew
+                    print("back diagonal tiles same in python but not c", x, y, tbd, tbdnew, ctbd, ctbdnew)
                 elif ctbdnew == ctbd:
                     csame.append(newfloats)
-                    print "back diagonal tiles same in c but not python", x, y, tbd, tbdnew, ctbd, ctbdnew
+                    print("back diagonal tiles same in c but not python", x, y, tbd, tbdnew, ctbd, ctbdnew)
 
                 tdmnew = fancytiles.diamondtiles(numtilings, memct, newfloats, None, ints)
                 ctdmnew = fancytilesc.diamondtiles(numtilings, memctc, newfloats, None, ints)

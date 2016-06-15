@@ -35,7 +35,7 @@ create windows which you may wish to call:
 """
 
 import tiles
-import fancytiles
+from . import fancytiles
 import random
 import RLtoolkit.graph as graph
 from RLtoolkit.g import *
@@ -49,7 +49,7 @@ class Tileview(graph.Dataview):
         pass
 
     def gClickEventHandler(self, x, y):
-        print "clicked at ", x, y
+        print("clicked at ", x, y)
         self.newExample(x, y)
 
     def newExample (self, x, y):
@@ -149,8 +149,8 @@ class TileDisplay(graph.Graph):
         tl = fancytiles.logtiles(numtilings, memct, floats, ints)
         te = fancytiles.exptiles(numtilings, memct, floats, ints)
         total = int((self.end - self.start) * self.intervals)
-        for i in xrange(total):
-            for j in xrange(total):
+        for i in range(total):
+            for j in range(total):
                 x = float(i)/self.intervals + self.start
                 y = float(j)/self.intervals + self.start
                 newfloats = [x, y]

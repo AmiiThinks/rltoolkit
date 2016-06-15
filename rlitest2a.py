@@ -1,4 +1,4 @@
-from RLinterface2 import RLinterface
+from .RLinterface2 import RLinterface
 
 def agentChoose(s):
     "Chooses the next action"

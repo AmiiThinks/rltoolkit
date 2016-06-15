@@ -1,1 +1,1 @@
-from Quickgraph.graph3d import *
+from .Quickgraph.graph3d import *

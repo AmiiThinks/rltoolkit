@@ -66,14 +66,14 @@ def do (env, verbose, a):
             comment = "(end)"
         else:
             comment = "(running)"
-        print "Environment returned sensation", sp, comment, "and reward", r	
+        print("Environment returned sensation", sp, comment, "and reward", r)	
     return sp, r
 
 def s0 (env, verbose):
     "Environment initial state"
     env.LastState = 0
     if verbose > 1:
-        print "Starting at initial state 0"
+        print("Starting at initial state 0")
     return 0
 	
 def maintenanceEnvironment(env, verbose, a=None):

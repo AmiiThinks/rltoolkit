@@ -1,1 +1,1 @@
-from G.g import *
+from .G.g import *

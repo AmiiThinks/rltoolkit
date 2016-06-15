@@ -59,7 +59,7 @@ class RLinterface:                       #<a name="RLinterface"></a>[<a href="RL
         """Run for numSteps steps, regardless of episode endings.
         return the sequence of sensations, rewards and actions."""
         oaseq = []
-        for step in xrange(numSteps):		# run for numSteps steps
+        for step in range(numSteps):		# run for numSteps steps
             new = self.step()
             oaseq.extend(new)
         return oaseq
@@ -101,7 +101,7 @@ class RLinterface:                       #<a name="RLinterface"></a>[<a href="RL
 
     def stepsQ (self, numSteps):        #<a name="stepsQ"></a>[<a href="RLdoc.html#stepsQ">Doc</a>]
         """Same as steps but quicker, quieter, and returns nothing."""
-        for step in xrange(numSteps):		    # run for numSteps steps
+        for step in range(numSteps):		    # run for numSteps steps
             self.step()
             
     def episodeQ (self, maxSteps=1000000):  #<a name="episodeQ"></a>[<a href="RLdoc.html#episodeQ">Doc</a>]

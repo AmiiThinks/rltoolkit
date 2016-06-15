@@ -2,6 +2,7 @@
 import random
 from math import *
 import operator
+from functools import reduce
 
 def minmax (item, limit1, limit2=None):
     "Bounds item to between limit1 and limit2 (or -limit1)"
@@ -26,13 +27,13 @@ def frange(start, stop=None, step=1.0):
 
 def nlist(start, stop=None, step=1):
     if isinstance(start, int):
-        return range(start, stop, step)
+        return list(range(start, stop, step))
     else:
         return frange(start, stop, step)
 
 def nwithoutm (n, m):
     "Returns a list of 0 to n-1 numbers, with m removed"
-    alist = range(n)
+    alist = list(range(n))
     alist.remove(m)
     return alist
 
@@ -93,7 +94,7 @@ def firstn (n, l):
 
 def reorderListOfLists(lofl):
     "Makes new list - 1st element is list of all the first elements, 2nd is all the second elements, etc"
-    return apply(zip, lofl)
+    return list(zip(*lofl))
 
 # Policies for an agent to use to choose an action
 
@@ -135,7 +136,7 @@ def argmaxrandom (values):
     best_index = 0
     best_value = values[0]
     numties = 1
-    for i in xrange(len(values)):
+    for i in range(len(values)):
 	val = values[i]
 	if val < best_value:			# our older value is better
 	    pass
@@ -207,7 +208,7 @@ def withProb (p1, choice1, choice2):
         return choice2
 
 def randomKofN (k, n):
-    random.sample(range(n), k)
+    random.sample(list(range(n)), k)
 
 def randomIntegerOtherThan (n, k):
     "Returns a random integer in [0,n1] that is not k"

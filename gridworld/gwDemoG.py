@@ -20,8 +20,8 @@ The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else
 
 ###
 
-from gwguimain import *
-from gwobject import *
+from .gwguimain import *
+from .gwobject import *
 
 def runDemo():
    makeGridworldSimulation(16, 16, 87, 15, 30)

@@ -1,1 +1,1 @@
-from Quickgraph.graph import *
+from .Quickgraph.graph import *

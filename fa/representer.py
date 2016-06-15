@@ -47,7 +47,7 @@
 ### but the general idea is to specify how finely the range of the input is to be
 ### be split up  how fine a distinction the representer's representation will make.
 
-from fa import *
+from .fa import *
 
 ### Mix in  CHECKINPUTRANGE and CHECKINPUTDIMENSIONALITY to get your inputs 
 ### checked automatically.
@@ -56,7 +56,7 @@ class CheckInputRange:
 
     def represent(self, input):
         if not inrangep(input, self.inputdescriptor):
-            print "Input", str(input), "out of range", str(self.inputdescriptor)
+            print("Input", str(input), "out of range", str(self.inputdescriptor))
         else:
             return input
 
@@ -130,7 +130,7 @@ def makeRepresenter (representerClass, limits, numintervals, \
         numinterval = numintervals[i]
         newd = [lower, upper, numinterval]
         desc.append(newd)
-    apply(representerClass, [desc, numlayers, contraction])
+    representerClass(*[desc, numlayers, contraction])
   
 
 def makeRepresenters (representerClass, conjunctslist, limits, numintervals, \

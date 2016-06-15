@@ -111,15 +111,15 @@ class Gridworld (Environment):
         if a == None:
             s = self.envstartepisode()
             if verbose:
-                print "Starting new episode with sensation", s
+                print("Starting new episode with sensation", s)
             self.state = s
             return s
         else:
             s, r = self.envstep(a)
             if verbose:
-                print "Did action", a, "got new sensation", s, "and reward", r
+                print("Did action", a, "got new sensation", s, "and reward", r)
             if s == 'terminal':
-                print "Reached goal in ", self.sim.episodestepnum, "steps"
+                print("Reached goal in ", self.sim.episodestepnum, "steps")
                 #sim = self.sim
                 #sim.episodenum += 1
                 #sim.episodestepnum = 0

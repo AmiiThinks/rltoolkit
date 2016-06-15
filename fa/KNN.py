@@ -4,7 +4,7 @@
 ### 
 ### 
 
-from fa import *
+from .fa import *
 
 class KNN (FunctionApproximator):
     "A basic Knearest neighbor function approximator"

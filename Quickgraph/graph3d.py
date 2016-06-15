@@ -27,10 +27,11 @@ Doesn't work for arrays less than 5x5
 try:
     from RLtoolkit.G.g import *
 except:
-    from g import *
+    from .g import *
     
 from math import *
 import operator
+from functools import reduce
 
 # written by Chuck
 # converted to Python by Steph (2004)
@@ -195,7 +196,7 @@ def set3DProjection (r0x, r0y, r0z, rcx, rcy, rcz, d):
 	r03D = [r0x, r0y, r0z]
 	distance = d
 	## u3D is difference between r03D and center of view volumn and normalized
-	u3D = normalizeList(map(lambda a, b: a-b, r03D, rc))
+	u3D = normalizeList(list(map(lambda a, b: a-b, r03D, rc)))
 
 	## Rotate (x,y) of u3D 90 degrees to get u13D
 	u13D = normalizeList([-u3D[1], u3D[0], 0.])
@@ -209,13 +210,13 @@ def set3DProjection (r0x, r0y, r0z, rcx, rcy, rcz, d):
 
 def project3D (x3D, y3D, z3D):
 	global r03D, u13D, u23D, u3D, distance
-	rd = map(lambda a,b: a-b, [x3D, y3D, z3D], r03D)
+	rd = list(map(lambda a,b: a-b, [x3D, y3D, z3D], r03D))
 	return  [ (-distance * dot(rd, u13D)) / (dot(rd, u3D) - distance), \
 				 (-distance * dot(rd, u23D)) / (dot(rd,u3D) - distance) ]
 
 def project3DVector (p3D):
 	global r03D, u13D, u23D, u3D, distance
-	rd = map(lambda a,b: a-b, p3D, r03D)
+	rd = list(map(lambda a,b: a-b, p3D, r03D))
 	return [ (-distance * dot(rd, u13D)) / (dot(rd, u3D) - distance), \
 				 (-distance * dot(rd, u23D)) / (dot(rd,u3D) - distance) ]
 
@@ -243,11 +244,11 @@ def project3DWindow (xmin, xmax, ymin, ymax, zmin, zmax):
 	return (wxmin, wymin, wxmax, wymax)
 
 def normalizeList(p):
-	sum = float(reduce(operator.add, map(lambda x: x * x, p)))
-	return map(lambda x: float(x) / sum, p)
+	sum = float(reduce(operator.add, [x * x for x in p]))
+	return [float(x) / sum for x in p]
  
 def dot (a, b):
-	return reduce(operator.add, map(lambda x, y: x * y, a, b))
+	return reduce(operator.add, list(map(lambda x, y: x * y, a, b)))
 
 wxmings = 0
 wxmaxgs = 0

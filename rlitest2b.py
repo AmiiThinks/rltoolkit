@@ -1,4 +1,4 @@
-import RLinterface2 as RLinterface
+from . import RLinterface2 as RLinterface
 import random
 
 # Random walk example using RL interface
@@ -8,7 +8,7 @@ def argmaxrandom (values):
     best_index = 0
     best_value = values[0]
     numties = 1
-    for i in xrange(len(values)):
+    for i in range(len(values)):
 	val = values[i]
 	if val < best_value:			# our older value is better
 	    pass
@@ -34,8 +34,8 @@ class Agent:
         self.gamma = gamma
         self.lasta = 0
         self.lasts = 0
-        self.Q = [[0.0 for i in xrange(self.numactions)] \
-                  for j in xrange(self.numstates)]
+        self.Q = [[0.0 for i in range(self.numactions)] \
+                  for j in range(self.numstates)]
     
     def agentChoose(self, s):
         "Chooses the next action using epsilon-greedy"
@@ -111,6 +111,6 @@ rli = RLinterface.RLinterface(agt.agentStart, agt.agentStep, \
 
 for i in range(20):
     eps = rli.episode()
-    print "Reward", eps[-2], "took", len(eps)//3, "steps"
+    print("Reward", eps[-2], "took", len(eps)//3, "steps")
     
     

@@ -3,9 +3,9 @@
 ### for expandedrepresentation function approximators
 
 
-from fa import *
-from representer import *
-from linear import *
+from .fa import *
+from .representer import *
+from .linear import *
 
 class ERFA (FunctionApproximator):
     "The foundation for expandedrepresentation function approximators"
@@ -32,7 +32,7 @@ class ERFA (FunctionApproximator):
         return self.finalfa.faApproximate(self.representation)
 
     def faLearnLastApproximation (self, input, output, target):
-        print "learn", input, output, target
+        print("learn", input, output, target)
         self.finalfa.faLearnLastApproximation(self.representation, output, target)
         self.representer.representerLearnLast(input, self.representation, 1)
 

@@ -3,8 +3,8 @@
 ###
 
 import RLtoolkit.Tiles.tiles as tiles
-from representer import *
-from ER import *
+from .representer import *
+from .ER import *
 
    
 class TileCoderRepresenter (Representer):

@@ -5,9 +5,9 @@
 
 # This package is based on Tkinter (python's version of tk)
 
-import Tkinter
-import tkColorChooser
-import tkFileDialog
+import tkinter
+import tkinter.colorchooser
+import tkinter.filedialog
 import sys
 
 # The color chooser currently starts up its own python application and will not appear until
@@ -32,7 +32,7 @@ class CSinfo:
         self.wwidth = width
         self.wheight = height
 
-class Gview(CSinfo, Tkinter.Canvas):                                      #<a name="Gview"></a>[<a href="g.html#Gview">Doc</a>]
+class Gview(CSinfo, tkinter.Canvas):                                      #<a name="Gview"></a>[<a href="g.html#Gview">Doc</a>]
     "Main graphical view class"
     parent = None
     childviews = []
@@ -40,13 +40,13 @@ class Gview(CSinfo, Tkinter.Canvas):                                      #<a na
     def __init__ (self, parent, vwidth=10, vheight=10, **kwargs):  #<a name="Gview...)"</a>[<a href="g.html#Gview...)">Doc</a>]
         "Initialization for Gview"
         global GDEVICE
-        Tkinter.Canvas.__init__(self, parent, borderwidth=0, highlightthickness=0, \
+        tkinter.Canvas.__init__(self, parent, borderwidth=0, highlightthickness=0, \
                                 width=vwidth, height=vheight)
         CSinfo.__init__(self, vwidth, vheight)
         self.color = None
         self.backcolor = None
         self.gSetParent(parent) 
-        self.place(in_=self.parent, anchor=Tkinter.NW)  
+        self.place(in_=self.parent, anchor=tkinter.NW)  
         gUpdateNormalization(self)
         # Now set up to handle events
         self.bind("<Button-1>", self.viewClickEventHandler)
@@ -67,10 +67,10 @@ class Gview(CSinfo, Tkinter.Canvas):                                      #<a na
         """Set the parent for this view. Things are slightly different if the parent is
            a Gwindow"""
         parent = self.gGetParent()
-        if parent != None and parent != newparent and not isinstance(newparent, Tkinter.Toplevel):
+        if parent != None and parent != newparent and not isinstance(newparent, tkinter.Toplevel):
             self.parent.childviews.remove(self)
         self.parent = newparent
-        if newparent != GDEVICE and not isinstance(self, Gwindow) and not isinstance(newparent, Tkinter.Toplevel):
+        if newparent != GDEVICE and not isinstance(self, Gwindow) and not isinstance(newparent, tkinter.Toplevel):
             newparent.childviews = newparent.childviews + [self]
     
     def setViewContainer(self):
@@ -239,7 +239,7 @@ class Gwindow(Gview):
     def __init__ (self, **kwargs):  #<a name="Gwindow...)"</a>[<a href="g.html#Gwindow...)">Doc</a>]
         "Initialization for Gwindow"
         global GDEVICE
-        new = Tkinter.Toplevel(GDEVICE)            # make a Toplevel window, and put a canvas(Gview) under it
+        new = tkinter.Toplevel(GDEVICE)            # make a Toplevel window, and put a canvas(Gview) under it
         self.screenx = 25                   # default placement for Toplevel window on screen device
         self.screeny = 65
         self.menu = None
@@ -269,7 +269,7 @@ class Gwindow(Gview):
         gdvpr = kwargs.get(gdViewportR)
         if gdvpr != None:
             gdSetViewportR(self, gdvpr[0], gdvpr[1], gdvpr[2], gdvpr[3])
-        self.place(in_=self.parent, anchor=Tkinter.NW, relheight=1, relwidth=1, relx=0, rely=0)
+        self.place(in_=self.parent, anchor=tkinter.NW, relheight=1, relwidth=1, relx=0, rely=0)
         gUpdateNormalization(self)      
         self.bind("<Configure>", self.gResize)      # set up to catch certain events
         self.bind("<Destroy>", self.gDestroy)
@@ -327,12 +327,12 @@ class Gwindow(Gview):
             self.gDrawView()                                # redraw window contents
         
 
-class Gdevice (CSinfo, Tkinter.Tk):                         #<a name="Gdevice"</a>[<a href="g.html#Gdevice">Doc</a>]
+class Gdevice (CSinfo, tkinter.Tk):                         #<a name="Gdevice"</a>[<a href="g.html#Gdevice">Doc</a>]
     """Object for a device, such as a screen or printer"""
     
     def __init__(self):
         "Initialization for Gdevice"
-        Tkinter.Tk.__init__(self)
+        tkinter.Tk.__init__(self)
         CSinfo.__init__(self, self.winfo_screenwidth(), self.winfo_screenheight())
         self.lower()                    # don't want it visible
         self.withdraw()
@@ -508,10 +508,10 @@ def gSetCoordinateSystem (view, x1, y1, x2, y2, corner='lowerLeft'):
     """Sets the coordinate system for a view to the one specified"""
     x1, y1, x2, y2 = float(x1), float(y1), float(x2), float(y2)
     if x1 == x2:
-        print "Attempt to Set left and right of g Coordinate System to same values."
+        print("Attempt to Set left and right of g Coordinate System to same values.")
         x2 = x1 + 1
     elif y1 == y2:
-        print "Attempt to Set top and bottom of g Coordinate System to same values."
+        print("Attempt to Set top and bottom of g Coordinate System to same values.")
         y2 = y1 + 1
     else:
         if corner in ['lowerLeft', 'upperLeft']:
@@ -559,12 +559,12 @@ def gUpdateNormalization (view):
     "Updates state variables of Normalized Coordinate System"
     x1, y1, x2, y2, corner = gdGetCoordinateSystem(view)
     if view.csRight == view.csLeft:
-        print "Error - Attempt to establish invalid (zero area) g Coordinate System"
+        print("Error - Attempt to establish invalid (zero area) g Coordinate System")
     else:
         view.scalex = float(x2 - x1) /  float( view.csRight - view.csLeft)  
         view.offsetx = x1 - (view.csLeft * view.scalex)
     if  view.csBottom == view.csTop:
-        print "Error - Attempt to establish invalid (zero area) g Coordinate System"
+        print("Error - Attempt to establish invalid (zero area) g Coordinate System")
     else:
         view.scaley =  float( y2 - y1) / float(view.csBottom - view.csTop)   
         view.offsety = y1 - (view.csTop * view.scaley)
@@ -793,7 +793,7 @@ def gColorBW (view, intensity):                        #<a name="gColorBW"</a>[<
 def gColorUserPick (view, **args):                   #<a name="gColorUserPick"</a>[<a href="g.html#gColorUserPick">Doc</a>]
     "call up tk's color picker - currently doesn't come out until you click the bouncing python icon in the dock"
     #return tkColorChooser.askcolor(parent=view, **args)[1]
-    b = tkColorChooser.Chooser(view)
+    b = tkinter.colorchooser.Chooser(view)
     return b.show()[1]
 
 def gSetColor (view, color):                              #<a name="gSetColor"</a>[<a href="g.html#gSetColor">Doc</a>]
@@ -808,14 +808,14 @@ def gOpenFileUserPick (view, **args):                   #<a name="gOpenFileUserP
     global GDEVICE
     if view == None:
         view = GDEVICE
-    return tkFileDialog.Open(view).show(**args)
+    return tkinter.filedialog.Open(view).show(**args)
 
 def gSaveFileUserPick (view, **args):                   #<a name="gSaveFileUserPick"</a>[<a href="g.html#gSaveFileUserPick">Doc</a>]
     "call up tk's file save dialog - args are title=, initialdir=, and initialfile="
     global GDEVICE
     if view == None:
         view = GDEVICE
-    return tkFileDialog.SaveAs(view).show(**args)
+    return tkinter.filedialog.SaveAs(view).show(**args)
 
 
 ### gdGRAPHICS
@@ -913,7 +913,7 @@ def gdFillPolygon (view, colorcode=None, *pts):
     "Draws a solid polygon on view, using pairs of device coordinates"
     color, pattern, mode, (xsize, ysize) = getColor(view, colorcode)
     arglist = {'fill':color, 'outline':color, 'stipple':pattern}
-    return apply(view.create_polygon, pts, arglist)
+    return view.create_polygon(*pts, **arglist)
 
                                                               #<a name="gdDrawText"</a>[<a href="g.html#gdDrawText">Doc</a>]
 def gdDrawText (view, string, font, dx, dy, colorcode=None):
@@ -921,9 +921,9 @@ def gdDrawText (view, string, font, dx, dy, colorcode=None):
     dx, dy = canvasPoint(view, dx, dy)
     color, pattern, mode, (xsize, ysize) = getColor(view, colorcode)
     if font == None:
-        return view.create_text(dx, dy, text=string, anchor=Tkinter.W, fill=color)  # use default font
+        return view.create_text(dx, dy, text=string, anchor=tkinter.W, fill=color)  # use default font
     else:
-        return view.create_text(dx, dy, text=string, anchor=Tkinter.W, fill=color, font=font)
+        return view.create_text(dx, dy, text=string, anchor=tkinter.W, fill=color, font=font)
 
 
                                                               #<a name="gdDrawTextCentered"</a>[<a href="g.html#gdDrawTextCentered">Doc</a>]
@@ -932,9 +932,9 @@ def gdDrawTextCentered (view, string, font, dx, dy, colorcode=None):
     dx, dy = canvasPoint(view, dx, dy)
     color, pattern, mode, (xsize, ysize) = getColor(view, colorcode)
     if font == None:
-        return view.create_text(dx, dy, text=string, anchor=Tkinter.CENTER, fill=color) # use default font
+        return view.create_text(dx, dy, text=string, anchor=tkinter.CENTER, fill=color) # use default font
     else:
-        return view.create_text(dx, dy, text=string, anchor=Tkinter.CENTER, fill=color, font=font)
+        return view.create_text(dx, dy, text=string, anchor=tkinter.CENTER, fill=color, font=font)
 
 
 # Need a better way to calculate this
@@ -1039,7 +1039,7 @@ def gDrawDisk (view, x, y, radius, colorcode=None):       #<a name="gDrawDisk"</
 
 def gFillPolygon (view, colorcode=None, *pts):       #<a name="gFillPolygon"</a>[<a href="g.html#gFillPolygon">Doc</a>]
     newpts = []
-    for i in xrange(0, len(pts), 2): 
+    for i in range(0, len(pts), 2): 
         x = pts[i]
         y = pts[i+1]
         dx = gdCoordx(view, x)
@@ -1200,7 +1200,7 @@ def gDelete (view, object):      #<a name="gDelete"</a>[<a href="g.html#gDelete"
 
 def gSetTitle(windoworbutton, newtitle):         #<a name="gSetTitle"</a>[<a href="g.html#gSetTitle">Doc</a>]
     "sets the title or label for a window or a button"
-    if isinstance(windoworbutton, Tkinter.Button):
+    if isinstance(windoworbutton, tkinter.Button):
         windoworbutton.config(text=newtitle)
     else:
         windoworbutton.parent.title(newtitle)
@@ -1217,9 +1217,9 @@ def gdAddButton(view, btext, bcommand, xpos, ypos, background=None):
         at position xpos, ypos, background of view is background
         e.g. gAddButton(w, "run", runcommand, .5, .5, 'blue')"""
     if background == None:
-        b = Tkinter.Button(view, text=btext, command=bcommand)
+        b = tkinter.Button(view, text=btext, command=bcommand)
     else:
-        b = Tkinter.Button(view, text=btext, command=bcommand, highlightbackground=background)
+        b = tkinter.Button(view, text=btext, command=bcommand, highlightbackground=background)
     b.place(x=xpos, y=ypos)
     return b
     
@@ -1231,17 +1231,17 @@ def gAddButton(view, btext, bcommand, xpos, ypos, background=None):      #<a nam
 
 def gButtonEnable(button):           #<a name="gButtonEnable"</a>[<a href="g.html#gButtonEnable">Doc</a>]
     "Enables a button and makes it visible and active"
-    button.config(state=Tkinter.NORMAL)
+    button.config(state=tkinter.NORMAL)
 
 def gButtonDisable(button):          #<a name="gButtonDisable"</a>[<a href="g.html#gButtonDisable">Doc</a>]
     "Disables a button - greys it out and makes it inactive"
-    button.config(state=Tkinter.DISABLED)
+    button.config(state=tkinter.DISABLED)
 
-class gIntVar(Tkinter.IntVar):
+class gIntVar(tkinter.IntVar):
     "Pass through for tk integer variable. Use set and get methods to set and get values"
     pass
     
-class gStringVar(Tkinter.StringVar):
+class gStringVar(tkinter.StringVar):
     "Pass through for tk string variable. Use set and get methods to set and get values"
     pass
     
@@ -1254,23 +1254,23 @@ def gAddMenu (parent, menuname, menuitems=None):         #<a name="gAddMenu"</a>
         If parent is a window, the menu is added to the menubar for that window. If it is a menu, it
            is added as a submenu"""
     global GMENU
-    if not isinstance(parent, (Gwindow, Tkinter.Menu)) and not parent == GMENU:
-        print "Cannot add menu to anything except a Gwindow or another menu"
+    if not isinstance(parent, (Gwindow, tkinter.Menu)) and not parent == GMENU:
+        print("Cannot add menu to anything except a Gwindow or another menu")
     else:
         if isinstance(parent, Gwindow):
             if parent.menu == None:
-                mm = Tkinter.Menu(parent)
+                mm = tkinter.Menu(parent)
                 parent.parent.config(menu=mm)
                 parent.menu = mm
             else:
                 mm = parent.menu
             parent = mm
-        m = Tkinter.Menu(parent, tearoff=0)
+        m = tkinter.Menu(parent, tearoff=0)
         for i in menuitems:
             if i == 'separator' or i == '---':
                 m.add_separator()
             elif not isinstance(i, (tuple, list)):
-                print i, "is not a legal menu item"
+                print(i, "is not a legal menu item")
             elif i[0] == 'button':
                 # form is ['button', 'label', gVarname, onvalue, offvalue, command]
                 bcom, l, v, on, off, c= i
@@ -1291,7 +1291,7 @@ def gCheckEvents(view, fn):
         
 
 GDEVICE = Gdevice()                     #<a name="GDEVICE"</a>[<a href="g.html#GDEVICE">Doc</a>]
-GMENU = Tkinter.Menu(GDEVICE)           #Application wide menu that all windows will inherit
+GMENU = tkinter.Menu(GDEVICE)           #Application wide menu that all windows will inherit
 GDEVICE["menu"] = GMENU                 
 
 #</pre></body></html>

@@ -48,7 +48,7 @@
 ### resolution of 10 intervals. 
 
 from random import *
-from representer import *
+from .representer import *
 normaldensity0 = normaldensity(0)
 
 class HyperCrossRepresenter (Representer):

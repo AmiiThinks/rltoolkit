@@ -59,10 +59,11 @@ To get rid of a graph:
 try:
     from RLtoolkit.G.g import *
 except:
-    from g import *
+    from .g import *
     
 import operator
 import math
+from functools import reduce
 
 class Dataview (Gview):
     "dataview of graph"
@@ -72,7 +73,7 @@ class Dataview (Gview):
         gSetCursor(self, 'crosshair')
         
     def gClickEventHandler(self, x, y):
-        print "Clicked at", x, y
+        print("Clicked at", x, y)
             
     def gKeyEventHandler(self, key):
         graph = self.parent
@@ -221,10 +222,10 @@ def removeNulls(l):
 def graph (newdata, color=None, graph=None):     #<a name="graph"</a>[<a href="graph.html#graph">Doc</a>]
     "Establishes some data for a graph, then draws it"
     if None in newdata or [] in newdata:
-        print "Warning: Some data to be graphed was nil; ignoring"
+        print("Warning: Some data to be graphed was nil; ignoring")
         removeNulls(newdata)
     if newdata == []:
-        print "No graphing data"
+        print("No graphing data")
     else:
         graph = chooseGraph(graph)
         graph.data = FillInColors (regularizeData(newdata, color))
@@ -299,11 +300,11 @@ def graphPointsOnly(graph=None):
                
 def addToGraph (newdata, color=None, graph=None):    #<a name="addtograph"</a>[<a href="graph.html#addtograph">Doc</a>]
     "Adds additional data to a graph"
-    if newdata == None or reduce(operator.and_, map(lambda a: a == None, newdata)):
-        print "No graphing data"
+    if newdata == None or reduce(operator.and_, [a == None for a in newdata]):
+        print("No graphing data")
     else:
         if None in newdata:
-                print "Warning: Some data to be graphed was nil; ignoring"
+                print("Warning: Some data to be graphed was nil; ignoring")
                 newdata.remove(None)
         graph = chooseGraph(graph)
         graph.data.extend(regularizeData(newdata, color))
@@ -326,7 +327,7 @@ def graphLess (colorkeyword=None, graph=None):       #<a name="graph"</a>[<a hre
             else:
                 linenum +=1
         else:
-            print "No such color used in this graph", colorkeyword
+            print("No such color used in this graph", colorkeyword)
     
                
 def subtractFromGraph (linenum=None, graph=None):    #<a name="subtractfromgraph"</a>[<a href="graph.html#subtractfromgraph">Doc</a>]
@@ -458,7 +459,7 @@ colorList = {'blue': gBlue, 'red': gRed, 'green': gGreen, 'black': gBlack, 'yell
 def ColorFromKeyword (colorkeyword):
     color = colorList.get(colorkeyword, None)
     if color == None:
-        print "Unrecognized color keyword:" ,colorkeyword
+        print("Unrecognized color keyword:" ,colorkeyword)
     return color
 
 def FirstUnusedColor (data):
@@ -499,7 +500,7 @@ def chooseGraph (graph=None):            #<a name="choosegraph"</a>[<a href="gra
         else:
             usegraph = Graph(graph)
     else:
-        print "Error: can't choose graph", graph
+        print("Error: can't choose graph", graph)
         usegraph = None
     return usegraph
 
@@ -603,7 +604,7 @@ def computeLimitsFromData (graph):
                         if x > graph.xmax:
                                 graph.xmax = x
         if graph.ymin == graph.ymax:
-            print "Warning: all lines are flat at", graph.ymin
+            print("Warning: all lines are flat at", graph.ymin)
             if graph.ymax > 0:
                 graph.ymin = 0
             else:
@@ -660,15 +661,15 @@ def drawLine (graph, line, color, highlight=False):
 def histogram (data, numbins=None, minex=None, maxex=None, color=None, hist=None):   #<a name="histogram"</a>[<a href="graph.html#histogram">Doc</a>]
     "plots histogram of data, minex <= data < maxex, in a color on a graph named hist"
     if data==None or data == []:
-        print "No graphing data"
+        print("No graphing data")
     elif len(data) == 1:
-        print "Cannot histogram a single datum"
+        print("Cannot histogram a single datum")
     else:
         if minex == None:
             minex = min(data)
         mx = max(data)
         if minex == mx:
-            print "Error: min=max - no histogram possible"
+            print("Error: min=max - no histogram possible")
         else:
             if isinstance(mx, int) and isinstance(minex, int):
                 if maxex==None:
@@ -700,24 +701,24 @@ def histogram (data, numbins=None, minex=None, maxex=None, color=None, hist=None
             gdata.append([maxex, bins[numbins-1]])  #force the last bar to come out
             graph([gdata], color, hgraph)
             if numtoosmall != 0:
-                print numtoosmall, "data points were below the range"
+                print(numtoosmall, "data points were below the range")
             if numtoobig != 0:
-                print numtoobig, "data points were above the range"
+                print(numtoobig, "data points were above the range")
 
 
 def histogramMore  (data, numbins=None, minex=None, maxex=None, color=None, hist=None):  #<a name="histogramMore"</a>[<a href="graph.html#histogramMore">Doc</a>]
     "adds histogram of data, minex <= data < maxex, in a color to a graph named hist"
     #histogram(data, numbins, minex, maxex, color, hist)
     if data==None or data == []:
-        print "No graphing data"
+        print("No graphing data")
     elif len(data) == 1:
-        print "Cannot histogram a single datum"
+        print("Cannot histogram a single datum")
     else:
         if minex == None:
             minex = min(data)
         mx = max(data)
         if minex == mx:
-            print "Error: min=max - no histogram possible"
+            print("Error: min=max - no histogram possible")
         else:
             if isinstance(mx, int) and isinstance(minex, int):
                 if maxex==None:
@@ -752,9 +753,9 @@ def histogramMore  (data, numbins=None, minex=None, maxex=None, color=None, hist
             hgraph.data = FillInColors (hgraph.data)
             hgraph.gDrawView()
             if numtoosmall != 0:
-                print numtoosmall, "data points were below the range"
+                print(numtoosmall, "data points were below the range")
             if numtoobig != 0:
-                print numtoobig, "data points were above the range"
+                print(numtoobig, "data points were above the range")
     
 
 #Testing stuff

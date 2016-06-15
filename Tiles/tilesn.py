@@ -55,7 +55,7 @@ from numarray import *
 _maxnumfloats = 20                      # maximum number of variables used in one grid
 _maxLongint = 2147483647                # maximum integer
 _maxLongintBy4 = _maxLongint // 4       # maximum integer divided by 4   
-_randomTable = array([random.randrange(65536) for i in xrange(2048)])   #table of random numbers
+_randomTable = array([random.randrange(65536) for i in range(2048)])   #table of random numbers
 
 # The following are temporary variables used by tiles.
 _qstate = zeros([_maxnumfloats]) #[0 for i in xrange(_maxnumfloats)]
@@ -67,7 +67,7 @@ class CollisionTable:
     def __init__(self, sizeval=2048, safetyval='safe'):
         # if not power of 2 error
         if not powerOf2(sizeval):
-                print "error - size should be a power of 2"
+                print("error - size should be a power of 2")
         self.size = sizeval                        
         self.safety = safetyval            # one of 'safe', 'super safe' or 'unsafe'
         self.calls = 0
@@ -87,8 +87,8 @@ class CollisionTable:
 
     def print_ (self):
         "Prints info about collision table"
-        print "usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
-                        "collisions", self.collisions, "safety", self.safety
+        print("usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
+                        "collisions", self.collisions, "safety", self.safety)
 
     def reset (self):
         "Reset Ctable values"
@@ -126,7 +126,7 @@ def startTiles (numtilings, floats, ints=[]):
 def fixcoord (numtilings, numfloats, j):
     "Fiddles with _coordinates and _base - done once for each tiling"
     global _coordinates, _base, _qstate
-    for i in xrange(numfloats):          # for each real variable
+    for i in range(numfloats):          # for each real variable
         if _qstate[i] >= _base[i]:
             _coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
         else:
@@ -146,7 +146,7 @@ def hashtile (numtilings, memctable, numcoord):
 def hashUNH (ints, numInts, m, increment=449):
     "Hashing of array of integers into below m, using random table"
     res = 0
-    for i in xrange(numInts):
+    for i in range(numInts):
         res += _randomTable[(ints[i] + i*increment) % 2048] 
     return res % m
 
@@ -173,7 +173,7 @@ def hash (ints, numInts, ct):
             ct.collisions += 1
             j = (j + h2) % memSize
             if i > memSize:             # or we run out of space 
-                print "Tiles: Collision table out of memory"
+                print("Tiles: Collision table out of memory")
                 return -1               # force it to stop if out of memory
             if ct.data[j] < 0:          
                 ct.data[j] = ccheck
@@ -192,7 +192,7 @@ def mod(num, by):
     
 def fixcoordwrap(numtilings, numfloats, j, wrapwidths):
     global _widthxnumtilings, _qstate, _base, _coordinates
-    for i in xrange(numfloats):  # loop over each relevant dimension
+    for i in range(numfloats):  # loop over each relevant dimension
         # find coordinates of activated tile in tiling space 
         if _qstate[i] >= _base[i]:
             _coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
@@ -210,7 +210,7 @@ def tiles (numtilings, memctable, floats, ints=[]):
     numcoord = 1 + numfloats + len(ints)
     startTiles (numtilings, floats, ints)
     tlist = []
-    for j in xrange(numtilings):             # for each tiling
+    for j in range(numtilings):             # for each tiling
         fixcoord(numtilings, numfloats, j)
         hnum = hashtile(numtilings, memctable, numcoord)
         tlist.append(hnum)
@@ -222,7 +222,7 @@ def loadtiles (tiles, startelement, numtilings, memctable, floats, ints=[]):
     numfloats = len(floats)
     numcoord = 1 + numfloats + len(ints)
     startTiles (numtilings, floats, ints)
-    for j in xrange(numtilings):
+    for j in range(numtilings):
         fixcoord(numtilings, numfloats, j)
         hnum = hashtile(numtilings, memctable, numcoord)
         tiles[startelement + j] = hnum
@@ -237,7 +237,7 @@ def tileswrap(numtilings, memsize, floats, wrapwidths, ints=[]):
     startTiles (numtilings, floats, ints)
     _widthxnumtilings = fromfunction(lambda i: wrapwidths[i] * numtilings, [numfloats])
         #array([wrapwidths[i] * numtilings for i in xrange(numfloats)])
-    for j in  xrange(numtilings):
+    for j in  range(numtilings):
         fixcoordwrap(numtilings, numfloats, j, wrapwidths)
         hnum = hashtile(numtilings, memsize, numcoord)
         tiles.append(hnum)
@@ -252,7 +252,7 @@ def loadtileswrap(tiles, startelement, numtilings, memsize, floats, wrapwidths, 
     startTiles (numtilings, floats, ints)
     _widthxnumtilings = fromfunction(lambda i: wrapwidths[i] * numtilings, [numfloats])
     #_widthxnumtilings = array([wrapwidths[i] * numtilings for i in xrange(numfloats)])
-    for j in xrange(numtilings):
+    for j in range(numtilings):
         fixcoordwrap(numtilings, numfloats, j, wrapwidths)
         hnum = hashtile(numtilings, memsize, numcoord)
         tiles[startelement + j] = hnum

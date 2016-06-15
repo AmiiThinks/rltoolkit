@@ -2,8 +2,8 @@
 """
 
 from RLtoolkit.RLinterface import RLinterface
-from gwAgent import *
-from gwEnv import *
+from .gwAgent import *
+from .gwEnv import *
 
 SIM = None
  

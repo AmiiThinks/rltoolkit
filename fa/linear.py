@@ -1,6 +1,6 @@
 ### This file contains definitions for linear or singlecell function approximators.
 
-from fa import *
+from .fa import *
 
 class SingleUnitFunctionApproximator (FunctionApproximator):
     "Foundation of all singleunit connectionist function approximators"

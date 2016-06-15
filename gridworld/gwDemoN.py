@@ -11,10 +11,10 @@ The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else
 """
 
 from RLtoolkit.basicclasses import *
-from gwEnv import *
-from gwAgent import *
-from gwSim import *
-from gwio import *
+from .gwEnv import *
+from .gwAgent import *
+from .gwSim import *
+from .gwio import *
 import os.path
 
 sim = None
@@ -38,14 +38,14 @@ def gwEpisode():
     if sim != None:
         sim.rlsim.episodeQ()
     else:
-        print "You have to set up your gridworld first. Use gwInit"
+        print("You have to set up your gridworld first. Use gwInit")
 
 def gwEpisodes(num):
     global sim
     if sim != None:
         sim.rlsim.episodesQ(num)
     else:
-        print "You have to set up your gridworld first. Use gwInit"
+        print("You have to set up your gridworld first. Use gwInit")
 
 def gwWall(square, action):
     global env
@@ -54,11 +54,11 @@ def gwWall(square, action):
             if int(square) and square < env.numsquares and square >= 0:
                 toggleWall(env, square, action)
             else:
-                print "Square", square, "is not a legal square"
+                print("Square", square, "is not a legal square")
         else:
-            print "Action", action, "is not a legal action"
+            print("Action", action, "is not a legal action")
     else:
-        print "You have to set up your gridworld firswt. Use gwInit"
+        print("You have to set up your gridworld firswt. Use gwInit")
 
 def gwBarrier(square):
     global env
@@ -66,9 +66,9 @@ def gwBarrier(square):
         if int(square) and square < env.numsquares and square >= 0:
             toggleBarrier(env, square)
         else:
-            print "Square", square, "is not a legal square"
+            print("Square", square, "is not a legal square")
     else:
-        print "You have to set up your gridworld firswt. Use gwInit"
+        print("You have to set up your gridworld firswt. Use gwInit")
 
 def gwNewAgent(newlearn='onestepdyna'):
     """Legal values for newlearn are 'onestepdyna', 'qlambdareplace',
@@ -143,7 +143,7 @@ def gwSetPar(agent=None, alpha=None, gamma=None, epsilon=None, agentlambda=None,
                     initialvalue)
 
 def gwHelp():
-    print """Gridworld demo:
+    print("""Gridworld demo:
    To set up your gridworld, use
       gwInit(height, width, start, goal, alpha, gamma, epsilon,
              agentlambda, explorationbonus, initialvalue, verbose)
@@ -200,6 +200,6 @@ def gwHelp():
       gwEpisode()      runs one episode
       gwEpisodes(num)  runs num episodes
    both return the number of steps required to reach the goal for each episode
-   """
+   """)
 
 gwHelp()

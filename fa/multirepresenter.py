@@ -2,7 +2,7 @@
 ### A multirepresenter is a set of representers that concatenate all the
 ### representations together to make one big representation.
 
-from representer import *
+from .representer import *
 
 class MultiRepresenter (Representer):
     def __init__(self, representers):

@@ -25,10 +25,10 @@ application.
 
 from RLtoolkit.g import *
 from RLtoolkit.guiwindow import *
-from gwAgent import *
-from gwAgent import *
-from gwSim import *
-from gwio import *
+from .gwAgent import *
+from .gwAgent import *
+from .gwSim import *
+from .gwio import *
 import operator
 
 if sys.platform in ['mac', 'darwin']:
@@ -377,14 +377,14 @@ class GridworldWindow (SimulationWindow):
 
     def simAvi(self):
         if not isinstance(self.agent, DynaGridAgent):
-            print "Cannot do DP on non model agent"
+            print("Cannot do DP on non model agent")
         else:   
             avi(self)
             self.wholeSimDisplay()
 
     def simVI1(self):
         if not isinstance(self.agent, DynaGridAgent):
-            print "Cannot do Value Iteration on non model agent"
+            print("Cannot do Value Iteration on non model agent")
         else:
             vi1(self)
             self.wholeSimDisplay()
@@ -393,7 +393,7 @@ class GridworldWindow (SimulationWindow):
         agent = self.agent
         if agent != None:
             if self.episodestepnum == 0:
-                self.display(range(agent.numstates))
+                self.display(list(range(agent.numstates)))
             else:
                 self.display(agent.changedstates)
 
@@ -416,7 +416,7 @@ class GridworldWindow (SimulationWindow):
         self.env.wallDisplay()
         agent = self.agent
         if agent != None:
-            self.display(range(agent.numstates))
+            self.display(list(range(agent.numstates)))
 
     # Opening and writing gridworld files
 

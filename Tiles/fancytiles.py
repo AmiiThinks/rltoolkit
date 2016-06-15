@@ -94,8 +94,9 @@ There is also a routine that tries to do it all for you.
 
 import math
 import operator
-import tiles
+from . import tiles
 import random
+from functools import reduce
 
 # Routines to change the tile sizes
 
@@ -114,7 +115,7 @@ def logfloats (floats):
        small to large"""
     # must ensure that none of the floats are 0 or less
     flist = floats[:]
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         if flist[i] <= 0:
             flist[i] = .0000001
     return [math.log(i) for i in flist]

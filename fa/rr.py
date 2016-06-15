@@ -1,6 +1,6 @@
 
 from random import *
-from representer import *
+from .representer import *
 
 class BinaryRandomRepresenter (Representer):
     "Standard RR LTU network for binary inputs"
