@@ -1,23 +1,27 @@
 from .RLinterface2 import RLinterface
 
+
 def agentChoose(s):
     "Chooses the next action"
     global lasta
     lasta += 1
-    #print "Agent chose action", lasta
+    # print "Agent chose action", lasta
     return lasta
+
 
 def agentLearn(s, a, r, sp):
     "Learns from the last action done"
-    pass #print "Learning from state", s, "action", a, "reward", r, "next s", sp
+    pass  # print "Learning from state", s, "action", a, "reward", r, "next s", sp
+
 
 def agentStart(s):
     "Return the first action"
     global lasta, lasts
     lasta = 0
     lasts = s
-    #print "Agent starting with action", lasta
+    # print "Agent starting with action", lasta
     return lasta
+
 
 def agentStep(s, r):
     "Learns and gets the next action"
@@ -27,12 +31,14 @@ def agentStep(s, r):
     if s != 'terminal':
         return agentChoose(s)
 
+
 def envStart():
     "Returns the initial state"
     global curstate
     curstate = 0
-    #print "Environment initializing state to", curstate
+    # print "Environment initializing state to", curstate
     return curstate
+
 
 def envStep(a):
     "Does the action and returns the next state and reward"
@@ -43,8 +49,9 @@ def envStep(a):
         r = 1
     else:
         r = 0
-    #print "Environment did action", a, "got new state", curstate, "and reward", r
+    # print "Environment did action", a, "got new state", curstate, "and reward", r
     return curstate, r
+
 
 rli = RLinterface(agentStart, agentStep, envStart, envStep)
 rli.episode()
@@ -92,4 +99,3 @@ profile.run('run3q()')
 profile.run('run4()')
 profile.run('run4q()')
 """
-

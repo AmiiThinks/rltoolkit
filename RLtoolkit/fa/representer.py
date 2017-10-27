@@ -1,4 +1,3 @@
-
 ### Representers take their input and represent it.  The input should be an array
 ### of numbers, or possibly a list of indices of active features.
 ### The new representation output
@@ -49,42 +48,45 @@
 
 from .fa import *
 
-### Mix in  CHECKINPUTRANGE and CHECKINPUTDIMENSIONALITY to get your inputs 
+
+### Mix in  CHECKINPUTRANGE and CHECKINPUTDIMENSIONALITY to get your inputs
 ### checked automatically.
 
 class CheckInputRange:
-
     def represent(self, input):
         if not inrangep(input, self.inputdescriptor):
-            print(("Input", str(input), "out of range", str(self.inputdescriptor)))
+            print(("Input", str(input), "out of range",
+                   str(self.inputdescriptor)))
         else:
             return input
 
-class Representer (CheckInputDimensionality, CheckInputRange):
+
+class Representer(CheckInputDimensionality, CheckInputRange):
     "Represents its input in a higher dimensional space; the foundation for all representers"
-    
+
     def __init__(self, numinputs, numoutputs, inputdescriptor=None):
         self.numinputs = numinputs
         self.numoutputs = numoutputs
         self.inputdescriptor = inputdescriptor
         if self.numinputs == None:
             self.numinputs = len(self.inputdescriptor)
- 
-    def representerLearn (self, input, weighting):
+
+    def representerLearn(self, input, weighting):
         "The default representerLearn method (suffices for most representers)"
         output = represent(self, input)
         self.representerLearnLast(input, output, weighting)
 
-    def representerLearnLast (self, input, output, weighting):
+    def representerLearnLast(self, input, output, weighting):
         "The default learning method for a representer does nothing"
         pass
 
-    def faInit (self):
+    def faInit(self):
         pass
 
-    def represent (self, input):
-        return input[:]     # return a copy of the input if no better method
-        
+    def represent(self, input):
+        return input[:]  # return a copy of the input if no better method
+
+
 ### The effect of a bias can be added using the REPRESENTERWITHBIAS mixin. 
 ### This mixin causes the last output dimension to be taken over to serve as the 
 ### constant input of a bias.  It will always be active.
@@ -102,13 +104,14 @@ class Representer (CheckInputDimensionality, CheckInputRange):
 class RepresenterWithBias:
     def __init__(self, biasstrength=1):
         self.biasstrength = biasstrength
-        #self.numoutputs -= 1           # I need the last one for the bias
+        # self.numoutputs -= 1           # I need the last one for the bias
 
-    def represent (self, input):
+    def represent(self, input):
         pass
         # (cons (numoutputs repr) (callnextmethod)))
 
-def inrangep (input, inputdescriptor):
+
+def inrangep(input, inputdescriptor):
     i = 0
     ok = True
     for min, max, res in inputdescriptor:
@@ -118,12 +121,13 @@ def inrangep (input, inputdescriptor):
             break
     return ok
 
-#def represent :before ((repr checkinputdimensionality) (input vector))
+
+# def represent :before ((repr checkinputdimensionality) (input vector))
 #  (when (not (= (numinputs repr) (length input)))
 #    (error "Input ~A does not match dimensionality ~A" input (numinputs repr))))
 
-def makeRepresenter (representerClass, limits, numintervals, \
-                     numlayers=1, contraction=1.0):
+def makeRepresenter(representerClass, limits, numintervals, \
+                    numlayers=1, contraction=1.0):
     i = 0
     desc = []
     for lower, upper in limits:
@@ -131,16 +135,16 @@ def makeRepresenter (representerClass, limits, numintervals, \
         newd = [lower, upper, numinterval]
         desc.append(newd)
     representerClass(*[desc, numlayers, contraction])
-  
 
-def makeRepresenters (representerClass, conjunctslist, limits, numintervals, \
-                                        numlayers=1, contraction=1.0):
+
+def makeRepresenters(representerClass, conjunctslist, limits, numintervals, \
+                     numlayers=1, contraction=1.0):
     """Takes a list of sets of input indices and returns a corresponding list of
        correspondingly conjunctive representers.  Numintervals may be
        a fixnum or a list.  Limits gives ranges for all the inputs."""
     n = len(limits)
     if not isinstance(numintervals, (tuple, list)):
-        numintervals = [ numintervals for i in range(n)]
+        numintervals = [numintervals for i in range(n)]
     reps = []
     for conjuncts in conjunctslist:
         intervals = []
@@ -149,10 +153,13 @@ def makeRepresenters (representerClass, conjunctslist, limits, numintervals, \
                 intervals.append(numintervals[i])
             else:
                 intervals.append(1)
-        reps.append(makeRepresenter(representerClass, limits, intervals, numlayers, contraction))
+        reps.append(
+            makeRepresenter(representerClass, limits, intervals, numlayers,
+                            contraction))
     return reps
 
-def combinations (n, k, items=None):
+
+def combinations(n, k, items=None):
     if items == None:
         items = [i for i in range(n)]
     if k == 0:
@@ -160,19 +167,20 @@ def combinations (n, k, items=None):
     elif k == n:
         return [items]
     else:
-        combo = combinations(n-1, k, items[1:])
-        for combination in  combinations(n-1, k-1, items[1:]):
+        combo = combinations(n - 1, k, items[1:])
+        for combination in combinations(n - 1, k - 1, items[1:]):
             c = [items[0]] + combination
             combo.append(c)
         return combo
 
-def makeSingletonRepresenters (representerClass, limits, numintervals, \
-                                           numlayers=1, contraction=1.0):
+
+def makeSingletonRepresenters(representerClass, limits, numintervals, \
+                              numlayers=1, contraction=1.0):
     return makeRepresenters(representerClass, combinations(len(limits), 1), \
-                     limits, numintervals, numlayers, contraction)
+                            limits, numintervals, numlayers, contraction)
 
-def makeDoubletonRepresenters (representerClass, limits, numintervals, \
-                                           numlayers=1, contraction=1.0):
+
+def makeDoubletonRepresenters(representerClass, limits, numintervals, \
+                              numlayers=1, contraction=1.0):
     return makeRepresenters(representerClass, combinations(len(limits), 2), \
-                     limits, numintervals, numlayers, contraction)
-
+                            limits, numintervals, numlayers, contraction)

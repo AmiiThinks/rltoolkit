@@ -24,21 +24,22 @@
 ### checked automatically.
 
 class CheckInputDimensionality:
-
     def __init__(self, numinputs=1):
         self.numinputs = numinputs
 
     def faApproximate(self, input):
         if self.numinputs != len(input):
-            print(("Input", str(input), "does not match dimentionality", fa.numinputs))
+            print(("Input", str(input), "does not match dimentionality",
+                   fa.numinputs))
         return 0
 
     def faLearnLastApproximation(self, input, output, target):
         if self.numinputs != len(input):
-            print(("Input", str(input), "does not match dimentionality", fa.numinputs))
+            print(("Input", str(input), "does not match dimentionality",
+                   fa.numinputs))
 
 
-class FunctionApproximator (CheckInputDimensionality):
+class FunctionApproximator(CheckInputDimensionality):
     "Foundation of all function approximators"
 
     def __init__(self, numinputs=1, numoutputs=1):
@@ -63,6 +64,3 @@ class FunctionApproximator (CheckInputDimensionality):
     def normalizedlearningrate(self, input):
         "Default for a functionapproximator just returns its learningrate slot's value"
         return self.learningrate
-
-
-

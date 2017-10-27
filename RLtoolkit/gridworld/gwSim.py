@@ -6,8 +6,9 @@ from .gwAgent import *
 from .gwEnv import *
 
 SIM = None
- 
-def simInit (sim, agent, env, verbose=False):
+
+
+def simInit(sim, agent, env, verbose=False):
     global SIM
     SIM = sim
     sim.episodenum = 0
@@ -21,7 +22,8 @@ def simInit (sim, agent, env, verbose=False):
     agent.sim = sim
     agent.agentInit()
 
-def resetSim (sim):
+
+def resetSim(sim):
     agent = sim.agent
     sim.episodenum = 0
     sim.episodestepnum = 0

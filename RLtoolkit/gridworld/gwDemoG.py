@@ -17,19 +17,21 @@ The barriers (squares you can't pass into) are overlaid on top of this.
 The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else.
 """
 
-
 ###
 
 from .gwguimain import *
 from .gwobject import *
 
+
 def runDemo():
-   makeGridworldSimulation(16, 16, 87, 15, 30)
-   gMainloop()
+    makeGridworldSimulation(16, 16, 87, 15, 30)
+    gMainloop()
+
 
 def runObjDemo():
     makeObjectGridworldSimulation(16, 16, 87, 15, 30)
     gMainloop()
+
 
 if __name__ == '__main__':
     runObjDemo()

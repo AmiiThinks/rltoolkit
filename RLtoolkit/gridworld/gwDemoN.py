@@ -21,17 +21,20 @@ sim = None
 env = None
 verboseV = False
 
-def gwInit (height=6, width=8, start=0, goal=47, alpha=0.5, gamma=0.9, \
-               epsilon=0.05, agentlambda=0.8, explorationbonus=0, \
-               initialvalue = .1, verbose=False):
+
+def gwInit(height=6, width=8, start=0, goal=47, alpha=0.5, gamma=0.9, \
+           epsilon=0.05, agentlambda=0.8, explorationbonus=0, \
+           initialvalue=.1, verbose=False):
     global env, sim, verboseV
     verboseV = verbose
     env = Gridworld(width, height, start, goal)
-    agent = DynaGridAgent(4, env.numstates(), epsilon, alpha, gamma, initialvalue, \
-                          agentlambda) #, expbonus)
+    agent = DynaGridAgent(4, env.numstates(), epsilon, alpha, gamma,
+                          initialvalue, \
+                          agentlambda)  # , expbonus)
     sim = Simulation()
     simInit(sim, agent, env, verbose)
     return sim
+
 
 def gwEpisode():
     global sim
@@ -40,12 +43,14 @@ def gwEpisode():
     else:
         print("You have to set up your gridworld first. Use gwInit")
 
+
 def gwEpisodes(num):
     global sim
     if sim != None:
         sim.rlsim.episodesQ(num)
     else:
         print("You have to set up your gridworld first. Use gwInit")
+
 
 def gwWall(square, action):
     global env
@@ -60,6 +65,7 @@ def gwWall(square, action):
     else:
         print("You have to set up your gridworld firswt. Use gwInit")
 
+
 def gwBarrier(square):
     global env
     if env != None:
@@ -70,6 +76,7 @@ def gwBarrier(square):
     else:
         print("You have to set up your gridworld firswt. Use gwInit")
 
+
 def gwNewAgent(newlearn='onestepdyna'):
     """Legal values for newlearn are 'onestepdyna', 'qlambdareplace',
                                      'onestepq' and 'sarsalambdatraces' """
@@ -77,56 +84,62 @@ def gwNewAgent(newlearn='onestepdyna'):
     changeAgentLearnMethod(sim, newlearn)
     simInit(sim, sim.agent, sim.env, verboseV)
 
+
 def gwRead(file, alpha=0.5, gamma=0.9, epsilon=0.05, agentlambda=0.8, \
-           explorationbonus=0, initialvalue = .1, verbose=False):
+           explorationbonus=0, initialvalue=.1, verbose=False):
     if not os.path.isabs(file):
         file = gwFilename(file)
     list = readGridworld(file)
     genGridworldN(list, alpha, gamma, epsilon, agentlambda, explorationbonus, \
                   initialvalue, verbose)
-           
+
+
 def genGridworldN(alist, alpha=0.5, gamma=0.9, epsilon=0.05, \
-                  agentlambda=0.8, explorationbonus=0, initialvalue = .1, \
+                  agentlambda=0.8, explorationbonus=0, initialvalue=.1, \
                   verbose=False, agentclass=DynaGridAgent):
     global env, sim, verboseV
     verboseV = verbose
     width, height, startsquare, goalsquare, barrierp, wallp = getgwinfo(alist)
-    env = Gridworld (width, height, startsquare, goalsquare)
+    env = Gridworld(width, height, startsquare, goalsquare)
     if barrierp != None:
         env.barrierp = barrierp
     if wallp != None:
         env.wallp = wallp
     agent = agentclass(4, env.numstates(), epsilon, alpha, gamma, initialvalue, \
-                          agentlambda)
+                       agentlambda)
     sim = Simulation()
     simInit(sim, agent, env, verbose)
 
+
 def gwObjRead(file, alpha=0.5, gamma=0.9, epsilon=0.05, agentlambda=0.8, \
-           explorationbonus=0, initialvalue = .1, verbose=False):
+              explorationbonus=0, initialvalue=.1, verbose=False):
     if not os.path.isabs(file):
         file = gwFilename(file)
     list = readGridworld(file)
     genObjGridworldN(list, alpha, gamma, epsilon, agentlambda, explorationbonus, \
-                  initialvalue, verbose)
-           
+                     initialvalue, verbose)
+
+
 def genObjGridworldN(alist, alpha=0.5, gamma=0.9, epsilon=0.05, \
-                  agentlambda=0.8, explorationbonus=0, initialvalue = .1, \
-                  verbose=False):
+                     agentlambda=0.8, explorationbonus=0, initialvalue=.1, \
+                     verbose=False):
     global env, sim, verboseV
     verboseV = verbose
     width, height, startsquare, goalsquare, barrierp, wallp = getgwinfo(alist)
     objects = alist.get('objects')
-    env = ObjectGridworld (width, height, startsquare, goalsquare)
+    env = ObjectGridworld(width, height, startsquare, goalsquare)
     if barrierp != None:
         env.barrierp = barrierp
     if wallp != None:
         env.wallp = wallp
     if objects != None:
         env.objects = objects
-    agent = DynaGridAgent(4, env.numstates(), epsilon, alpha, gamma, initialvalue, \
+    agent = DynaGridAgent(4, env.numstates(), epsilon, alpha, gamma,
+                          initialvalue, \
                           agentlambda)
     sim = Simulation()
     simInit(sim, agent, env, verbose)
+
 
 def gwDisplayPar(agent=None):
     global sim
@@ -134,13 +147,15 @@ def gwDisplayPar(agent=None):
         agent = sim.agent
     displayParameters(agent)
 
+
 def gwSetPar(agent=None, alpha=None, gamma=None, epsilon=None, agentlambda=None, \
-                     explorationbonus=None, initialvalue=None):
+             explorationbonus=None, initialvalue=None):
     global sim
     if agent == None:
         agent = sim.agent
     resetParameters(agent, alpha, gamma, epsilon, agentlambda, explorationbonus, \
                     initialvalue)
+
 
 def gwHelp():
     print("""Gridworld demo:
@@ -201,5 +216,6 @@ def gwHelp():
       gwEpisodes(num)  runs num episodes
    both return the number of steps required to reach the goal for each episode
    """)
+
 
 gwHelp()

@@ -11,13 +11,15 @@ def gwPath():
     global gridworldpath
     return gridworldpath
 
-def gwFilename (name):
+
+def gwFilename(name):
     global gridworldpath
     return os.path.join(gridworldpath, name)
 
+
 ### READING and WRITING gridworlds to FILES
 
-def readGridworld (filename):
+def readGridworld(filename):
     "reads a gridworld file into a dictionary list and returns it"
     print(("reading", filename))
     if filename != None and filename != '':
@@ -27,7 +29,8 @@ def readGridworld (filename):
         list = eval(uselist)
         input.close()
         return list
-    
+
+
 def getgwinfo(alist):
     """Picks off the basic information from an input dictionary list
        (such as that returned by readGridworld) and returns it"""
@@ -39,6 +42,7 @@ def getgwinfo(alist):
     wallp = alist.get('wallp')
     return width, height, startsquare, goalsquare, barrierp, wallp
 
+
 def prepareWrite(gridworld):
     """makes a dictionary list with the gridworld basics in it, in
        string form for writing. Call this first when writing a gridworld
@@ -49,10 +53,11 @@ def prepareWrite(gridworld):
                'barrierp': str(gridworld.barrierp), \
                'wallp': str(gridworld.wallp), \
                'startsquare': str(gridworld.startsquare), \
-               'goalsquare': str(gridworld.goalsquare) }
+               'goalsquare': str(gridworld.goalsquare)}
     return gridout
 
-def writeGridworld (dlist, filename):
+
+def writeGridworld(dlist, filename):
     "writes a dictionary list to the filename"
     print(("writing to file", filename))
     if filename != None and filename != '':
@@ -66,11 +71,10 @@ def writeGridworld (dlist, filename):
         gridout.append("'startsquare':" + str(dlist['startsquare']) + ", \n")
         gridout.append("'goalsquare':" + str(dlist['goalsquare']) + ", \n")
         for k, v in list(dlist.items()):
-            if not k in ['width', 'height', 'squaresize', 'startsquare', 'goalsquare']:
+            if not k in ['width', 'height', 'squaresize', 'startsquare',
+                         'goalsquare']:
                 gridout.append("'" + k + "'" + ':' + v + ", \n")
-        gridout.append("'file': '" + str(filename) + "'}")  #just so that the last , is ok :)
+        gridout.append("'file': '" + str(
+            filename) + "'}")  # just so that the last , is ok :)
         output.writelines(gridout)
         output.close
-
-
-                                                                             

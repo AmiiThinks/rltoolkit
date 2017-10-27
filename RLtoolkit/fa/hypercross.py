@@ -1,4 +1,3 @@
-
 ### This file contains the definition of the hypercross function approximator,
 ### a form of randomrepresentation system for continuous valued inputs.
 ### The hypercrossFA is a good example of an expandedrepresentation function
@@ -17,7 +16,7 @@
 ### for each dimension of the input.  Of course you can also call makeERFA directly,
 ### specifying a hypercrossrepresenter and finalfa constructed as you would like.
 
-  
+
 
 ### A HYPERCROSSREPRESENTER is a two-stage representer.  The final effect is that
 ### each feature corresponds to a cross shaped region in the input space.  In other
@@ -49,21 +48,27 @@
 
 from random import *
 from .representer import *
+
 normaldensity0 = normaldensity(0)
 
-class HyperCrossRepresenter (Representer):
 
+class HyperCrossRepresenter(Representer):
     def __init__(self, inputdescriptor, numinputs, percentmatchthreshold=0.6):
         Representer.__init__(self, numinputs, 1, inputdescriptor)
-        self.stripeactivities = [0 for i in  range(self.numinputs)] # each dimension's stripe activities
-        self.centers = [0 for i in range(self.numinputs)]           # each dimension's stripe centers
-        self.width = [0 for i in range(self.numinputs)]            # each dimension's stripe width
-        self.resolution = [0 for i in range(self.numinputs)]      # each dimension's resolution
-        self.LTUconnections = [[0 for i in self.numinputs] for j in self.numoutputs] # each LTU's connectiosn to stripe activities
-        self.beta = percentmatchthreshold                        # thresholds of the LTUs
+        self.stripeactivities = [0 for i in range(
+            self.numinputs)]  # each dimension's stripe activities
+        self.centers = [0 for i in range(
+            self.numinputs)]  # each dimension's stripe centers
+        self.width = [0 for i in
+                      range(self.numinputs)]  # each dimension's stripe width
+        self.resolution = [0 for i in
+                           range(self.numinputs)]  # each dimension's resolution
+        self.LTUconnections = [[0 for i in self.numinputs] for j in
+                               self.numoutputs]  # each LTU's connectiosn to stripe activities
+        self.beta = percentmatchthreshold  # thresholds of the LTUs
         self.faInit()
 
-    def faInit (self):
+    def faInit(self):
         i = 0
         for min, max, res in self.inputdescriptor:
             self.resolution[i] = res
@@ -79,14 +84,14 @@ class HyperCrossRepresenter (Representer):
             for i in range(self.numinputs):
                 self.LTUconnections[j][i] = random(self.resolution[i])
 
-
-    def represent (self, input):
+    def represent(self, input):
         "Represents the list of continuous inputs as a list of active feature indices"
         global normaldensity0
         for i in range(self.numinputs):
             for k in range(self.resolution[i]):
                 stripeactivities[i][k] = \
-                            normaldensity((float(input[i] - self.centers[i][k]) / self.width[i]))
+                    normaldensity(
+                        (float(input[i] - self.centers[i][k]) / self.width[i]))
         replist = []
         for j in range(self.numoutputs):
             nummatches = 0
@@ -98,22 +103,24 @@ class HyperCrossRepresenter (Representer):
         return replist
 
 
-class HyperCrossRepresenterWithBias (RepresenterWithBias, HyperCrossRepresenter):
+class HyperCrossRepresenterWithBias(RepresenterWithBias, HyperCrossRepresenter):
     pass
 
 
-def makehypercrossFA (inputdescriptor, numoutputs, representationsize, \
-                                             finalfa=None, percentmatchthreshold=0.2):
+def makehypercrossFA(inputdescriptor, numoutputs, representationsize, \
+                     finalfa=None, percentmatchthreshold=0.2):
     if finalfa == None:
         if numoutputs == 1:
             finalfa = NormalizedStepAdaline(representationsize)
         else:
             finalfa = NormalizedStepAdalineLayer(representationsize, numoutputs)
-    return ERFA(HyperCrossRepresenter(inputdescriptor, representationsize, percentmatchthreshold), \
+    return ERFA(HyperCrossRepresenter(inputdescriptor, representationsize,
+                                      percentmatchthreshold), \
                 finalfa)
 
-def draw2dreceptivefield (context, repr, feature, \
-                                    dimensionstovary=[0, 1], inputdescriptor=None):
+
+def draw2dreceptivefield(context, repr, feature, \
+                         dimensionstovary=[0, 1], inputdescriptor=None):
     if inputdescriptor == None:
         inputdescriptor = repr.inputdescriptor
     black = gColorBlack(context)
@@ -122,10 +129,10 @@ def draw2dreceptivefield (context, repr, feature, \
     seconddescriptor = inputdescriptor[dimensionstovary[1]]
     min1, max1, num1 = firstdescriptor
     min2, max2, num2 = seconddescriptor
-    numinputs = repr.n #repr.numinputs
+    numinputs = repr.n  # repr.numinputs
     array = [0 for i in range(numinputs)]
     gClear(context)
-    gdOutlineRect(context, 0,0,51, 51, black)
+    gdOutlineRect(context, 0, 0, 51, 51, black)
     x = min1
     for dx in range(1, 50):
         array[0] = x
@@ -136,4 +143,3 @@ def draw2dreceptivefield (context, repr, feature, \
                 gdDrawPoint(context, dx, dy, black)
             y += float(max2 - min2) / 50.0
         x += float(max1 - min1) / 50.0
-

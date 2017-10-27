@@ -48,33 +48,37 @@ Useful routines and classes:
               should be zero. The wrapping width is in the same units as the floats, but an integer
 """
 
-import random 
+import random
 import math
 import operator
 
-_maxnumfloats = 20                      # maximum number of variables used in one grid
-_maxLongint = 2147483647                # maximum integer
-_maxLongintBy4 = _maxLongint // 4       # maximum integer divided by 4   
-_randomTable = [random.randrange(_maxLongintBy4) for i in range(2048)]   #table of random numbers
-#_randomTable = [random.randrange(65536) for i in xrange(2048)]   #table of random numbers
-            
+_maxnumfloats = 20  # maximum number of variables used in one grid
+_maxLongint = 2147483647  # maximum integer
+_maxLongintBy4 = _maxLongint // 4  # maximum integer divided by 4
+_randomTable = [random.randrange(_maxLongintBy4) for i in
+                range(2048)]  # table of random numbers
+# _randomTable = [random.randrange(65536) for i in xrange(2048)]   #table of random numbers
+
 # The following are temporary variables used by tiles.
 _qstate = [0 for i in range(_maxnumfloats)]
 _base = [0 for i in range(_maxnumfloats)]
 
-safteydict = {'unsafe':0,'safe':1,'super safe':2}
+safteydict = {'unsafe': 0, 'safe': 1, 'super safe': 2}
 _UNSAFE = 0
 _SAFE = 1
 _SUPER_SAFE = 2
 
+
 class CollisionTable:
     "Structure to handle collisions"
+
     def __init__(self, sizeval=2048, safetyval='safe'):
         # if not power of 2 error
         if not powerOf2(sizeval):
-                print("error - size should be a power of 2")
-        self.size = sizeval                        
-        self.safety = safteydict[safetyval]            # one of 'safe', 'super safe' or 'unsafe'
+            print("error - size should be a power of 2")
+        self.size = sizeval
+        self.safety = safteydict[
+            safetyval]  # one of 'safe', 'super safe' or 'unsafe'
         self.calls = 0
         self.clearhits = 0
         self.collisions = 0
@@ -86,26 +90,27 @@ class CollisionTable:
                " Safety : " + str(self.safety) + \
                " Usage : " + str(self.usage()) + \
                " Size :" + str(self.size) + \
-               " Calls : "+ str(self.calls) + \
+               " Calls : " + str(self.calls) + \
                " Collisions : " + str(self.collisions)
-    
-    def print_ (self):
-        "Prints info about collision table"
-        print(("usage", self.usage(), "size", self.size, "calls", self.calls, "clearhits", self.clearhits, \
-                        "collisions", self.collisions, "safety", self.safety))
 
-    def reset (self):
+    def print_(self):
+        "Prints info about collision table"
+        print(("usage", self.usage(), "size", self.size, "calls", self.calls,
+               "clearhits", self.clearhits, \
+               "collisions", self.collisions, "safety", self.safety))
+
+    def reset(self):
         "Reset Ctable values"
         self.calls = 0
         self.clearhits = 0
         self.collisions = 0
         self.data = [-1 for i in range(self.size)]
-    
-    def stats (self):
+
+    def stats(self):
         "Return some statistics of the usage of the collision table"
         return self.calls, self.clearhits, self.collisions, self.usage
 
-    def usage (self):
+    def usage(self):
         "count how many entries in the collision table are used"
         use = 0
         for d in self.data:
@@ -113,102 +118,111 @@ class CollisionTable:
                 use += 1
         return use
 
-def startTiles (coordinates, numtilings, floats, ints=[]):
+
+def startTiles(coordinates, numtilings, floats, ints=[]):
     "Does initial assignments to _coordinates, _base and _qstate for both GetTiles and LoadTiles"
     global _base, _qstate
     numfloats = len(floats)
-    i = numfloats + 1                   # starting place for integers
-    for v in ints:                      # for each integer variable, store it
-        coordinates[i] = v             
+    i = numfloats + 1  # starting place for integers
+    for v in ints:  # for each integer variable, store it
+        coordinates[i] = v
         i += 1
     i = 0
-    for float in floats:                # for real variables, quantize state to integers
+    for float in floats:  # for real variables, quantize state to integers
         _base[i] = 0
         _qstate[i] = int(math.floor(float * numtilings))
         i += 1
-        
-def fixcoord (coordinates, numtilings, numfloats, j):
+
+
+def fixcoord(coordinates, numtilings, numfloats, j):
     "Fiddles with _coordinates and _base - done once for each tiling"
     global _base, _qstate
-    for i in range(numfloats):          # for each real variable
+    for i in range(numfloats):  # for each real variable
         if _qstate[i] >= _base[i]:
             coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
         else:
-            coordinates[i] = _qstate[i]+1 + ((_base[i] - _qstate[i] - 1) % numtilings) - numtilings
-        _base[i] += 1 + (2*i)
-        #_hashnum[i] = _randomTable[(coordinates[i] + _increment[i]) & 2047]
+            coordinates[i] = _qstate[i] + 1 + (
+            (_base[i] - _qstate[i] - 1) % numtilings) - numtilings
+        _base[i] += 1 + (2 * i)
+        # _hashnum[i] = _randomTable[(coordinates[i] + _increment[i]) & 2047]
     coordinates[numfloats] = j
-    #_hashnum[numfloats] = _randomTable[(coordinates[numfloats] + _increment[numfloats]) & 2047]
+    # _hashnum[numfloats] = _randomTable[(coordinates[numfloats] + _increment[numfloats]) & 2047]
 
 
-def hashUNH (ints, numInts, m, increment=449):
+def hashUNH(ints, numInts, m, increment=449):
     "Hashing of array of integers into below m, using random table"
     res = 0
     for i in range(numInts):
-        res += _randomTable[(ints[i] + i*increment) % 2048]
-        #res += _randomTable[(ints[i] + i*increment) & 2047] 
+        res += _randomTable[(ints[i] + i * increment) % 2048]
+        # res += _randomTable[(ints[i] + i*increment) & 2047]
 
-    #res = reduce(operator.add, [_randomTable[(ints[i] + i*increment) & 2047] for i in xrange(numInts)])
-    #res = reduce(operator.add,_hashnum)
+    # res = reduce(operator.add, [_randomTable[(ints[i] + i*increment) & 2047] for i in xrange(numInts)])
+    # res = reduce(operator.add,_hashnum)
     return res % m
 
 
-def hash (ints, numInts, ct):
+def hash(ints, numInts, ct):
     "Returns index in collision table corresponding to first part of ints (an array)"
     ct.calls += 1
     memSize = ct.size
     j = hashUNH(ints, numInts, memSize)
     if ct.safety == _SUPER_SAFE:
-        ccheck = ints[:]                # use whole list as check
-    else:                               # for safe or unsafe, use extra hash number as check
+        ccheck = ints[:]  # use whole list as check
+    else:  # for safe or unsafe, use extra hash number as check
         ccheck = hashUNH(ints, numInts, _maxLongint, 457)
-    if ccheck == ct.data[j]:            # if new data same as saved data, add to hits
+    if ccheck == ct.data[j]:  # if new data same as saved data, add to hits
         ct.clearhits += 1
-    elif ct.data[j] < 0:                # first time, set up data
+    elif ct.data[j] < 0:  # first time, set up data
         ct.clearhits += 1
         ct.data[j] = ccheck
-    elif ct.safety == _UNSAFE:         # collison, but we don't care   
+    elif ct.safety == _UNSAFE:  # collison, but we don't care
         ct.collisions += 1
-    else:                               # handle collision - rehash
-        h2 = 1 + 2*hashUNH(ints, numInts, _maxLongintBy4)
+    else:  # handle collision - rehash
+        h2 = 1 + 2 * hashUNH(ints, numInts, _maxLongintBy4)
         i = 1
-        while ccheck != ct.data[j]:     # keep looking for a new spot until we find an empty spot
+        while ccheck != ct.data[
+            j]:  # keep looking for a new spot until we find an empty spot
             ct.collisions += 1
             j = (j + h2) % memSize
-            if i > memSize:             # or we run out of space 
+            if i > memSize:  # or we run out of space
                 print("Tiles: Collision table out of memory")
-                return -1               # force it to stop if out of memory
-            if ct.data[j] < 0:          
+                return -1  # force it to stop if out of memory
+            if ct.data[j] < 0:
                 ct.data[j] = ccheck
             i += 1
     return j
 
-def powerOf2 (n):
+
+def powerOf2(n):
     lgn = math.log(n, 2)
     return (lgn - math.floor(lgn)) == 0
+
 
 def mod(num, by):
     if num >= 0:
         return num % by
     else:
         return (by + (num % by)) % by
-    
+
+
 def fixcoordwrap(coordinates, numtilings, numfloats, j, wrapwidths):
     global _widthxnumtilings, _qstate, _base
     for i in range(numfloats):  # loop over each relevant dimension
         # find coordinates of activated tile in tiling space 
-        #if _qstate[i] >= _base[i]:
+        # if _qstate[i] >= _base[i]:
         coordinates[i] = _qstate[i] - ((_qstate[i] - _base[i]) % numtilings)
-        #else:
+        # else:
         #    _coordinates[i] = _qstate[i]+1 + ((_base[i] - _qstate[i] - 1) % numtilings) - numtilings
         if wrapwidths[i] != 0:
-            #_coordinates[i] = mod(_coordinates[i], _widthxnumtilings[i])
+            # _coordinates[i] = mod(_coordinates[i], _widthxnumtilings[i])
             coordinates[i] = coordinates[i] % _widthxnumtilings[i]
-        _base[i] += 1 + (2 * i) # compute displacement of next tiling in quantized space
-    coordinates[numfloats] = j # add indices for tiling and hashing_set so they hash differently
+        _base[i] += 1 + (
+        2 * i)  # compute displacement of next tiling in quantized space
+    coordinates[
+        numfloats] = j  # add indices for tiling and hashing_set so they hash differently
 
 
-def tiles (numtilings, memctable, floats, ints=[]):
+def tiles(numtilings, memctable, floats, ints=[]):
     """Returns list of numtilings tiles corresponding to variables (floats and ints),
         hashed down to mem, using ctable to check for collisions"""
 
@@ -219,16 +233,17 @@ def tiles (numtilings, memctable, floats, ints=[]):
 
     numfloats = len(floats)
     numcoord = 1 + numfloats + len(ints)
-    _coordinates = [0]*numcoord
-    startTiles (_coordinates, numtilings, floats, ints)
-    tlist = [None] *numtilings
-    for j in range(numtilings):             # for each tiling
+    _coordinates = [0] * numcoord
+    startTiles(_coordinates, numtilings, floats, ints)
+    tlist = [None] * numtilings
+    for j in range(numtilings):  # for each tiling
         fixcoord(_coordinates, numtilings, numfloats, j)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tlist[j] = hnum
     return tlist
 
-def loadtiles (tiles, startelement, numtilings, memctable, floats, ints=[]):
+
+def loadtiles(tiles, startelement, numtilings, memctable, floats, ints=[]):
     """Loads numtilings tiles into array tiles, starting at startelement, corresponding
        to variables (floats and ints), hashed down to mem, using ctable to check for collisions"""
 
@@ -239,13 +254,14 @@ def loadtiles (tiles, startelement, numtilings, memctable, floats, ints=[]):
 
     numfloats = len(floats)
     numcoord = 1 + numfloats + len(ints)
-    _coordinates = [0]*numcoord
-    startTiles (_coordinates, numtilings, floats, ints)
+    _coordinates = [0] * numcoord
+    startTiles(_coordinates, numtilings, floats, ints)
     for j in range(numtilings):
         fixcoord(_coordinates, numtilings, numfloats, j)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[startelement + j] = hnum
-        
+
+
 def tileswrap(numtilings, memctable, floats, wrapwidths, ints=[]):
     """Returns list of numtilings tiles corresponding to variables (floats and ints),
         hashed down to mem, using ctable to check for collisions - wrap version"""
@@ -258,17 +274,19 @@ def tileswrap(numtilings, memctable, floats, wrapwidths, ints=[]):
 
     numfloats = len(floats)
     numcoord = 1 + numfloats + len(ints)
-    _coordinates = [0]*numcoord
+    _coordinates = [0] * numcoord
     tiles = [None] * numtilings
-    startTiles (_coordinates, numtilings, floats, ints)
+    startTiles(_coordinates, numtilings, floats, ints)
     _widthxnumtilings = [wrapwidths[i] * numtilings for i in range(numfloats)]
-    for j in  range(numtilings):
+    for j in range(numtilings):
         fixcoordwrap(_coordinates, numtilings, numfloats, j, wrapwidths)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[j] = hnum
     return tiles
 
-def loadtileswrap(tiles, startelement, numtilings, memctable, floats, wrapwidths, ints=[]):
+
+def loadtileswrap(tiles, startelement, numtilings, memctable, floats,
+                  wrapwidths, ints=[]):
     """Returns list of numtilings tiles corresponding to variables (floats and ints),
         hashed down to mem, using ctable to check for collisions - wrap version"""
     global _widthxnumtilings
@@ -280,13 +298,14 @@ def loadtileswrap(tiles, startelement, numtilings, memctable, floats, wrapwidths
 
     numfloats = len(floats)
     numcoord = 1 + numfloats + len(ints)
-    _coordinates = [0]*numcoord
-    startTiles (_coordinates, numtilings, floats, ints)
+    _coordinates = [0] * numcoord
+    startTiles(_coordinates, numtilings, floats, ints)
     _widthxnumtilings = [wrapwidths[i] * numtilings for i in range(numfloats)]
-    for j in  range(numtilings):
+    for j in range(numtilings):
         fixcoordwrap(_coordinates, numtilings, numfloats, j, wrapwidths)
         hnum = hashfun(_coordinates, numcoord, memctable)
         tiles[startelement + j] = hnum
+
 
 getTiles = tiles
 loadTiles = loadtiles

@@ -1,10 +1,10 @@
-
 ### A multirepresenter is a set of representers that concatenate all the
 ### representations together to make one big representation.
 
 from .representer import *
 
-class MultiRepresenter (Representer):
+
+class MultiRepresenter(Representer):
     def __init__(self, representers):
         Representer.__init__(self)
         self.representers = representers
@@ -13,7 +13,7 @@ class MultiRepresenter (Representer):
             numout += r.numoutputs
         self.numoutputs = numout
 
-    def represent (self, input):
+    def represent(self, input):
         offset = 0
         finalrep = []
         for r in self.representers:
@@ -25,9 +25,8 @@ class MultiRepresenter (Representer):
         self.representation = rep
         return rep
 
-    def numlayers (self):
-        num =0
+    def numlayers(self):
+        num = 0
         for r in self.representers:
             num += r.numlayers
         return num
-

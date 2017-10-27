@@ -1,6 +1,6 @@
-
 from .fa import *
 from .linear import *
+
 
 class Weight:
     def __init__(self, weightvalue, tov, fromv):
@@ -8,14 +8,16 @@ class Weight:
         self.tov = tov
         self.fromv = fromv
 
-class SparseLinearFunctionApproximator (FunctionApproximator):
 
+class SparseLinearFunctionApproximator(FunctionApproximator):
     def __init__(self, numinputs, numoutputs):
         FunctionApproximator.__init__(self, numinputs, numoutputs)
         self.numweights = 0
         self.learningrate = 1
-        self.fromweights = [[] for i in range(self.numinputs)] #array of weights FROM each input
-        self.toweights = [[] for i in range(self.numoutputs)]  # array of weights TO each output
+        self.fromweights = [[] for i in range(
+            self.numinputs)]  # array of weights FROM each input
+        self.toweights = [[] for i in range(
+            self.numoutputs)]  # array of weights TO each output
 
     def faApproximate(sself, inputs):
         approximation = []
@@ -24,7 +26,7 @@ class SparseLinearFunctionApproximator (FunctionApproximator):
                 approximation = incrementsparseapproximation(approximation, w)
         return approximation
 
-    def faLearnLastApproximation (self, inputs, outputl, targetl):
+    def faLearnLastApproximation(self, inputs, outputl, targetl):
         # First I assure that the outputs and targets lists are sorted !
         outputs = outlputl[:].sort()
         targets = targetl[:].sort()
@@ -49,7 +51,7 @@ class SparseLinearFunctionApproximator (FunctionApproximator):
                 outputsleft.pop()
                 targetsleft.pop()
                 errors.append([output, learningrate * (1 - guess)])
-        #errors.remove (deleteif #'(lambda (x) (< (cdr x) .1)) errors))
+        # errors.remove (deleteif #'(lambda (x) (< (cdr x) .1)) errors))
         nerrors = errors
         errors = []
         for e, i in nerrors:
@@ -77,15 +79,16 @@ class SparseLinearFunctionApproximator (FunctionApproximator):
                     if self.weightto[weight] == errornum:
                         errorsleft.pop()
                         weight.w += error
-                        
-class SparseMadaline (NormalizedStepSize, SparseLinearFunctionApproximator):
+
+
+class SparseMadaline(NormalizedStepSize, SparseLinearFunctionApproximator):
     pass
 
 
 ## An approximation is an ordered list of (outputnum , intensity) .
 
-def incrementsparseapproximation (approximation, weight):
-    #This does not increment in place  it returns the incremented approximation
+def incrementsparseapproximation(approximation, weight):
+    # This does not increment in place  it returns the incremented approximation
     to = weight.to
     lastrest = 'first'
     for i in range(len(approximation)):
@@ -101,7 +104,8 @@ def incrementsparseapproximation (approximation, weight):
                 return approximation[:i] + [[to, weight.w]] + approximation[i:]
             break
 
-def addweight (fa, fromw, to, weightvalue, location=None):
+
+def addweight(fa, fromw, to, weightvalue, location=None):
     weight = Weight(weightvalue, to, fromw)
     if location == 'first':
         fa.fromweights[fromw] = [weight] + fa.fromweights[fromw]
@@ -120,10 +124,3 @@ def addweight (fa, fromw, to, weightvalue, location=None):
         print(("location is ", location, "add after that"))
     fa.toweights[to] = [weight] + fa.toweights[to]
     fa.numweights += 1
-                
-
-
-
-
-
- 

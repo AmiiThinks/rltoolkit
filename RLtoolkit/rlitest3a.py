@@ -1,7 +1,7 @@
 from .RLinterface3 import RLinterface
 
+
 class Agent:
-        
     def agentChoose(self, s):
         "Chooses the next action"
         self.lasta += 1
@@ -10,14 +10,15 @@ class Agent:
 
     def agentLearn(self, s, a, r, sp):
         "Learns from the last action done"
-        print(("Learning from state", s, "action", a, "reward", r, "next s", sp))
+        print(
+            ("Learning from state", s, "action", a, "reward", r, "next s", sp))
 
     def agent_init(self, taskspec):
         """Initializes agent"""
         print(("Initializing agent, taskspec is", taskspec))
         self.lasta = 0
         self.lasts = 0
-        
+
     def agent_start(self, s):
         "Return the first action"
         self.lasta = 0
@@ -36,8 +37,8 @@ class Agent:
         "Just learns"
         self.agentLearn(self.lasts, self.lasta, r, 'terminal')
 
-class Environment:
 
+class Environment:
     def env_init(self):
         "initialize environment"
         self.curstate = 0
@@ -57,14 +58,15 @@ class Environment:
             r = 1
         else:
             r = 0
-        print(("Environment did action", a, "got new state", self.curstate, "and reward", r))
+        print(("Environment did action", a, "got new state", self.curstate,
+               "and reward", r))
         return r, self.curstate
-    
+
 
 myagent = Agent()
 myenv = Environment()
 rli = RLinterface(myagent, myenv)
-#rli.RL_init()
+# rli.RL_init()
 print((rli.RL_episode()))
 print(("reward .9", rli.RL_total_reward(.9)))
 print(("reward 1", rli.RL_total_reward(1)))
@@ -113,4 +115,3 @@ profile.run('run3q()')
 profile.run('run4()')
 profile.run('run4q()')
 """
-

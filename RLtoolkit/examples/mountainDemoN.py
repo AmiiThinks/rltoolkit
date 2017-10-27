@@ -27,7 +27,8 @@ from RLtoolkit.RLinterface import RLinterface
 from .mountainEnv import *
 from .mountainAgent import *
 
-def mcEpisode (maxsteps=10000):	
+
+def mcEpisode(maxsteps=10000):
     "Runs one episode of mountain car"
     global rli
     if rli == None:
@@ -36,18 +37,20 @@ def mcEpisode (maxsteps=10000):
     st, ep, epst = curStats()
     print(("Used", epst, "steps"))
     return epst
-	
-def mcEpisodes (numEpisodes, maxsteps=2000):
+
+
+def mcEpisodes(numEpisodes, maxsteps=2000):
     "Simulates num episodes of mountain car"
     global rli
     if rli == None:
         rli = RLinterface(mountainAgent, mountainEnv)
     eps = []
     for i in range(numEpisodes):
-	eps.append(mcEpisode(maxsteps))
+        eps.append(mcEpisode(maxsteps))
     return eps
 
-def mcInit (epsil=0.01, alph=0.5):
+
+def mcInit(epsil=0.01, alph=0.5):
     "Initializes the agent and gets ready to run"
     global rli
     setAlpha(alph)
@@ -56,11 +59,13 @@ def mcInit (epsil=0.01, alph=0.5):
     rli = RLinterface(mountainAgent, mountainEnv)
     return rli
 
-def mcTest (numEpisodes, maxsteps=2000, epsil=0.01, alph=0.5):
-	"""Runs numEpisodes episodes, each with maxSteps, and returns a list of 
-	    the number of steps taken by each episode"""
-	mcInit(epsil, alph)
-	return(mcEpisodes(numEpisodes, maxsteps))
+
+def mcTest(numEpisodes, maxsteps=2000, epsil=0.01, alph=0.5):
+    """Runs numEpisodes episodes, each with maxSteps, and returns a list of
+        the number of steps taken by each episode"""
+    mcInit(epsil, alph)
+    return (mcEpisodes(numEpisodes, maxsteps))
+
 
 def mcHelp():
     print("""Mountain Car Demo:
@@ -85,16 +90,16 @@ def mcHelp():
            alpha is the learning rate (default is 0.9)
     """)
 
+
 mcHelp()
 
 import time
 
+
 def mcTime(episodes=200):
-    #seed(64497)
-    s=time.clock()
+    # seed(64497)
+    s = time.clock()
     mcEpisodes(episodes)
-    e=time.clock()
-    print(("Used", e-s, "seconds for", episodes, "episodes"))
-    return e-s
-
-
+    e = time.clock()
+    print(("Used", e - s, "seconds for", episodes, "episodes"))
+    return e - s

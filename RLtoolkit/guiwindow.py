@@ -131,35 +131,42 @@ import sys
 import time
 
 
-class SimulationWindow (Gwindow, Simulation):
-
+class SimulationWindow(Gwindow, Simulation):
     def __init__(self, wwidth=500, wheight=600):
         Simulation.__init__(self)
         if sys.platform in ['mac', 'darwin']:
             extrah = 30
         else:
-            extrah = 50     # account for menu being added to window in Windows and Linus
-        Gwindow.__init__(self, windowTitle="Simulation Window", gdViewportR=(0, 20, wwidth, wheight+extrah))
+            extrah = 50  # account for menu being added to window in Windows and Linus
+        Gwindow.__init__(self, windowTitle="Simulation Window",
+                         gdViewportR=(0, 20, wwidth, wheight + extrah))
         self.simulationrunning = False
         self.updatedisplay = True
-        self.displaypause = 0 
-        self.redrawinterval = 1 
-        self.countsx = self.countsy = 0         # xcoord and ycoord of time displays
+        self.displaypause = 0
+        self.redrawinterval = 1
+        self.countsx = self.countsy = 0  # xcoord and ycoord of time displays
         self.lastcount = None
-        self.dcount = 0                         # display counter
+        self.dcount = 0  # display counter
         self.status = Gview(self)
         self.goff = gColorOff(self)
         gdSetViewportR(self.status, 0, wheight, wwidth, 30)
-        self.gobutton = gdAddButton(self.status, "Go  ", self.simStopGo, 5, 0, self.goff)
-        self.stepbutton = gdAddButton(self.status, "Step", self.singleStep, 65, 0, self.goff)
-        self.episodebutton = gdAddButton(self.status, "Episode", self.singleEpisode,125, 0, self.goff)
-        if wwidth < 350:        # make the window longer and add the buttons there
+        self.gobutton = gdAddButton(self.status, "Go  ", self.simStopGo, 5, 0,
+                                    self.goff)
+        self.stepbutton = gdAddButton(self.status, "Step", self.singleStep, 65,
+                                      0, self.goff)
+        self.episodebutton = gdAddButton(self.status, "Episode",
+                                         self.singleEpisode, 125, 0, self.goff)
+        if wwidth < 350:  # make the window longer and add the buttons there
             gdSetViewportR(self.status, 0, wheight, wwidth, 60)
-            self.fastbutton = gdAddButton(self.status, "Faster ", self.simFaster, 5, 30, self.goff)
-            gdAddButton(self.status, "Slower", self.simSlower, 80, 30, self.goff)
-        else:                   # add the buttons horizontally
-            self.fastbutton = gdAddButton(self.status, "Faster ", self.simFaster, 210, 0, self.goff)
-            gdAddButton(self.status, "Slower", self.simSlower, 285, 0, self.goff)
+            self.fastbutton = gdAddButton(self.status, "Faster ",
+                                          self.simFaster, 5, 30, self.goff)
+            gdAddButton(self.status, "Slower", self.simSlower, 80, 30,
+                        self.goff)
+        else:  # add the buttons horizontally
+            self.fastbutton = gdAddButton(self.status, "Faster ",
+                                          self.simFaster, 210, 0, self.goff)
+            gdAddButton(self.status, "Slower", self.simSlower, 285, 0,
+                        self.goff)
         self.debug = gIntVar()
         self.debug.set(0)
         self.setupTimeDisplay()
@@ -168,8 +175,8 @@ class SimulationWindow (Gwindow, Simulation):
         self.readtitle = "Open File"
         self.writetitle = "Save File As"
         self.initialdir = None
-        
-    def gDrawView (self):
+
+    def gDrawView(self):
         if self.updatedisplay:
             self.updateSimDisplay()
         self.simDisplayCounts()
@@ -178,7 +185,7 @@ class SimulationWindow (Gwindow, Simulation):
     def gKeyEventHandler(self, key):
         print(("got key", key))
 
-    def wholeView (self):
+    def wholeView(self):
         self.dcount = 0
         self.wholeSimDisplay()
         self.simDisplayCounts()
@@ -186,50 +193,51 @@ class SimulationWindow (Gwindow, Simulation):
 
     def simstep(self):
         if self.simulationrunning:
-            self.rlsim.stepsQ(self.redrawinterval)  # do a number of steps at once for speed
+            self.rlsim.stepsQ(
+                self.redrawinterval)  # do a number of steps at once for speed
             self.simDisplay()
             gCheckEvents(self, self.simstep)
-            #self.after(1, self.simstep)     # using tk method after to force it to check for stop event
+            # self.after(1, self.simstep)     # using tk method after to force it to check for stop event
 
-    def simStopGo (self):
-        if self.simulationrunning:              # already running, stop it
-            self.simulationrunning = False      # setSimulationRunning(self, False)
+    def simStopGo(self):
+        if self.simulationrunning:  # already running, stop it
+            self.simulationrunning = False  # setSimulationRunning(self, False)
             gButtonEnable(self.stepbutton)
             gButtonEnable(self.episodebutton)
             gSetTitle(self.gobutton, "Go  ")
             self.wholeView()
-        else:                                   # set it running
-            self.simulationrunning = True       # setSimulationRunning(self, True)
+        else:  # set it running
+            self.simulationrunning = True  # setSimulationRunning(self, True)
             gButtonDisable(self.stepbutton)
             gButtonDisable(self.episodebutton)
             gSetTitle(self.gobutton, "Stop")
             gMakeVisible(self)
             self.simstep()
 
-    def singleStep (self):
+    def singleStep(self):
         self.rlsim.step()
         self.wholeView()
 
     def epstep(self):
         if self.simulationrunning:
-            self.rlsim.step()                   # one step at a time - must check for episode termination
+            self.rlsim.step()  # one step at a time - must check for episode termination
             self.simDisplay()
-            if self.rlsim.action != None:       # end of episode
+            if self.rlsim.action != None:  # end of episode
                 gCheckEvents(self, self.epstep)
-                #self.after(1, self.epstep)      # using tk method after to force it to check for stop event
+                # self.after(1, self.epstep)      # using tk method after to force it to check for stop event
             else:
-                self.simStopGo()                # reset buttons on display
-    
-    def singleEpisode (self):
+                self.simStopGo()  # reset buttons on display
+
+    def singleEpisode(self):
         if not self.simulationrunning:
             gButtonDisable(self.stepbutton)
             gButtonDisable(self.episodebutton)
             gSetTitle(self.gobutton, "Stop")
             self.simulationrunning = True
-            self.rlsim.action = None    # force start of episode
+            self.rlsim.action = None  # force start of episode
             self.epstep()
-  
-    def simFaster (self):
+
+    def simFaster(self):
         if self.displaypause == 0:
             gSetTitle(self.fastbutton, "Jumpier")
             self.redrawinterval = 2 * self.redrawinterval
@@ -242,7 +250,7 @@ class SimulationWindow (Gwindow, Simulation):
         else:
             self.displaypause = self.displaypause / 2
 
-    def simSlower (self):
+    def simSlower(self):
         if self.displaypause > 0:
             self.updatedisplay = True
             self.displaypause = max(0.01, 2 * self.displaypause)
@@ -256,7 +264,7 @@ class SimulationWindow (Gwindow, Simulation):
             if self.redrawinterval == 1:
                 gSetTitle(self.fastbutton, "Faster ")
 
-    def simDisplay (self):
+    def simDisplay(self):
         self.dcount += 1
         pause(self.displaypause)
         if self.redrawinterval != None and self.dcount % self.redrawinterval == 0:
@@ -267,24 +275,25 @@ class SimulationWindow (Gwindow, Simulation):
         Gwindow.gDestroy(self, event)
         if GDEVICE.childwindows == []:
             self.quit()
-            
+
     def exit(self):
         gQuit()
 
-    def setupTimeDisplay (self):
+    def setupTimeDisplay(self):
         oldx1, oldy1, oldx2, oldy2, oldcorner = gGetCS(self.status)
-        self.countsy = 10 
-        self.countsx = self.wwidth - 60 
+        self.countsy = 10
+        self.countsx = self.wwidth - 60
 
-    def simDisplayCounts (self):
+    def simDisplayCounts(self):
         # Note: the specific application must update the stepnum, episodenum
         # and episodestepnum !!!
         if self.countsx != None:
             if self.lastcount != None:
                 gDelete(self.status, self.lastcount)
-            countstr = str(self.stepnum) + '|'+ str(self.episodenum) + \
-                       '|'+ str(self.episodestepnum)
-            self.lastcount = gdDrawTextCentered(self.status, countstr, ("Chicago", 12, "normal"), \
+            countstr = str(self.stepnum) + '|' + str(self.episodenum) + \
+                       '|' + str(self.episodestepnum)
+            self.lastcount = gdDrawTextCentered(self.status, countstr,
+                                                ("Chicago", 12, "normal"), \
                                                 self.countsx, self.countsy, gOn)
 
     def wholeSimDisplay(self):
@@ -298,8 +307,8 @@ class SimulationWindow (Gwindow, Simulation):
     def openFile(self):
         "open simulation file"
         filename = gOpenFileUserPick(None, \
-                                     title = self.readtitle, \
-                                     initialdir = self.initialdir)
+                                     title=self.readtitle, \
+                                     initialdir=self.initialdir)
         self.readFile(filename)
 
     def readFile(self, filename):
@@ -310,8 +319,8 @@ class SimulationWindow (Gwindow, Simulation):
     def saveFile(self):
         "save currently open file"
         filename = filenameFromTitle(self.title)
-        if filename != None and filename !="":
-            self.writeFile(filename)  
+        if filename != None and filename != "":
+            self.writeFile(filename)
         else:
             self.saveFileAs()
         pass
@@ -319,9 +328,9 @@ class SimulationWindow (Gwindow, Simulation):
     def saveFileAs(self):
         "save current simulation as"
         filename = gSaveFileUserPick(self, \
-                                     title = self.writetitle, \
-                                     initialdir = self.initialdir)
-        if filename != None and filename != '':            # not cancelled
+                                     title=self.writetitle, \
+                                     initialdir=self.initialdir)
+        if filename != None and filename != '':  # not cancelled
             self.writeFile(filename)
             setWindowTitleFromNamestring(self, filename)
 
@@ -361,38 +370,42 @@ class SimulationWindow (Gwindow, Simulation):
                   ["Reset Simulation", self.resetSimulation], \
                   '---', \
                   ['button', "Debug Mode", self.debug, 1, 0, self.toggleDebug], \
-                  ] )
-        
+                  ])
+
     def addFileMenu(self):
         gAddMenu(self, "File", \
                  [["Open ...", self.openFile], \
                   ["Save", self.saveFile], \
                   ["Save As ...", self.saveFileAs], \
                   ["Print", self.printInfo], \
-                  ["Quit", self.exit] ] )
-    
-def pause (seconds):
+                  ["Quit", self.exit]])
+
+
+def pause(seconds):
     time.sleep(seconds)
     """
     x = 0
     for i in range(int(seconds * 118000000)):
         x*= 1
     """
+
+
 def filenameFromTitle(title):
     position = title.find('-')
     if position != None and position != -1:
         name = title[:position]
-        path = title[position+1:]
+        path = title[position + 1:]
         filename = path + '/' + name
         filename = filename.strip()
         return filename
-    
-def setWindowTitleFromNamestring (window, filename):
+
+
+def setWindowTitleFromNamestring(window, filename):
     if isinstance(window, Gwindow):
         position = filename.rfind('/')
         if position == None or position == -1:
             newtitle = filename
         else:
-            newtitle = filename[position+1:] + ' - ' + filename[:position]
+            newtitle = filename[position + 1:] + ' - ' + filename[:position]
         window.title = newtitle
         gSetTitle(window, newtitle)

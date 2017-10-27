@@ -6,15 +6,16 @@
 
 from .fa import *
 
-class KNN (FunctionApproximator):
+
+class KNN(FunctionApproximator):
     "A basic Knearest neighbor function approximator"
 
     def __init__(self, numinputs, k=1):
         FunctionApproximator.__init__(self, numinputs)
-        self.K = k    # neighborhood
+        self.K = k  # neighborhood
         self.datastore = None
 
-    def faApproximate (self, input):
+    def faApproximate(self, input):
         bestsofar = []
         pairsleft = self.datastore
         while pairsleft != []:
@@ -22,7 +23,7 @@ class KNN (FunctionApproximator):
             currentdistance = KNNdistance(input, currentpair[0])
             if len(bestsofar) < self.K:
                 bestsofar.append([currentdistance, currentpair])
-                bestsofar.sort() # >
+                bestsofar.sort()  # >
             else:
                 maxdistancesofar = bestsofar[0][0]
                 if currentdistance < maxdistancesofar:
@@ -30,17 +31,18 @@ class KNN (FunctionApproximator):
                     bestsofar.append([currentdistance, currentpair])
                     bestsofar.sort()
         return KNNaverage(bestsofar)
-    
-                                    
-    def faLearnLastApproximation (self, input, output, target):
+
+    def faLearnLastApproximation(self, input, output, target):
         newarray = input[:]
         self.datastore.append([newarray, target])
         newarray = [0 for i in range(len(input))]
 
-def makeKNN (numinputs, k=1):
-    return KNN(numinputs, k) 
 
-def KNNdistance (x, y):
+def makeKNN(numinputs, k=1):
+    return KNN(numinputs, k)
+
+
+def KNNdistance(x, y):
     if not len(x) == len(y):
         10000.0
     else:
@@ -48,8 +50,9 @@ def KNNdistance (x, y):
         for i in range(len(x)):
             dist += exp((x[i] - y[i]), 2)
     return dist
- 
-def KNNaverage (l):
+
+
+def KNNaverage(l):
     if l == []:
         return 0
     else:
@@ -57,4 +60,3 @@ def KNNaverage (l):
         for x in l:
             av += x[1][1]
         return float(av) / len(l)
-

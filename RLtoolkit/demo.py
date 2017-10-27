@@ -11,32 +11,38 @@ from . import gridworld
 from . import fa
 import sys, os
 
+
 def mountainCarGuiDemo():
     from .examples.mountainDemoG import runDemo
     runDemo()
 
+
 def mountainCarNonGuiDemo():
     global mcTest, mcEpisodes, mcEpisode, mcInit, mcHelp
-    from .examples.mountainDemoN import mcTest, mcEpisodes, mcEpisode, mcInit, mcHelp
+    from .examples.mountainDemoN import mcTest, mcEpisodes, mcEpisode, mcInit, \
+        mcHelp
     mcTest = examples.mountainDemoN.mcTest
     mcEpisodes = examples.mountainDemoN.mcEpisodes
     mcEpisode = examples.mountainDemoN.mcEpisode
     mcInit = examples.mountainDemoN.mcInit
     mcHelp = examples.mountainDemoN.mcHelp
 
+
 def gridworldGuiDemo():
     from .gridworld.gwDemoG import runDemo
     runDemo()
+
 
 def gridworldObjGuiDemo():
     from .gridworld.gwDemoG import runObjDemo
     runObjDemo()
 
+
 def gridworldNonGuiDemo():
     global gwEpisode, gwEpisodes, gwInit, gwWall, gwBarrier, gwRead, gwNewAgent, \
-           gwDisplayPar, gwSetPar, gwObjRead
+        gwDisplayPar, gwSetPar, gwObjRead
     from .gridworld.gwDemoN import gwEpisode, gwEpisodes, gwInit, gwWall, \
-         gwBarrier, gwHelp, gwRead, gwNewAgent, gwDisplayPar, gwSetPar, gwObjRead
+        gwBarrier, gwHelp, gwRead, gwNewAgent, gwDisplayPar, gwSetPar, gwObjRead
     gwEpisode = gridworld.gwDemoN.gwEpisode
     gwEpisodes = gridworld.gwDemoN.gwEpisodes
     gwInit = gridworld.gwDemoN.gwInit
@@ -49,24 +55,28 @@ def gridworldNonGuiDemo():
     gwSetPar = gridworld.gwDemoN.gwSetPar
     gwObjRead = gridworld.gwDemoN.gwObjRead
 
+
 def functionApproximationDemo():
     from .fa.demo import faDemo
     faDemo()
 
+
 def maintenanceEgDemo():
     global maintInit, maintSteps, maintTest, maintHelp
-    from .examples.maintenanceDemoN import maintInit, maintSteps, maintTest, maintHelp
+    from .examples.maintenanceDemoN import maintInit, maintSteps, maintTest, \
+        maintHelp
     maintInit = examples.maintenanceDemoN.maintInit
     maintHelp = examples.maintenanceDemoN.maintHelp
     maintTest = examples.maintenanceDemoN.maintTest
     maintSteps = examples.maintenanceDemoN.maintSteps
+
 
 demoFn = {'mcg': mountainCarGuiDemo, \
           'mcn': mountainCarNonGuiDemo, \
           'gwg': gridworldGuiDemo, \
           'gwog': gridworldObjGuiDemo, \
           'gwn': gridworldNonGuiDemo, \
-          'fa' : functionApproximationDemo, \
+          'fa': functionApproximationDemo, \
           'maint': maintenanceEgDemo, \
           'maint': maintenanceEgDemo}
 
@@ -78,7 +88,7 @@ demoDoc = {'mcg': "Mountain Car with GUI interface", \
            'gwn': "Gridworld with non GUI interface", \
            'gwog': "Gridworld with rewards (objects) with GUI interface"}
 
-demoHelp = {"maint" : """Maintenance example:
+demoHelp = {"maint": """Maintenance example:
   This is a continual task, with no episodes or
   resets.  You are running a machine to maximize reward.
   The only way to get rewards is to operate your machine.  If that works well,
@@ -91,13 +101,13 @@ demoHelp = {"maint" : """Maintenance example:
   Counting the broken state, there are N+2 states- an MDP with a machine which
   breaks with probability p, stays broken with probability q. Actions
   are run and do maintenance. Rewards are for running only.""", \
-            "mcn" : """Mountain Car Demo, non GUI interface:
+            "mcn": """Mountain Car Demo, non GUI interface:
   This is an example program for reinforcement learning with linear function
   approximation (tiles) and sarsa lambda with traces. A car is at the bottom
   of a deep valley and must try to get out. It has 3 actions: reverse thrust,
   forward thrust, and coast.
             """, \
-            "mcg" : """Mountain Car Demo, GUI interface:
+            "mcg": """Mountain Car Demo, GUI interface:
   This is an example program for reinforcement learning with linear function
   approximation (tiles) and sarsa lambda with traces. A car is at the bottom
   of a deep valley and must try to get out. It has 3 actions: reverse thrust,
@@ -106,13 +116,13 @@ demoHelp = {"maint" : """Maintenance example:
   a single step, single episode or just keep running episode after episode
   with the interface.
             """, \
-            "gwn" : """Gridworld example, non GUI interface:
+            "gwn": """Gridworld example, non GUI interface:
   This is an episodic task with a dyna agent acting in a gridworld environment.
   The agent's goal is to go from the start square to the goal square. Actions 
   are right, left, up and down. You can specify the dimensions of the world, as
   well as walls and barriers within the world. Rewards are +1 for reaching the
   goal, 0 otherwise.""", \
-            "gwg" : """Gridworld example, GUI interface:
+            "gwg": """Gridworld example, GUI interface:
   This is an episodic task with a dyna agent acting in a gridworld environment.
   The agent's goal is to go from the start square to the goal square. Actions 
   are right, left, up and down. You can specify the dimensions of the world, as
@@ -121,7 +131,7 @@ demoHelp = {"maint" : """Maintenance example:
   also allows you to set many details of the agent, step through simulations,
   start new simulations, visually set up your gridworld, save a gridworld, and
   more""", \
-            "gwog" : """Gridworld with rewards (objects) example, GUI interface:
+            "gwog": """Gridworld with rewards (objects) example, GUI interface:
   This is an episodic task with a dyna agent acting in a gridworld environment.
   The agent's goal is to go from the start square to the goal square. Actions 
   are right, left, up and down. You can specify the dimensions of the world, as
@@ -132,11 +142,12 @@ demoHelp = {"maint" : """Maintenance example:
   also allows you to set many details of the agent, step through simulations,
   start new simulations, visually set up your gridworld, save a gridworld, and
   more""", \
-            "fa" : """Function Approximation Demo:
+            "fa": """Function Approximation Demo:
   This GUI demo shows function approximation in action on a graph. Currently it
   uses tiling as the representation, but other methods will be available soon.
   You can modify various aspects of the representation method and function
   approximator to see what effects they have."""}
+
 
 def demos(d=None, do=None):
     "Print demo info o run specific demo"
@@ -160,5 +171,5 @@ def demos(d=None, do=None):
         else:
             print(info)
 
-print("To get a list of demos available, use demos()")
 
+print("To get a list of demos available, use demos()")

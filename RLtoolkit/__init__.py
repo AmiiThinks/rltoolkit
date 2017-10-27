@@ -1,2 +1,2 @@
-__all__ = ["tiles", "traces", "g", "graph", "graph3d", "RLinterface", \
+__all__ = ["tiles", "traces", "g", "graph", "graph3d", "RLinterface",
            "utilities", "demo"]

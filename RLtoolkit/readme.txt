@@ -1,4 +1,23 @@
-RLtoolkit   Version 1.0 b6  January 25, 2005
+RLtoolkit   Version 1.0 b7  October 27, 2017
+
+Note: the arrangement of modules in this package is subject to change (and most likely will!) with future releases.
+
+
+To use:
+1. Move the RLtoolkit folder to your site-packages folder for Python
+                               OR
+   `export PYTHONPATH=$PYTHONPATH:/path/to/rltoolkit`
+
+2. You can then import as you would any other package
+
+    In Python:
+        from RLtoolkit import Tiles.tiles as tiles
+            from RLtoolkit.traces import *
+            from RLtoolkit import *
+            etc.
+    From the command line:
+        python -m RLtoolkit.gridworld.gwDemoG
+
 
 Contents:
 
@@ -37,13 +56,3 @@ rlitest2a is a simple test of RLinterface2
 rlitest2b is the random walk example with RLinterface2
 rlittest3a is a simple test of RLinterface3
 rlitest3b is the random walk example with RLinterface3
-
-Note: the arrangement of modules in this package is subject to change (and most likely will!) with future releases.
-
-To use:
-Move the RLtoolkit folder to your site-packages folder for Python
-You can then import as you would any other package
-	from RLtoolkit import Tiles.tiles as tiles
-        from RLtoolkit.traces import *
-        from RLtoolkit import *
-        etc.

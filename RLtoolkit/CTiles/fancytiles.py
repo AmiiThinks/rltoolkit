@@ -92,10 +92,9 @@ There is also a routine that tries to do it all for you.
        you may get a larger number of tiles back.
 """
 
-
 import math
 import operator
-import tiles 
+import tiles
 import random
 from functools import reduce
 
@@ -109,7 +108,7 @@ from functools import reduce
 
 # Routines to change the tile sizes
 
-def scalefloats (floats, scalewidths=None):
+def scalefloats(floats, scalewidths=None):
     "Scales floats so that their tiles will have the given widths"
     if scalewidths != None and len(scalewidths) == len(floats):
         l = []
@@ -119,7 +118,8 @@ def scalefloats (floats, scalewidths=None):
     else:
         return floats
 
-def logfloats (floats):
+
+def logfloats(floats):
     """Manipulates floats so that their tiles are logarithmic sizes 
        small to large"""
     # must ensure that none of the floats are 0 or less
@@ -129,14 +129,16 @@ def logfloats (floats):
             flist[i] = .0000001
     return [math.log(i) for i in flist]
 
-def expfloats (floats):
+
+def expfloats(floats):
     """Manipulates floats so that their tiles are logarithmic sizes 
        large to small"""
     return [math.exp(i) for i in floats]
 
+
 # Routines to change the tile shapes
 
-def diagonalfloats (floats):
+def diagonalfloats(floats):
     """Manipulate floats so that you get diagonal stripes for tiles - does
        pairwise subtraction. Returns a different sized list than the original.
     """
@@ -149,7 +151,8 @@ def diagonalfloats (floats):
         flist = flist[1:]
     return l
 
-def backdiagonalfloats (floats):
+
+def backdiagonalfloats(floats):
     """Manipulate floats so that you get backwards diagonal stripes for tiles - does
        pairwise addition. Returns a different sized list than the original.
     """
@@ -162,37 +165,46 @@ def backdiagonalfloats (floats):
         flist = flist[1:]
     return l
 
-def backdiagonalstripe (floats):
+
+def backdiagonalstripe(floats):
     "For two dimensions only"
     return [round(floats[0] + floats[1], 1)]
 
-def diagonalstripe (floats):
+
+def diagonalstripe(floats):
     "For two dimensions only"
     return [round(floats[0] - floats[1], 1)]
+
 
 # Fancy tile routines - some examples using the above transformations to get different tile shapes
 # and sizes
 
-def scaletiles (numtilings, memctable, floats, widths=None, ints=[]):
+def scaletiles(numtilings, memctable, floats, widths=None, ints=[]):
     "returns tiles scaled by widths"
     floats = scalefloats(floats, widths)
     return tiles.tiles(numtilings, memctable, floats, ints)
 
-def logtiles (numtilings, memctable, floats, ints=[]):
+
+def logtiles(numtilings, memctable, floats, ints=[]):
     "returns tiles which vary in size logarithmically from small to large"
     floats = logfloats(floats)
     return tiles.tiles(numtilings, memctable, floats, ints)
 
-def exptiles (numtilings, memctable, floats, ints=[]):
+
+def exptiles(numtilings, memctable, floats, ints=[]):
     "returns tiles which vary in size exponentially from large to small"
     floats = expfloats(floats)
     return tiles.tiles(numtilings, memctable, floats, ints)
+
 
 def stripetiles(numtilings, memctable, floats, widths=None, ints=[]):
     "returns tiles in the shape of stripes (scaled by widths), a set for each dimension in floats"
     floats = scalefloats(floats, widths)
     # should another int be added here for each dimension if there is more than one?
-    return reduce(operator.add, [tiles.tiles(numtilings, memctable, [f], ints) for f in floats])
+    return reduce(operator.add,
+                  [tiles.tiles(numtilings, memctable, [f], ints) for f in
+                   floats])
+
 
 def diagonaltiles(numtilings, memctable, floats, widths=None, ints=[]):
     "returns tiles in the shape of diagonal stripes"
@@ -200,18 +212,20 @@ def diagonaltiles(numtilings, memctable, floats, widths=None, ints=[]):
     floats = diagonalfloats(floats)
     return stripetiles(numtilings, memctable, floats, ints)
 
+
 def backdiagonaltiles(numtilings, memctable, floats, widths=None, ints=[]):
     "returns tiles in the shape of backward diagonal stripes"
     floats = scalefloats(floats, widths)
     floats = backdiagonalfloats(floats)
     return stripetiles(numtilings, memctable, floats, ints)
 
+
 def diamondtiles(numtilings, memctable, floats, widths=None, ints=[]):
     "returns tiles in the shape of diamonds"
     floats = scalefloats(floats, widths)
     floats1 = diagonalfloats(floats)
     floats2 = backdiagonalfloats(floats)
-    return tiles.tiles(numtilings, memctable, floats1+floats2, ints)
+    return tiles.tiles(numtilings, memctable, floats1 + floats2, ints)
 
 
 def fancytiles(numtilings, floats, tileshape="square", tilesize="uniform", \
@@ -234,44 +248,51 @@ def fancytiles(numtilings, floats, tileshape="square", tilesize="uniform", \
        Note that you may get back more tiles than numtilings - for stripes or diagonal stripes
        you may get a larger number of tiles back.
     """
-    if tilewidths != None:                  # apply scaling, if desired
-            floats = scalefloats(floats, tilewidths)
-    if tilesize == "log":                   # logarithmic sized tiles
+    if tilewidths != None:  # apply scaling, if desired
+        floats = scalefloats(floats, tilewidths)
+    if tilesize == "log":  # logarithmic sized tiles
         floats = logfloats(floats)
-    elif tilesize == "exp":                 # exponential sized tiles
+    elif tilesize == "exp":  # exponential sized tiles
         floats = expfloats(floats)
-        
-    if tileshape == "stripe":               # stripes - do one set for each variable in floats
-        return reduce(operator.add, [tiles.tiles(numtilings, memctable, [f], ints) for f in floats])
-    elif tileshape == "diagonal":           # diagonal stripes for every pair of dimensions
+
+    if tileshape == "stripe":  # stripes - do one set for each variable in floats
+        return reduce(operator.add,
+                      [tiles.tiles(numtilings, memctable, [f], ints) for f in
+                       floats])
+    elif tileshape == "diagonal":  # diagonal stripes for every pair of dimensions
         flist = floats[:]
         tlist = []
         while len(flist) > 1:
             current = flist[0]
             for next in flist[1:]:
-                tlist.extend(tiles.tiles(numtilings, memctable, diagonalstripe([current, next]), ints))
+                tlist.extend(tiles.tiles(numtilings, memctable,
+                                         diagonalstripe([current, next]), ints))
             flist = flist[1:]
         return tlist
-    elif tileshape == "backdiagonal":       # diagonal stripes for every pair of dimensions
+    elif tileshape == "backdiagonal":  # diagonal stripes for every pair of dimensions
         flist = floats[:]
         tlist = []
         while len(flist) > 1:
             current = flist[0]
             for next in flist[1:]:
-                tlist.extend(tiles.tiles(numtilings, memctable, backdiagonalstripe([current, next]), ints))
+                tlist.extend(tiles.tiles(numtilings, memctable,
+                                         backdiagonalstripe([current, next]),
+                                         ints))
             flist = flist[1:]
         return tlist
-    elif tileshape == "alldiagonal":        # diagonal stripe through all dimensions at once - no different than diag?
+    elif tileshape == "alldiagonal":  # diagonal stripe through all dimensions at once - no different than diag?
         return tiles.tiles(numtilings, memctable, diagonalfloats(floats), ints)
-    elif tileshape == "allbackdiagonal":    # diagonal stripe through all dimensions at once
-        return tiles.tiles(numtilings, memctable, backdiagonalfloats(floats), ints)
-    elif tileshape == "diamond":            # diamond shaped tiles 
+    elif tileshape == "allbackdiagonal":  # diagonal stripe through all dimensions at once
+        return tiles.tiles(numtilings, memctable, backdiagonalfloats(floats),
+                           ints)
+    elif tileshape == "diamond":  # diamond shaped tiles
         floats1 = diagonalfloats(floats)
         floats2 = backdiagonalfloats(floats)
-        return tiles.tiles(numtilings, memctable, floats1+floats2, ints)
-    else:                                   # square/rectangular - do the regular tiles
+        return tiles.tiles(numtilings, memctable, floats1 + floats2, ints)
+    else:  # square/rectangular - do the regular tiles
         return tiles.tiles(numtilings, memctable, floats, ints)
-   
+
+
 """
 for i in xrange(10):
     print "reg",i, [fancytiles(1,[float(i), float(j)]) for j in xrange(10)]

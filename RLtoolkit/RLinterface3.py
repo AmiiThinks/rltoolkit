@@ -1,4 +1,4 @@
-#<html><body><pre>
+# <html><body><pre>
 
 # RLinterface module
 
@@ -33,19 +33,20 @@ RL_num_steps() -> number of steps in current/last episode
 
 """
 
-class RLinterface:                       #<a name="RLinterface"></a>[<a href="RLdoc.html#RLinterface">Doc</a>]
+
+class RLinterface:  # <a name="RLinterface"></a>[<a href="RLdoc.html#RLinterface">Doc</a>]
     """Object associating a reinforcement learning agent with its environment;
     stores next action; see http://rlai.cs.ualberta.ca/RLAI/RLinterface.html."""
 
     def __init__(self, agent, env):
-    	"""Store functions defining agent and environment""" 
-    	self.agent = agent   
-    	self.environment = env
-    	self.numsteps = 0
-    	self.rewards = []
-    	self.o = 'terminal'                     # force start of new episode
-    	self.a = None			        # the action to be used in the next step
-    	self.RL_init()
+        """Store functions defining agent and environment"""
+        self.agent = agent
+        self.environment = env
+        self.numsteps = 0
+        self.rewards = []
+        self.o = 'terminal'  # force start of new episode
+        self.a = None  # the action to be used in the next step
+        self.RL_init()
 
     def RL_init(self):
         """Initialize both the agent and the environment"""
@@ -76,17 +77,17 @@ class RLinterface:                       #<a name="RLinterface"></a>[<a href="RL
     def RL_episode(self):
         """Run the simulation for one episode"""
         obslist = list(self.RL_start())
-        while self.o != 'terminal': # max steps test???
+        while self.o != 'terminal':  # max steps test???
             new = self.RL_step()
             obslist.extend(new)
         return obslist
 
-    def RL_total_reward(self,gamma):
+    def RL_total_reward(self, gamma):
         """calculate total discounted reward from current (or last) episode"""
         discount = 1
         tot = 0
         i = len(self.rewards) - 1
-        while i >= 0:               # go through rewards from end to start
+        while i >= 0:  # go through rewards from end to start
             tot += self.rewards[i] * discount
             discount *= gamma
             i -= 1
@@ -95,6 +96,5 @@ class RLinterface:                       #<a name="RLinterface"></a>[<a href="RL
     def RL_num_steps(self):
         """returns number of steps so far or in last episode"""
         return self.numsteps
-        
 
-#</pre></body></html>
+# </pre></body></html>

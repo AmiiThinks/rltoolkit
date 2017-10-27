@@ -43,8 +43,8 @@ from RLtoolkit.g import *
 
 class Tileview(graph.Dataview):
     """Special graph view for tile display"""
-    
-    def gDrawView (self):
+
+    def gDrawView(self):
         self.parentgraph.gDrawView()
         pass
 
@@ -52,15 +52,16 @@ class Tileview(graph.Dataview):
         print(("clicked at ", x, y))
         self.newExample(x, y)
 
-    def newExample (self, x, y):
+    def newExample(self, x, y):
         global inputarray, functionapproximator, examples
         self.parentgraph.drawExample(x, y)
 
+
 class TileDisplay(graph.Graph):
-    
     def __init__(self, x, y, numtilings=1, memct=8192, title="Tile Display c", \
-                 dataviewtype=Tileview, start=0.0, end=5.0, intervals=10, **kwargs):
-        title = title + " for "+str(numtilings)+" tilings"
+                 dataviewtype=Tileview, start=0.0, end=5.0, intervals=10,
+                 **kwargs):
+        title = title + " for " + str(numtilings) + " tilings"
         graph.Graph.__init__(self, title, dataviewtype, **kwargs)
         self.dataview.parentgraph = self
         self.tilex = x
@@ -72,35 +73,76 @@ class TileDisplay(graph.Graph):
         self.intervals = intervals
         self.initDemo()
         gAddMenu(self, 'Tile Window', \
-         [['1 tiling, memory 1024', lambda: showtiles(1, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['2 tilings, memory 1024', lambda: showtiles(2, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['4 tilings, memory 1024', lambda: showtiles(4, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['8 tilings, memory 1024', lambda: showtiles(8, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['16 tilings, memory 1024', lambda: showtiles(16, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          '---', \
-          ['1 tiling, memory 2048', lambda: showtiles(1, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['2 tilings, memory 2048', lambda: showtiles(2, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['4 tilings, memory 2048', lambda: showtiles(4, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['8 tilings, memory 2048', lambda: showtiles(8, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['16 tilings, memory 2048', lambda: showtiles(16, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          '---', \
-          ['1 tiling, memory 4096', lambda: showtiles(1, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['2 tilings, memory 4096', lambda: showtiles(2, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['4 tilings, memory 4096', lambda: showtiles(4, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['8 tilings, memory 4096', lambda: showtiles(8, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['16 tilings, memory 4096', lambda: showtiles(16, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          '---', \
-          ['1 tiling, safe collision table', lambda: showtiles(1, cts, [1.0, 2.0], title="Tile Display c, safe collision table")], \
-          ['2 tilings, safe collision table', lambda: showtiles(2, cts, [1.0, 2.0], title="Tile Display c, safe collision table")], \
-          '---', \
-          ['1 tiling, super safe collision table', lambda: showtiles(1, ctss, [1.0, 2.0], title="Tile Display c, super safe collision table")], \
-          ['2 tilings, super safe collision table', lambda: showtiles(2, ctss, [1.0, 2.0], title="Tile Display c, super safe collision table")], \
-          '---', \
-          ['1 tiling, range -2 to 7, memory 4096', lambda: showtiles(1, 4096, [1.0, 2.0], start=-2.0, end=7.0, title="Tile Display c, memory 4096")], \
-          ['2 tilings, range -2 to 7, memory 4096', lambda: showtiles(2, 4096, [1.0, 2.0], start=-2.0, end=7.0, title="Tile Display c, memory 4096")], \
-          '---', \
-          ['Quit', gQuit]])
-
+                 [['1 tiling, memory 1024',
+                   lambda: showtiles(1, 1024, [1.0, 2.0],
+                                     title="Tile Display c, memory 1024")], \
+                  ['2 tilings, memory 1024',
+                   lambda: showtiles(2, 1024, [1.0, 2.0],
+                                     title="Tile Display c, memory 1024")], \
+                  ['4 tilings, memory 1024',
+                   lambda: showtiles(4, 1024, [1.0, 2.0],
+                                     title="Tile Display c, memory 1024")], \
+                  ['8 tilings, memory 1024',
+                   lambda: showtiles(8, 1024, [1.0, 2.0],
+                                     title="Tile Display c, memory 1024")], \
+                  ['16 tilings, memory 1024',
+                   lambda: showtiles(16, 1024, [1.0, 2.0],
+                                     title="Tile Display c, memory 1024")], \
+                  '---', \
+                  ['1 tiling, memory 2048',
+                   lambda: showtiles(1, 2048, [1.0, 2.0],
+                                     title="Tile Display c, memory 2048")], \
+                  ['2 tilings, memory 2048',
+                   lambda: showtiles(2, 2048, [1.0, 2.0],
+                                     title="Tile Display c, memory 2048")], \
+                  ['4 tilings, memory 2048',
+                   lambda: showtiles(4, 2048, [1.0, 2.0],
+                                     title="Tile Display c, memory 2048")], \
+                  ['8 tilings, memory 2048',
+                   lambda: showtiles(8, 2048, [1.0, 2.0],
+                                     title="Tile Display c, memory 2048")], \
+                  ['16 tilings, memory 2048',
+                   lambda: showtiles(16, 2048, [1.0, 2.0],
+                                     title="Tile Display c, memory 2048")], \
+                  '---', \
+                  ['1 tiling, memory 4096',
+                   lambda: showtiles(1, 4096, [1.0, 2.0],
+                                     title="Tile Display c, memory 4096")], \
+                  ['2 tilings, memory 4096',
+                   lambda: showtiles(2, 4096, [1.0, 2.0],
+                                     title="Tile Display c, memory 4096")], \
+                  ['4 tilings, memory 4096',
+                   lambda: showtiles(4, 4096, [1.0, 2.0],
+                                     title="Tile Display c, memory 4096")], \
+                  ['8 tilings, memory 4096',
+                   lambda: showtiles(8, 4096, [1.0, 2.0],
+                                     title="Tile Display c, memory 4096")], \
+                  ['16 tilings, memory 4096',
+                   lambda: showtiles(16, 4096, [1.0, 2.0],
+                                     title="Tile Display c, memory 4096")], \
+                  '---', \
+                  ['1 tiling, safe collision table',
+                   lambda: showtiles(1, cts, [1.0, 2.0],
+                                     title="Tile Display c, safe collision table")], \
+                  ['2 tilings, safe collision table',
+                   lambda: showtiles(2, cts, [1.0, 2.0],
+                                     title="Tile Display c, safe collision table")], \
+                  '---', \
+                  ['1 tiling, super safe collision table',
+                   lambda: showtiles(1, ctss, [1.0, 2.0],
+                                     title="Tile Display c, super safe collision table")], \
+                  ['2 tilings, super safe collision table',
+                   lambda: showtiles(2, ctss, [1.0, 2.0],
+                                     title="Tile Display c, super safe collision table")], \
+                  '---', \
+                  ['1 tiling, range -2 to 7, memory 4096',
+                   lambda: showtiles(1, 4096, [1.0, 2.0], start=-2.0, end=7.0,
+                                     title="Tile Display c, memory 4096")], \
+                  ['2 tilings, range -2 to 7, memory 4096',
+                   lambda: showtiles(2, 4096, [1.0, 2.0], start=-2.0, end=7.0,
+                                     title="Tile Display c, memory 4096")], \
+                  '---', \
+                  ['Quit', gQuit]])
 
     def gDrawView(self):
         graph.Graph.gDrawView(self)
@@ -112,7 +154,8 @@ class TileDisplay(graph.Graph):
     def drawExample(self, x, y):
         self.tilex = x
         self.tiley = y
-        graph.graph(self.calcTiledata(self.numtilings, self.memct, [x, y]), None, self)
+        graph.graph(self.calcTiledata(self.numtilings, self.memct, [x, y]),
+                    None, self)
         gDrawLineR(self.dataview, x, y, 0, .2, 'black')
         gDrawLineR(self.dataview, x, y, 0, -.2, 'black')
         gDrawLineR(self.dataview, x, y, .2, 0, 'black')
@@ -123,8 +166,8 @@ class TileDisplay(graph.Graph):
         gClear(self.dataview)
         self.data = []
         self.drawExample(self.tilex, self.tiley)
-        #graph.xGraphLimits(0.0, 5.0, self)
-        #graph.yGraphLimits(0.0, 5.0, self)
+        # graph.xGraphLimits(0.0, 5.0, self)
+        # graph.yGraphLimits(0.0, 5.0, self)
         graph.xGraphLimits(self.start, self.end, self)
         graph.yGraphLimits(self.start, self.end, self)
         graph.graphPointsOnly(self)
@@ -144,71 +187,108 @@ class TileDisplay(graph.Graph):
         tsx = fancytiles.stripetiles(numtilings, memct, [floats[0]], None, ints)
         tsy = fancytiles.stripetiles(numtilings, memct, [floats[1]], None, ints)
         td = fancytiles.diagonaltiles(numtilings, memct, floats, None, ints)
-        tbd = fancytiles.backdiagonaltiles(numtilings, memct, floats, None, ints)
+        tbd = fancytiles.backdiagonaltiles(numtilings, memct, floats, None,
+                                           ints)
         tdm = fancytiles.diamondtiles(numtilings, memct, floats, None, ints)
         tl = fancytiles.logtiles(numtilings, memct, floats, ints)
         te = fancytiles.exptiles(numtilings, memct, floats, ints)
         total = int((self.end - self.start) * self.intervals)
         for i in range(total):
             for j in range(total):
-                x = float(i)/self.intervals + self.start
-                y = float(j)/self.intervals + self.start
+                x = float(i) / self.intervals + self.start
+                y = float(j) / self.intervals + self.start
                 newfloats = [x, y]
                 if tiles.tiles(numtilings, memct, newfloats, ints) == t:
                     samet.append(newfloats)
-                if fancytiles.stripetiles(numtilings, memct, [x], None, ints) == tsx or \
-                   fancytiles.stripetiles(numtilings, memct, [y], None, ints) == tsy:
+                if fancytiles.stripetiles(numtilings, memct, [x], None,
+                                          ints) == tsx or \
+                                fancytiles.stripetiles(numtilings, memct, [y],
+                                                       None, ints) == tsy:
                     samets.append(newfloats)
-                if fancytiles.diagonaltiles(numtilings, memct, newfloats, None, ints) == td:
+                if fancytiles.diagonaltiles(numtilings, memct, newfloats, None,
+                                            ints) == td:
                     sametd.append(newfloats)
-                if fancytiles.backdiagonaltiles(numtilings, memct, newfloats, None, ints) == tbd:
+                if fancytiles.backdiagonaltiles(numtilings, memct, newfloats,
+                                                None, ints) == tbd:
                     sametbd.append(newfloats)
-                if fancytiles.diamondtiles(numtilings, memct, newfloats, None, ints) == tdm:
+                if fancytiles.diamondtiles(numtilings, memct, newfloats, None,
+                                           ints) == tdm:
                     sametdm.append(newfloats)
-                if fancytiles.logtiles(numtilings, memct, newfloats, ints) == tl:
+                if fancytiles.logtiles(numtilings, memct, newfloats,
+                                       ints) == tl:
                     sametl.append(newfloats)
-                if fancytiles.exptiles(numtilings, memct, newfloats, ints) == te:
+                if fancytiles.exptiles(numtilings, memct, newfloats,
+                                       ints) == te:
                     samete.append(newfloats)
         data = [samet, samets, sametd, sametbd, sametdm, sametl, samete]
         return data
-        
+
+
 def showtiles(numtilings, memct, floats, ints=[], title="Tile Display c", \
               start=0.0, end=5.0, intervals=10):
     w = TileDisplay(2.0, 2.0, numtilings, memct, title=title, start=start, \
                     end=end, intervals=intervals, gdViewport=(0, 20, 600, 620))
-    
+
+
 # should really have one for each type of tiling for test?
 ctu = tiles.CollisionTable(4096, 'unsafe')
 cts = tiles.CollisionTable(4096, 'safe')
 ctss = tiles.CollisionTable(4096, 'super safe')
 
 gAddMenu(GMENU, 'Tile Window', \
-         [['1 tiling, memory 1024', lambda: showtiles(1, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['2 tilings, memory 1024', lambda: showtiles(2, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['4 tilings, memory 1024', lambda: showtiles(4, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['8 tilings, memory 1024', lambda: showtiles(8, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
-          ['16 tilings, memory 1024', lambda: showtiles(16, 1024, [1.0, 2.0], title="Tile Display c, memory 1024")], \
+         [['1 tiling, memory 1024', lambda: showtiles(1, 1024, [1.0, 2.0],
+                                                      title="Tile Display c, memory 1024")], \
+          ['2 tilings, memory 1024', lambda: showtiles(2, 1024, [1.0, 2.0],
+                                                       title="Tile Display c, memory 1024")], \
+          ['4 tilings, memory 1024', lambda: showtiles(4, 1024, [1.0, 2.0],
+                                                       title="Tile Display c, memory 1024")], \
+          ['8 tilings, memory 1024', lambda: showtiles(8, 1024, [1.0, 2.0],
+                                                       title="Tile Display c, memory 1024")], \
+          ['16 tilings, memory 1024', lambda: showtiles(16, 1024, [1.0, 2.0],
+                                                        title="Tile Display c, memory 1024")], \
           '---', \
-          ['1 tiling, memory 2048', lambda: showtiles(1, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['2 tilings, memory 2048', lambda: showtiles(2, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['4 tilings, memory 2048', lambda: showtiles(4, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['8 tilings, memory 2048', lambda: showtiles(8, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
-          ['16 tilings, memory 2048', lambda: showtiles(16, 2048, [1.0, 2.0], title="Tile Display c, memory 2048")], \
+          ['1 tiling, memory 2048', lambda: showtiles(1, 2048, [1.0, 2.0],
+                                                      title="Tile Display c, memory 2048")], \
+          ['2 tilings, memory 2048', lambda: showtiles(2, 2048, [1.0, 2.0],
+                                                       title="Tile Display c, memory 2048")], \
+          ['4 tilings, memory 2048', lambda: showtiles(4, 2048, [1.0, 2.0],
+                                                       title="Tile Display c, memory 2048")], \
+          ['8 tilings, memory 2048', lambda: showtiles(8, 2048, [1.0, 2.0],
+                                                       title="Tile Display c, memory 2048")], \
+          ['16 tilings, memory 2048', lambda: showtiles(16, 2048, [1.0, 2.0],
+                                                        title="Tile Display c, memory 2048")], \
           '---', \
-          ['1 tiling, memory 4096', lambda: showtiles(1, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['2 tilings, memory 4096', lambda: showtiles(2, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['4 tilings, memory 4096', lambda: showtiles(4, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['8 tilings, memory 4096', lambda: showtiles(8, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
-          ['16 tilings, memory 4096', lambda: showtiles(16, 4096, [1.0, 2.0], title="Tile Display c, memory 4096")], \
+          ['1 tiling, memory 4096', lambda: showtiles(1, 4096, [1.0, 2.0],
+                                                      title="Tile Display c, memory 4096")], \
+          ['2 tilings, memory 4096', lambda: showtiles(2, 4096, [1.0, 2.0],
+                                                       title="Tile Display c, memory 4096")], \
+          ['4 tilings, memory 4096', lambda: showtiles(4, 4096, [1.0, 2.0],
+                                                       title="Tile Display c, memory 4096")], \
+          ['8 tilings, memory 4096', lambda: showtiles(8, 4096, [1.0, 2.0],
+                                                       title="Tile Display c, memory 4096")], \
+          ['16 tilings, memory 4096', lambda: showtiles(16, 4096, [1.0, 2.0],
+                                                        title="Tile Display c, memory 4096")], \
           '---', \
-          ['1 tiling, safe collision table', lambda: showtiles(1, cts, [1.0, 2.0], title="Tile Display c, safe collision table")], \
-          ['2 tilings, safe collision table', lambda: showtiles(2, cts, [1.0, 2.0], title="Tile Display c, safe collision table")], \
+          ['1 tiling, safe collision table',
+           lambda: showtiles(1, cts, [1.0, 2.0],
+                             title="Tile Display c, safe collision table")], \
+          ['2 tilings, safe collision table',
+           lambda: showtiles(2, cts, [1.0, 2.0],
+                             title="Tile Display c, safe collision table")], \
           '---', \
-          ['1 tiling, super safe collision table', lambda: showtiles(1, ctss, [1.0, 2.0], title="Tile Display c, super safe collision table")], \
-          ['2 tilings, super safe collision table', lambda: showtiles(2, ctss, [1.0, 2.0], title="Tile Display c, super safe collision table")], \
+          ['1 tiling, super safe collision table',
+           lambda: showtiles(1, ctss, [1.0, 2.0],
+                             title="Tile Display c, super safe collision table")], \
+          ['2 tilings, super safe collision table',
+           lambda: showtiles(2, ctss, [1.0, 2.0],
+                             title="Tile Display c, super safe collision table")], \
           '---', \
-          ['1 tiling, range -2 to 7, memory 4096', lambda: showtiles(1, 4096, [1.0, 2.0], start=-2.0, end=7.0, title="Tile Display c, memory 4096")], \
-          ['2 tilings, range -2 to 7, memory 4096', lambda: showtiles(2, 4096, [1.0, 2.0], start=-2.0, end=7.0, title="Tile Display c, memory 4096")], \
+          ['1 tiling, range -2 to 7, memory 4096',
+           lambda: showtiles(1, 4096, [1.0, 2.0], start=-2.0, end=7.0,
+                             title="Tile Display c, memory 4096")], \
+          ['2 tilings, range -2 to 7, memory 4096',
+           lambda: showtiles(2, 4096, [1.0, 2.0], start=-2.0, end=7.0,
+                             title="Tile Display c, memory 4096")], \
           '---', \
           ['Quit', gQuit]])
 
