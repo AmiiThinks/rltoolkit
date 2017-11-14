@@ -1,4 +1,4 @@
-
+*.idea*
 # Created by https://www.gitignore.io/api/c,c++,linux,osx,python,windows
 
 ### C ###
@@ -88,7 +88,8 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
