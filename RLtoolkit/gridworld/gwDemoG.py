@@ -29,7 +29,7 @@ def runDemo():
 
 
 def runObjDemo():
-    makeObjectGridworldSimulation(16, 16, 87, 15, 30)
+    makeObjectGridworldSimulation(25, 25, 87, 15, 24)
     gMainloop()
 
 

@@ -22,13 +22,13 @@ import operator
 class Gridworld(Environment):
     def __init__(self, width=8, height=6, startsquare=0, goalsquare=1):
         Environment.__init__(self)
-        if width == None:
+        if width is None:
             width = 8
-        if height == None:
+        if height is None:
             height = 6
-        if startsquare == None:
+        if startsquare is None:
             startsquare = 0
-        if goalsquare == None:
+        if goalsquare is None:
             goalsquare = 1
         self.width = width
         self.height = height
@@ -81,7 +81,7 @@ class Gridworld(Environment):
 
     def neighboringSquares(self, square):
         sqs = []
-        for i in range(4):
+        for action in range(4):
             sqs.append(self.neighboringSquare(square, action))
         return sqs
 
@@ -109,7 +109,7 @@ class Gridworld(Environment):
             return proposednextstate
 
     def envfn(self, verbose=False, a=None):
-        if a == None:
+        if a is None:
             s = self.envstartepisode()
             if verbose:
                 print(("Starting new episode with sensation", s))
@@ -175,7 +175,7 @@ class GPGridworld(Gridworld):
             # be nasty and give a random action half the time
             if random() > 0.5:
                 action = randomIntegerOtherThan(4, action)
-                proposednextstate = self.neighboringSquare(state, action)
+                proposednextstate = self.neighboringSquare(self.state, action)
         if not (
             self.barrierp[proposednextstate] or self.wallp[self.state][action]):
             self.state = proposednextstate

@@ -22,7 +22,7 @@ def gwFilename(name):
 def readGridworld(filename):
     "reads a gridworld file into a dictionary list and returns it"
     print(("reading", filename))
-    if filename != None and filename != '':
+    if filename is not None and filename != '':
         input = open(filename, 'r')
         alist = input.readlines()
         uselist = reduce(operator.add, alist)
@@ -47,12 +47,12 @@ def prepareWrite(gridworld):
     """makes a dictionary list with the gridworld basics in it, in
        string form for writing. Call this first when writing a gridworld
        out to get the basic information prepared, and then add any extras"""
-    gridout = {'height': str(gridworld.height), \
-               'width': str(gridworld.width), \
-               'squaresize': str(gridworld.squaresize), \
-               'barrierp': str(gridworld.barrierp), \
-               'wallp': str(gridworld.wallp), \
-               'startsquare': str(gridworld.startsquare), \
+    gridout = {'height': str(gridworld.height),
+               'width': str(gridworld.width),
+               'squaresize': str(gridworld.squaresize),
+               'barrierp': str(gridworld.barrierp),
+               'wallp': str(gridworld.wallp),
+               'startsquare': str(gridworld.startsquare),
                'goalsquare': str(gridworld.goalsquare)}
     return gridout
 

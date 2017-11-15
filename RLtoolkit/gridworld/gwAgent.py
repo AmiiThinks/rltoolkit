@@ -40,10 +40,10 @@ class GridAgent(Agent):
         self.recentactions = []
         self.numactions = numactions
         self.numstates = numstates
-        self.Q = [[self.initialvalue for i in range(self.numactions)] \
-                  for j in range(self.numstates)]
-        self.savedq = [[self.initialvalue for i in range(self.numactions)] \
-                       for j in range(self.numstates)]
+        self.Q = [[self.initialvalue for _ in range(self.numactions)]
+                  for _ in range(self.numstates)]
+        self.savedq = [[self.initialvalue for _ in range(self.numactions)]
+                       for _ in range(self.numstates)]
         self.changedstates = []
 
     def agentStartEpisode(self, sensation):
@@ -51,14 +51,14 @@ class GridAgent(Agent):
         self.recentactions = []
 
     def agentchangestate(self, s):
-        if not s in self.changedstates:
+        if s not in self.changedstates:
             self.changedstates.append(s)
 
     def actionvalues(self, s):
         return [self.Q[s][a] for a in range(self.numactions)]
 
     def statevalue(self, s):
-        if s == None:
+        if s is None:
             return 0
         elif s == 'terminal':
             return 0
@@ -75,8 +75,8 @@ class GridAgent(Agent):
             return self.recentactions[0]
 
     def agentLearn(self, s, a, reward, sprime):  # default is one step q
-        self.Q[s][a] += self.alpha * (r + \
-                                      (self.gamma * self.statevalue(sprime)) \
+        self.Q[s][a] += self.alpha * (reward
+                                      + (self.gamma * self.statevalue(sprime))
                                       - self.Q[s][a])
 
     def agentInit(self):
@@ -87,7 +87,7 @@ class GridAgent(Agent):
     def agentfn(self, verbose, s, r=None):
         global lasts, lasta
         simcollect(self.sim, lasts, lasta, r, s)
-        if r != None:
+        if r is not None:
             self.agentLearn(lasts, lasta, r, s)
         else:
             self.agentStartEpisode(s)
@@ -120,7 +120,7 @@ class SarsaGridAgent(GridAgent):
         simcollect(self.sim, lasts, lasta, r, s)
         if debugmode():
             print(("agentfn", s, r))
-        if r != None:
+        if r is not None:
             self.agentLearn(lasts, lasta, r, s)  # does action choice as well
         else:
             self.agentStartEpisode(s)

@@ -38,7 +38,7 @@ def gwInit(height=6, width=8, start=0, goal=47, alpha=0.5, gamma=0.9, \
 
 def gwEpisode():
     global sim
-    if sim != None:
+    if sim is not None:
         sim.rlsim.episodeQ()
     else:
         print("You have to set up your gridworld first. Use gwInit")
@@ -46,7 +46,7 @@ def gwEpisode():
 
 def gwEpisodes(num):
     global sim
-    if sim != None:
+    if sim is not None:
         sim.rlsim.episodesQ(num)
     else:
         print("You have to set up your gridworld first. Use gwInit")

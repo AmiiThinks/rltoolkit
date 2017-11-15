@@ -29,8 +29,6 @@ RL_step() -> r, o, a
 RL_episode() -> o0, a0, r1, o1, a1, ..., rT
 RL_total_reward(gamma) - > total gamma discounted reward of current/last episode
 RL_num_steps() -> number of steps in current/last episode
-
-
 """
 
 
