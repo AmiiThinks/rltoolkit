@@ -13,46 +13,52 @@ The barriers (squares you can't pass into) are overlaid on top of this.
 The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else.
 """
 
-from RLtoolkit.utilities import *
-from RLtoolkit.basicclasses import *
+from RLtoolkit.utilities import egreedy
+
 from random import *
 from math import *
-import operator
-
-lasts = 0
-lasta = 0
 
 changeDiff = 0.01  # difference in Q values needed to notice change
 
 
 ###
 
-class GridAgent(Agent):
-    def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5, \
+class GridAgent:
+    def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5,
                  gamma=.9, initialvalue=0.1, agentlambda=0.8):
-        Agent.__init__(self)
         self.alpha = alpha
         self.initialvalue = initialvalue
         self.gamma = gamma
         self.epsilon = epsilon
         self.agentlambda = agentlambda
-        self.recentsensations = []
-        self.recentactions = []
         self.numactions = numactions
         self.numstates = numstates
+        self.Q = None
+        self.savedq = None
+        self.changedstates = None
+        self.recentsensations = None
+        self.recentactions = None
+
+    def agentchangestate(self, s):
+        if s not in self.changedstates:
+            self.changedstates.append(s)
+
+    def agent_init(self):
         self.Q = [[self.initialvalue for _ in range(self.numactions)]
                   for _ in range(self.numstates)]
         self.savedq = [[self.initialvalue for _ in range(self.numactions)]
                        for _ in range(self.numstates)]
         self.changedstates = []
-
-    def agentStartEpisode(self, sensation):
         self.recentsensations = []
         self.recentactions = []
 
-    def agentchangestate(self, s):
-        if s not in self.changedstates:
-            self.changedstates.append(s)
+    def agent_start(self, state):
+        self.recentsensations = [state]
+
+        a = self.policy(state)
+        self.recentactions = [a]
+
+        return a
 
     def actionvalues(self, s):
         return [self.Q[s][a] for a in range(self.numactions)]
@@ -74,120 +80,100 @@ class GridAgent(Agent):
             self.recentactions = [self.policy(sprime)] + self.recentactions
             return self.recentactions[0]
 
-    def agentLearn(self, s, a, reward, sprime):  # default is one step q
-        self.Q[s][a] += self.alpha * (reward
-                                      + (self.gamma * self.statevalue(sprime))
-                                      - self.Q[s][a])
+    def agent_learn(self, s, a, r, sp=None):
+        next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
+        self.Q[s][a] += self.alpha * (r + next_val - oldq)
 
-    def agentInit(self):
-        self.recentsensations = []
-        self.recentactions = []
+    def agent_step(self, reward, sprime):  # default is one step q
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
 
+        self.agent_learn(s, a, reward, sprime)
 
-    def agentfn(self, verbose, s, r=None):
-        global lasts, lasta
-        simcollect(self.sim, lasts, lasta, r, s)
-        if r is not None:
-            self.agentLearn(lasts, lasta, r, s)
-        else:
-            self.agentStartEpisode(s)
-        if s != 'terminal':
-            a = self.agentChoose(s)
-            lasts, lasta = s, a
-            if verbose:
-                print(("Agent chose action", a))
-            return a
-        else:
-            return None
+        return self.agentChoose(sprime)
+
+    def agent_end(self, reward):
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
+
+        self.agent_learn(s, a, reward)
 
 
 class SarsaGridAgent(GridAgent):
-    def agentLearn(self, s1, a1, r, sprime):  # Sarsa
-        global changeDiff
-        if sprime != 'terminal':
-            aprime = self.agentChoose(sprime)
-            aprimeq = self.Q[sprime][aprime]
-        else:
-            aprimeq = 0
-        alphadelta = self.alpha * (r + (self.gamma * aprimeq) - self.Q[s1][a1])
-        oldq = self.Q[s1][a1]
-        self.Q[s1][a1] += alphadelta
-        if abs(self.Q[s1][a1] - oldq) > changeDiff:
-            self.agentchangestate(s1)
 
-    def agentfn(self, verbose, s, r=None):
-        global lasts, lasta
-        simcollect(self.sim, lasts, lasta, r, s)
-        if debugmode():
-            print(("agentfn", s, r))
-        if r is not None:
-            self.agentLearn(lasts, lasta, r, s)  # does action choice as well
+    def agent_learn(self, s, a, r, sp=None):
+        oldq = self.Q[s][a]
+
+        if sp is not None:
+            ap = self.agentChoose(sp)
+            next_val = self.gamma * self.Q[sp][ap]
         else:
-            self.agentStartEpisode(s)
-            a = self.agentChoose(s)  # first action
-            if debugmode():
-                print(("st", self.recentsensations, "ac", self.recentactions))
-        if s != 'terminal':
-            a = self.recentactions[0]
-            lasts, lasta = s, a
-            if verbose:
-                print(("Agent chose action", a))
-            return a
-        else:
-            return None
+            next_val = 0
+            ap = None
+
+        self.Q[s][a] += self.alpha * (r + next_val - oldq)
+
+        if abs(self.Q[s][a] - oldq) > changeDiff:
+            self.agentchangestate(s)
+
+        return ap
+
+    def agent_step(self, reward, sprime):  # default is one step q
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
+
+        return self.agent_learn(s, a, reward, sprime)
+
+    def agent_end(self, reward):
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
+
+        self.agent_learn(s, a, reward)
 
 
 class SarsaLambdaGridAgent(SarsaGridAgent):
-    def agentLearn(self, s1, a1, r, sprime):  # Sarsa(lambda), replace traces
-        global changeDiff
-        senses = self.recentsensations
-        actions = self.recentactions
-        if sprime != 'terminal':
-            aprime = self.agentChoose(sprime)
-            aprimeq = self.Q[sprime][aprime]
+    """Replacing traces"""
+
+    def agent_learn(self, s, a, r, sp=None):
+        if sp is not None:
+            ap = self.agentChoose(sp)
+            next_val = self.gamma * self.Q[sp][ap]
         else:
-            aprimeq = 0
-        alphadelta = self.alpha * (r + (self.gamma * aprimeq) - self.Q[s1][a1])
-        if debugmode():
-            print(("states", senses))
-            print(("actions", actions))
-            print(("s1", s1, "a1", a1, "r", r, "sprime", sprime, "q s1 a1",
-                   self.Q[s1][a1], "aprimeq", aprimeq))
-            print(('alphadelta', alphadelta))
+            next_val = 0
+            ap = None
+
+        alpha_delta = self.alpha * (r + next_val - self.Q[s][a])
+
         trace = 1
         i = 0
-        while trace > 0.01 and i < len(actions):  # len(self.recentactions):
-            s = senses[i]  # self.recentsensations[i]
-            a = actions[i]  # self.recentactions[i]
-            if not s in senses[
-                        0:i]:  # i+1:]: #self.recentsensations[i+1:]: #[0:i]:  #[i+1:]: # [0:i]s doesn't occur again in the list of recent sensations
+        while trace > 0.01 and i < len(self.recentactions):
+            s = self.recentsensations[i]
+            a = self.recentactions[i]
+            if s not in self.recentsensations[0:i]:
                 oldq = self.Q[s][a]
-                self.Q[s][a] += alphadelta * trace
-                if debugmode():
-                    print(("updating s", s, "a", a, "old", oldq, "new",
-                           self.Q[s][a], "trace", trace))
+                self.Q[s][a] += alpha_delta * trace
+
                 if abs(self.Q[s][a] - oldq) > changeDiff:
                     self.agentchangestate(s)
             trace = trace * self.gamma * self.agentlambda
             i += 1
 
+        return ap
+
 
 class QlambdaGridAgent(GridAgent):
-    def agentLearn(self, s1, a1, r, sprime):  # Q(lambda), replace traces
-        global changeDiff
+    """replacing traces"""
+    def agent_learn(self, s, a, r, sp=None):
         trace = 1
         i = 0
-        if debugmode():
-            print(("states", self.recentsensations))
-            print(("actions", self.recentactions))
-        alphadelta = self.alpha * (r + \
-                                   (self.gamma * self.statevalue(sprime)) \
-                                   - self.Q[s1][a1])
+
+        next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
+        alphadelta = self.alpha * (r + next_val - self.Q[s][a])
+
         while trace > 0.01 and i < len(self.recentactions):
             s = self.recentsensations[i]
             a = self.recentactions[i]
-            if not s in self.recentsensations[
-                        0:i]:  # [i+1:]: # [0:i]s doesn't occur again in the list of recent sensations
+            if s not in self.recentsensations[0:i]:
                 oldq = self.Q[s][a]
                 self.Q[s][a] += alphadelta * trace
                 if abs(self.Q[s][a] - oldq) > changeDiff:
@@ -197,10 +183,12 @@ class QlambdaGridAgent(GridAgent):
 
 
 class QonestepGridAgent(GridAgent):
-    def agentLearn(self, s, a, r, sprime):  # onestep qLearning
+    def agent_learn(self, s, a, r, sp=None):  # onestep qLearning
         oldq = self.Q[s][a]
-        delta = (r + (self.gamma * self.statevalue(sprime)) - self.Q[s][a])
-        self.Q[s][a] += self.alpha * delta
+
+        next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
+
+        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
         if abs(self.Q[s][a] - oldq) > changeDiff:
             self.agentchangestate(s)
 
@@ -212,18 +200,23 @@ class DeterministicForwardModel:
         self.numactions = numactions
         self.numstates = numstates
         self.initialvalue = initialvalue
+        self.predictedreward = None
+        self.predictednextstate = None
+        self.savedpredictednextstate = None
+        self.savedpredictedreward = None
+        self.q = None
 
-    def agentInit(self):
-        self.predictednextstate = [[None for i in range(self.numactions)] \
-                                   for j in range(self.numstates)]
-        self.predictedreward = [[None for i in range(self.numactions)] \
-                                for j in range(self.numstates)]
-        self.savedpredictednextstate = [[None for i in range(self.numactions)] \
-                                        for j in range(self.numstates)]
-        self.savedpredictedreward = [[None for i in range(self.numactions)] \
-                                     for j in range(self.numstates)]
-        self.q = [[self.initialvalue for i in range(self.numactions)] \
-                  for j in range(self.numstates)]
+    def agent_init(self):
+        self.predictedreward = [[None for _ in range(self.numactions)]
+                                for _ in range(self.numstates)]
+        self.predictednextstate = [[None for _ in range(self.numactions)]
+                                   for _ in range(self.numstates)]
+        self.savedpredictednextstate = [[None for _ in range(self.numactions)]
+                                        for _ in range(self.numstates)]
+        self.savedpredictedreward = [[None for _ in range(self.numactions)]
+                                     for _ in range(self.numstates)]
+        self.q = [[self.initialvalue for _ in range(self.numactions)]
+                  for _ in range(self.numstates)]
 
     def learnworldmodel(self, x, a, y, r):
         self.setpredictednextstate(x, a, y)
@@ -242,18 +235,19 @@ class DeterministicForwardModel:
         return self.predictedreward[x][a]
 
 
-def setupEmptyGridModel(sim):
-    agent = sim.agent
+def setupEmptyGridModel(glue):
+    agent = glue.agent
+    env = glue.environment
     saveModel(agent)
     for x in range(agent.numstates):
         for a in range(agent.numactions):
-            agent.setpredictednextstate(x, a, sim.env.neighboringSquare(x, a))
+            agent.setpredictednextstate(x, a, env.neighboringSquare(x, a))
             agent.setpredictedreward(x, a, 0)
 
 
-def revealGoalLocation(sim):
-    agent = sim.agent
-    env = sim.env
+def revealGoalLocation(glue):
+    agent = glue.agent
+    env = glue.environment
     for x in range(agent.numstates):
         for a in range(agent.numactions):
             s = env.neighboringSquare(x, a)
@@ -262,12 +256,12 @@ def revealGoalLocation(sim):
                 agent.setpredictednextstate(x, a, 'terminal')
 
 
-def setupAccurateModel(sim):
-    agent = sim.agent
+def setupAccurateModel(glue):
+    agent = glue.agent
     saveModel(agent)
     for x in range(agent.numstates):
         for a in range(agent.numactions):
-            sp = sim.env.gridworldnextstate(x, a)
+            sp = glue.environment.gridworldnextstate(x, a)
             agent.setpredictednextstate(x, a, sp)
             if sp == 'terminal':
                 r = 1
@@ -276,8 +270,8 @@ def setupAccurateModel(sim):
             agent.setpredictedreward(x, a, r)
 
 
-def setupNullModel(sim):
-    agent = sim.agent
+def setupNullModel(glue):
+    agent = glue.agent
     saveModel(agent)
     for x in range(agent.numstates):
         for a in range(agent.numactions):
@@ -316,66 +310,105 @@ def restoreModel(agent):
 
 
 def qLearn(agent, s, a, sprime, r):
-    if r == None:
+    if r is None:
         r = 0
-    agent.Q[s][a] += agent.alpha * \
-                     (r + (agent.gamma * agent.statevalue(sprime)) \
-                      - agent.Q[s][a])
+    td_error = (r + (agent.gamma * agent.statevalue(sprime)) - agent.Q[s][a])
+    agent.Q[s][a] += agent.alpha * td_error
 
 
 class DynaGridAgent(DeterministicForwardModel, GridAgent):
-    def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5, \
+    def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5,
                  gamma=.9, initialvalue=0.1, agentlambda=0.8,
                  expbonus=0.0):  # .0001
-        GridAgent.__init__(self, numactions, numstates, epsilon, alpha, \
+        GridAgent.__init__(self, numactions, numstates, epsilon, alpha,
                            gamma, initialvalue, agentlambda)
+        self.agenttime = None
+        self.nummodelsteps = None
+        self.explorationbonus = None
+        self.Q = None
+        self.savedQ = None
+        self.predictednextstate = None
+        self.predictedreward = None
+        self.savedpredictednextstate = None
+        self.savedpredictedreward = None
+        self.changedstates = None
         self.agenttime = 0
         self.nummodelsteps = 20
         self.explorationbonus = expbonus
-        # num states and numactions should be set by call to DynaGridAgent
-        self.Q = [[self.initialvalue for i in range(self.numactions)] \
-                  for j in range(self.numstates)]
-        self.savedQ = [[self.initialvalue for i in range(self.numactions)] \
-                       for j in range(self.numstates)]
-        self.predictednextstate = [[None for i in range(self.numactions)] \
-                                   for j in range(self.numstates)]
-        self.predictedreward = [[None for i in range(self.numactions)] \
-                                for j in range(self.numstates)]
-        self.savedpredictednextstate = [[None for i in range(self.numactions)] \
-                                        for j in range(self.numstates)]
-        self.savedpredictedreward = [[None for i in range(self.numactions)] \
-                                     for j in range(self.numstates)]
-        self.changedstates = list(range(self.numstates))
-        # self.agentInit()
+        self.timeoflasttry = None
 
-    def agentInit(self):
-        self.timeoflasttry = [[0 for i in range(self.numactions)] \
-                              for j in range(self.numstates)]
+    def agent_init(self):
+        # num states and numactions should be set by call to DynaGridAgent
+        self.Q = [[self.initialvalue for _ in range(self.numactions)]
+                  for _ in range(self.numstates)]
+        self.savedQ = [[self.initialvalue for _ in range(self.numactions)]
+                       for _ in range(self.numstates)]
+        self.predictednextstate = [[None for _ in range(self.numactions)]
+                                   for _ in range(self.numstates)]
+        self.predictedreward = [[None for _ in range(self.numactions)]
+                                for _ in range(self.numstates)]
+        self.savedpredictednextstate = [[None for _ in range(self.numactions)]
+                                        for _ in range(self.numstates)]
+        self.savedpredictedreward = [[None for _ in range(self.numactions)]
+                                     for _ in range(self.numstates)]
+        self.changedstates = list(range(self.numstates))
+        self.timeoflasttry = [[0 for _ in range(self.numactions)]
+                              for _ in range(self.numstates)]
         setupStayModel(self)
 
-    def learnworldmodel(self, x, a, y, r):
-        DeterministicForwardModel.learnworldmodel(self, x, a, y, r)
+    def learn_model(self, x, a, y, r):
+        self.learnworldmodel(x, a, y, r)
         self.agenttime += 1
         self.timeoflasttry[x][a] = self.agenttime
 
-    def agentLearn(self, s, a, reward, sprime):  # onestep dyna
-        global changeDiff
+    def explore_reward(self, r, s, a):
+        x = self.explorationbonus
+        x *= sqrt(self.agenttime - self.timeoflasttry[s][a])
+
+        return r + x
+
+    def agent_step(self, reward, sprime):  # onestep dyna
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
         qLearn(self, s, a, sprime, reward)
-        self.learnworldmodel(s, a, sprime, reward)
+        self.learn_model(s, a, sprime, reward)
         for i in range(self.nummodelsteps):
             for j in range(10 * self.nummodelsteps):
                 s = randrange(self.numstates)
                 a = randrange(self.numactions)
                 sp = self.getpredictednextstate(s, a)
                 r = self.getpredictedreward(s, a)
-                if r == None:
+                if r is None:
                     r = 0
-                if sp != None and sp != s:  # sp != s added
+                if sp is not None and sp != s:  # sp != s added
                     oldq = self.Q[s][a]
-                    qLearn(self, s, a, sp, \
-                           (r + (self.explorationbonus * \
-                                 sqrt(self.agenttime - self.timeoflasttry[s][
-                                     a]))))
+                    r = self.explore_reward(r, s, a)
+                    qLearn(self, s, a, sp, r)
+                    if abs(self.Q[s][a] - oldq) >= changeDiff:
+                        self.agentchangestate(s)
+                    break
+
+        return self.agentChoose(sprime)
+
+    def agent_end(self, reward):
+        s = self.recentsensations[0]
+        a = self.recentactions[0]
+
+        self.Q[s][a] += self.alpha * (reward - self.Q[s][a])
+
+        self.learn_model(s, a, 'terminal', reward)
+        for i in range(self.nummodelsteps):
+            for j in range(10 * self.nummodelsteps):
+                s = randrange(self.numstates)
+                a = randrange(self.numactions)
+                sp = self.getpredictednextstate(s, a)
+                r = self.getpredictedreward(s, a)
+                if r is None:
+                    r = 0
+                if sp is not None and sp != s:
+                    oldq = self.Q[s][a]
+                    r = self.explore_reward(r, s, a)
+                    qLearn(self, s, a, sp, r)
                     if abs(self.Q[s][a] - oldq) >= changeDiff:
                         self.agentchangestate(s)
                     break
@@ -402,8 +435,7 @@ class PreloadedDynaGridAgent(DynaGridAgent):
         setupAccurateModel(self.sim)
 
 
-def changeAgentLearnMethod(sim, newlearn):
-    env = sim.env
+def changeAgentLearnMethod(env, newlearn):
     # also need to reset agent before using new method
     print(("Setting up agent with new learning method:", newlearn))
     newagent = None
@@ -419,9 +451,8 @@ def changeAgentLearnMethod(sim, newlearn):
         newagent = SarsaGridAgent(env.numactions(), env.numstates())
     else:
         print(("Error: Learning method requested", newlearn, "not implemented"))
-    if newagent != None:
-        sim.agent = newagent
-        newagent.sim = sim
+
+    return newagent
 
 
 def saveQ(agent):
@@ -436,11 +467,7 @@ def restoreQ(agent):
             agent.Q[s][a] = agent.savedQ[s][a]
 
 
-def avi(sim=None):
-    global SIM
-    if sim == None:
-        sim = SIM
-    agent = sim.agent
+def avi(agent):
     saveQ(agent)
     keepon = True
     while keepon:
@@ -457,11 +484,7 @@ def avi(sim=None):
 
 
 ## Value Iteration
-def vi1(sim=None):
-    global SIM
-    if sim == None:
-        sim = SIM
-    agent = sim.agent
+def vi1(agent):
     saveQ(agent)
     for s in range(agent.numstates):
         agent.Q[s][0] = max(
@@ -472,9 +495,9 @@ def vi1(sim=None):
         for a in range(agent.numactions):
             sp = agent.getpredictednextstate(s, a)
             r = agent.getpredictedreward(s, a)
-            if r == None:
+            if r is None:
                 r = 0
-            if sp == None or sp == 'terminal':
+            if sp is None or sp == 'terminal':
                 spq = 0
             else:
                 spq = agent.savedQ[sp][0]
@@ -489,9 +512,6 @@ def vi1(sim=None):
 
 
 def ape(agent=None):
-    global AGENT
-    if agent == None:
-        agent = AGENT
     saveQ(agent)
     delta = 0
     for s in range(agent.numstates):
@@ -506,9 +526,6 @@ def ape(agent=None):
 
 
 def aperandom(agent=None):
-    global AGENT
-    if agent == None:
-        agent = AGENT
     saveQ(agent)
     delta = 0
     for s in range(agent.numstates):
@@ -529,59 +546,21 @@ def aperandom(agent=None):
     return delta < 0.0001
 
 
-def simcollect(sim, s, a, reward, nextsensation):
-    if nextsensation == 'terminal':  # new episode  reset appropriate counters
-        sim.episodestepnum = 0
-        sim.episodenum += 1
-    else:  # otherwise incr episode step
-        sim.episodestepnum += 1
-    sim.stepnum += 1
-
-
-def displayParameters(agent=None):
-    "Shows agent's parameters"
-    global SIM
-    if agent == None:
-        agent = SIM.agent
-    print("Current agent parameters:")
-    if isinstance(agent, QonestepGridAgent):
-        print("One step Q grid agent")
-    elif isinstance(agent, QlambdaGridAgent):
-        print("Q lambda with traces grid agent")
-    elif isinstance(agent, DynaGridAgent):
-        print("Dyna grid agent")
-    elif isinstance(agent, SarsaLambdaGridAgent):
-        print("Sarsa lambda grid agent")
-    elif isinstance(agent, SarsaGridAgent):
-        print("Sarsa grid agent")
-    else:
-        print(("Grid agent is of type", type(agent)))
-    print(("alpha:", agent.alpha, "  gamma:", agent.gamma, "  epsilon:",
-           agent.epsilon))
-    print(("lambda:", agent.agentlambda, "initial value:", agent.initialvalue))
-    if isinstance(agent, DynaGridAgent):
-        print(("exploration bonus:", agent.explorationbonus,
-               "  num model steps:", agent.nummodelsteps))
-
-
 def resetParameters(agent=None, alpha=None, gamma=None, epsilon=None,
                     agentlambda=None, \
                     explorationbonus=None, initialvalue=None):
     "Changes agent's parameters"
-    global SIM
-    if agent == None:
-        agent = SIM.agent
-    if alpha != None:
+    if alpha is not None:
         agent.alpha = alpha
-    if gamma != None:
+    if gamma is not None:
         agent.gamma = gamma
-    if epsilon != None:
+    if epsilon is not None:
         agent.epsilon = epsilon
-    if agentlambda != None:
+    if agentlambda is not None:
         agent.agentlambda = agentlambda
     if isinstance(agent, DynaGridAgent):
-        if explorationbonus != None:
+        if explorationbonus is not None:
             agent.explorationbonus = explorationbonus
-        if initialvalue != None:
+        if initialvalue is not None:
             agent.initialvalue = initialvalue
             # how about num model steps too?

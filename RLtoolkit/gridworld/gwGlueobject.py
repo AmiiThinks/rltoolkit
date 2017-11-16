@@ -5,8 +5,9 @@ Note: negative consumable rewards may not disappear when they are consumed until
 the square is redrawn for some other reason.
 """
 
-from .gwguimain import *
-from RLtoolkit.rl_glue import RLGlue
+from RLtoolkit.utilities  import strlist
+from .gwGlueguimain import *
+
 
 class ObjectGridworldView(ObjectGridworld, GridworldView):
     def __init__(self, parent, width=None, height=None,
@@ -66,7 +67,7 @@ class ObjectGridworldView(ObjectGridworld, GridworldView):
                                  'black'))
         else:  # consumable
             return (gdDrawWedge(self, dx + mid + 1, dy + mid + radius,
-                               2 * radius, 50, 80, color),
+                                2 * radius, 50, 80, color),
                     gdDrawArc(self, dx + mid + 1, dy + mid + radius, 2 * radius,
                               50, 80, 'black'))
 
@@ -88,24 +89,24 @@ class ObjectGridworldWindow(GridworldWindow):
         self.typebutton = gdAddButton(self, 'permanent', self.changeType, 320,
                                       buttony)
         self.addObjectMenu()
-        self.rl_glue = None
 
-    def makeNewSimulation(self, w=16, h=16, st=0, g=1, size=30,
+    @staticmethod
+    def makeNewSimulation(w=16, h=16, st=0, g=1, size=30,
                           agentclass=DynaGridAgent):
         s = ObjectGridworldWindow(width=w, height=h, startsquare=st,
                                   goalsquare=g, squaresize=size)
-        env = s.gridview
-        agent = agentclass(numstates=env.numsquares,
-                           numactions=env.numactions())
-
-        self.rl_glue = RLGlue(env, agent)
-        return self.rl_glue
+        s.environment = s.gridview
+        s.agent = agentclass(numstates=s.environment.numsquares,
+                             numactions=s.environment.numactions())
+        s.gridview.agent = s.agent
+        s.rl_init()
+        return s
 
     def readFile(self, filename):
         if filename is not None and filename != '':
             lst = readGridworld(filename)
             gridworld = self.genGridworld(lst)
-            setWindowTitleFromNamestring(gridworld, filename)
+            set_window_title_from_namestring(gridworld, filename)
 
     def writeFile(self, filename):
         olist = prepareWrite(self.gridview)
@@ -128,20 +129,22 @@ class ObjectGridworldWindow(GridworldWindow):
         if objects is not None:
             gview.objects = objects
         gview.updatedisplay = True
-        agent = agentclass(numstates=gview.numsquares,
-                           numactions=gview.numactions())
-        self.rl_glue = RLGlue(gview, agent)
-        return self.rl_glue
+
+        gridworld.environment = gview
+        gridworld.agent = agentclass(numstates=gview.numsquares,
+                                     numactions=gview.numactions())
+        gridworld.rl_init()
+        return gridworld
 
     def setObject(self):
-        "toggle between clicks meaning barriers and clicks meaning objects"
+        """toggle between clicks meaning barriers and clicks meaning objects"""
         if self.gridview.clickBarrier:
             self.setClickObject()
         else:
             self.setClickBarrier()
 
     def changeType(self):
-        "toggle between permanent and consumable objects"
+        """toggle between permanent and consumable objects"""
         if self.gridview.curtype == 'permanent':
             self.gridview.curtype = 'consumable'
         else:
@@ -172,24 +175,24 @@ class ObjectGridworldWindow(GridworldWindow):
         self.gridview.objIncr = incr
 
     def addObjectMenu(self):
-        omenu = gAddMenu(self, "Objects", \
-                         [["Click means Objects", self.setClickObject], \
-                          ["Click means Barriers", self.setClickBarrier], \
-                          ["Increment Object Value", self.incrObjValue], \
-                          ["Decrement Object Value", self.decrObjValue], \
+        omenu = gAddMenu(self, "Objects",
+                         [["Click means Objects", self.setClickObject],
+                          ["Click means Barriers", self.setClickBarrier],
+                          ["Increment Object Value", self.incrObjValue],
+                          ["Decrement Object Value", self.decrObjValue],
                           '---'])
-        gAddMenu(omenu, "Set object value range", \
+        gAddMenu(omenu, "Set object value range",
                  [["Object values -1.0 to 1.0",
-                   lambda: self.resetObjLimits(-1.0, 1.0)], \
+                   lambda: self.resetObjLimits(-1.0, 1.0)],
                   ["Object values -10.0 to 10.0",
-                   lambda: self.resetObjLimits(-10.0, 10.0)], \
+                   lambda: self.resetObjLimits(-10.0, 10.0)],
                   ["Object values -100.0 to 100.0",
                    lambda: self.resetObjLimits(-100.0, 100.0)]])
-        gAddMenu(omenu, "Set object value increment", \
+        gAddMenu(omenu, "Set object value increment",
                  [["Increment/Decrement by 0.1",
-                   lambda: self.resetObjIncr(0.1)], \
+                   lambda: self.resetObjIncr(0.1)],
                   ["Increment/Decrement by 1.0",
-                   lambda: self.resetObjIncr(1.0)], \
+                   lambda: self.resetObjIncr(1.0)],
                   ["Increment/Decrement by 10.0",
                    lambda: self.resetObjIncr(10.0)]])
 
@@ -200,6 +203,9 @@ def makeObjectGridworldSimulation(w=16, h=16, st=0, g=1, size=30,
                                   agentclass=DynaGridAgent):
     s = ObjectGridworldWindow(width=w, height=h, startsquare=st, goalsquare=g,
                               squaresize=size)
-    env = s.gridview
-    agent = agentclass(numstates=env.numsquares, numactions=env.numactions())
-    return RLGlue(env, agent)
+    s.environment = s.gridview
+    s.agent = agentclass(numstates=s.environment.numsquares,
+                         numactions=s.environment.numactions())
+    s.rl_init()
+    s.gridview.agent = s.agent
+    # return s

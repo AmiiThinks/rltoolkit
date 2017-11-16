@@ -22,6 +22,7 @@ class RLGlue:
         self.last_action = None
         self.num_steps = None
         self.num_episodes = None
+        self.num_ep_steps = None
 
     def rl_init(self):
         """Initial method called when RLGlue experiment is created"""
@@ -31,6 +32,7 @@ class RLGlue:
         self.total_reward = 0.0
         self.num_steps = 0
         self.num_episodes = 0
+        self.num_ep_steps = 0
 
     def rl_start(self):
         """Starts RLGlue experiment
@@ -38,6 +40,7 @@ class RLGlue:
         Returns:
             tuple: (state, action)
         """
+        self.num_ep_steps = 0
 
         last_state = self.environment.env_start()
         self.last_action = self.agent.agent_start(last_state)
@@ -87,7 +90,7 @@ class RLGlue:
                 indicating termination
         """
         self.total_reward = 0.0
-        self.num_steps = 1
+        self.num_ep_steps = 1
 
         this_observation = self.environment.env_start()
 
@@ -111,7 +114,9 @@ class RLGlue:
         if terminal:
             self.num_episodes += 1
         else:
-            self.num_steps += 1
+            self.num_ep_steps += 1
+
+        self.num_steps += 1
 
         return ro
 
@@ -123,19 +128,20 @@ class RLGlue:
             (float, state, action, Boolean): reward, last state observation,
                 last action, boolean indicating termination
         """
-        (reward, last_state, term) = self.environment.env_step(self.last_action)
+        (reward, state, term) = self.environment.env_step(self.last_action)
 
         self.total_reward += reward
 
         if term:
             self.num_episodes += 1
             self.agent.agent_end(reward)
-            roat = (reward, last_state, None, term)
+            roat = (reward, state, None, term)
         else:
-            self.num_steps += 1
-            self.last_action = self.agent.agent_step(reward, last_state)
-            roat = (reward, last_state, self.last_action, term)
+            self.last_action = self.agent.agent_step(reward, state)
+            roat = (reward, state, self.last_action, term)
 
+        self.num_ep_steps += 1
+        self.num_steps += 1
         return roat
 
     def rl_cleanup(self):
@@ -172,7 +178,7 @@ class RLGlue:
         """Runs an RLGlue episode
         
         Args:
-            max_steps_this_episode (Int): the maximum steps for the experiment to run in an episode
+            max_steps_this_episode (Int): max number of steps in this episode
         
         Returns:
             Boolean: if the episode should terminate

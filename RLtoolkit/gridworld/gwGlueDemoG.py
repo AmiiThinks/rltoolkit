@@ -19,7 +19,7 @@ The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else
 
 ###
 
-from .gwobject import *
+from .gwGlueobject import *
 
 
 def runDemo():
@@ -29,18 +29,8 @@ def runDemo():
 
 def runObjDemo():
     makeObjectGridworldSimulation(25, 25, 87, 15, 24)
-
     gMainloop()
 
-
-def makeObjectGridworldSimulation(w=16, h=16, st=0, g=1, size=30,
-                                  agentclass=DynaGridAgent):
-    s = ObjectGridworldWindow(width=w, height=h, startsquare=st, goalsquare=g,
-                              squaresize=size)
-    env = s.gridview
-    agent = agentclass(numstates=env.numsquares, numactions=env.numactions())
-    simInit(s, agent, env, False)
-    return s
 
 if __name__ == '__main__':
     runObjDemo()

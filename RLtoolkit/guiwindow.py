@@ -103,7 +103,7 @@ class MySimClass (SimulationWindow):
     def resetSimulation(self):
        ... reset agent info ...
        ... reset environment inf, including stepnum, episodestepnum and episodenum
-       self.wholeView()    # force drawing of entire simulation display
+       self.whole_view()    # force drawing of entire simulation display
 
 mysim = MySimClass(1000, 1000)
 gMainloop()
