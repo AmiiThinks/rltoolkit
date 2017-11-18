@@ -13,6 +13,7 @@ The barriers (squares you can't pass into) are overlaid on top of this.
 The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else.
 """
 
+from RLtoolkit.rl_glue import BaseAgent
 from RLtoolkit.utilities import egreedy
 
 from random import *
@@ -82,7 +83,7 @@ class GridAgent:
 
     def agent_learn(self, s, a, r, sp=None):
         next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
-        self.Q[s][a] += self.alpha * (r + next_val - oldq)
+        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
 
     def agent_step(self, reward, sprime):  # default is one step q
         s = self.recentsensations[0]
@@ -118,7 +119,7 @@ class SarsaGridAgent(GridAgent):
 
         return ap
 
-    def agent_step(self, reward, sprime):  # default is one step q
+    def agent_step(self, reward, sprime):
         s = self.recentsensations[0]
         a = self.recentactions[0]
 

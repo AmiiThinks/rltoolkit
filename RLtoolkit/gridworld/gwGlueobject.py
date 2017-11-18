@@ -114,27 +114,34 @@ class ObjectGridworldWindow(GridworldWindow):
         # str(self.gridview.objects)
         writeGridworld(olist, filename)
 
-    def genGridworld(self, alist, agentclass=DynaGridAgent):
+    @staticmethod
+    def genGridworld(alist, agentclass=DynaGridAgent):
         (width, height, startsquare, goalsquare,
          barrierp, wallp) = getgwinfo(alist)
         squaresize = alist.get('squaresize')
         objects = alist.get('objects')
         gridworld = ObjectGridworldWindow(width, height, startsquare,
                                           goalsquare, squaresize)
-        gview = gridworld.gridview
-        if barrierp is not None:
-            gview.barrierp = barrierp
-        if wallp is not None:
-            gview.wallp = wallp
-        if objects is not None:
-            gview.objects = objects
-        gview.updatedisplay = True
 
-        gridworld.environment = gview
-        gridworld.agent = agentclass(numstates=gview.numsquares,
-                                     numactions=gview.numactions())
+        gridworld.environment = gridworld.gridview
+        gridworld.agent = agentclass(numstates=gridworld.gridview.numsquares,
+                                     numactions=gridworld.gridview.numactions())
         gridworld.rl_init()
+        gridworld.gridview.agent = gridworld.agent
+
+        if barrierp is not None:
+            gridworld.gridview.barrierp = barrierp
+        if wallp is not None:
+            gridworld.gridview.wallp = wallp
+        if objects is not None:
+            gridworld.gridview.objects = objects
+            gridworld.gridview.updatedisplay = True
+
         return gridworld
+
+    @staticmethod
+    def new_gridworld_from_file(filename):
+        ObjectGridworldWindow.genGridworld(alist=readGridworld(gwFilename(filename)))
 
     def setObject(self):
         """toggle between clicks meaning barriers and clicks meaning objects"""
@@ -195,6 +202,46 @@ class ObjectGridworldWindow(GridworldWindow):
                    lambda: self.resetObjIncr(1.0)],
                   ["Increment/Decrement by 10.0",
                    lambda: self.resetObjIncr(10.0)]])
+
+    def addGridworldMenu(self):
+        m = gAddMenu(self, "Gridworld",
+                     [
+                         ['button', "Show Policy Arrows", self.showpolicyarrows,
+                          1, 0,
+                          lambda: self.toggleShowArrows()],
+                         ['button', "Show Value Colors", self.showvaluecolors,
+                          1, 0,
+                          lambda: self.toggleShowColors()],
+                         "---",
+                         ["6 x 8 gridworld",
+                          lambda: self.read_file(gwFilename('gw8x6'))],
+                         ["16 x 10 gridworld",
+                          lambda: self.read_file(gwFilename('gw16x10'))],
+                         ["16 x 10 cleared gridworld",
+                          lambda: self.read_file(gwFilename('gw16x10cleared'))],
+                         ["16 x 16 cleared gridworld",
+                          lambda: self.read_file(gwFilename('gw16x16'))],
+                         '---'])
+        gAddMenu(m, "New Gridworld",
+                 [["4x1", lambda: GridworldWindow.makeNewSimulation(4, 1, 0, 3, 80)],
+                  ["2x2", lambda: GridworldWindow.makeNewSimulation(2, 2, 0, 3, 160)],
+                  ["8x1", lambda: GridworldWindow.makeNewSimulation(8, 1, 0, 3, 80)],
+                  ["4x4", lambda: GridworldWindow.makeNewSimulation(4, 4, 0, 15, 80)],
+                  ["8x6", lambda: GridworldWindow.makeNewSimulation(8, 6, 0, 47, 70)],
+                  ["6x8", lambda: GridworldWindow.makeNewSimulation(6, 8, 0, 47, 70)],
+                  ["8x8", lambda: GridworldWindow.makeNewSimulation(8, 8, 0, 47, 70)],
+                  ["10x10", lambda: GridworldWindow.makeNewSimulation(10, 10, 0, 99, 60)],
+                  ["10x16", lambda: GridworldWindow.makeNewSimulation(10, 16, 0, 159, 40)],
+                  ["16x10", lambda: GridworldWindow.makeNewSimulation(16, 10, 0, 159, 60)],
+                  ["16x16", lambda: GridworldWindow.makeNewSimulation(16, 16, 0, 255, 40)],
+                  ["20x20", lambda: GridworldWindow.makeNewSimulation(20, 20, 0, 399, 30)],
+                  ["40x40",
+                   lambda: GridworldWindow.makeNewSimulation(40, 40, 0, 1599,
+                                                             20)],
+                  ["Maze single", lambda: ObjectGridworldWindow.new_gridworld_from_file(
+                      'gw25x25maze_single')],
+                  ["Maze", lambda: ObjectGridworldWindow.new_gridworld_from_file('gw25x25maze')],
+                  ])
 
 
 ###

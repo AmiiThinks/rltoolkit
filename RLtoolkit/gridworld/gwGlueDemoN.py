@@ -16,7 +16,7 @@ from .gwAgent import *
 from .gwio import *
 
 
-class GWDemoN:
+class GWDemoN(RLGlue):
     def __init__(self,
                  height=6,
                  width=8,
@@ -29,30 +29,29 @@ class GWDemoN:
                  initialvalue=.1,
                  verbose=False):
         self.verboseV = verbose
-        self.env = Gridworld(width, height, start, goal)
-        agent = DynaGridAgent(4, self.env.numstates(), epsilon, alpha, gamma,
+        env = Gridworld(width, height, start, goal)
+        agent = DynaGridAgent(4, self.environment.numstates(), epsilon, alpha, gamma,
                               initialvalue,
                               agentlambda)
-        self.rl_glue = RLGlue(self.env, agent)
-        self.rl_glue.rl_init()
-        
-        return self.rl_glue
+        RLGlue.__init__(env, agent)
+        self.rl_init()
 
     def episode(self, max_steps):
-        self.rl_glue.rl_episode(max_steps)
+        self.rl_episode(max_steps)
 
     def wall(self, square, action):
         if action in range(4):
-            if int(square) == square and 0 <= square < self.env.numsquares:
-                self.env.toggleWall(square, action)
+            if (int(square) == square and 0 <= square < 
+                    self.environment.numsquares):
+                self.environment.toggleWall(square, action)
             else:
                 print("Square '{}' is not a legal square".format(square))
         else:
             print("Action '{}' is not a legal action".format(action))
 
     def barrier(self, square):
-        if int(square) == square and 0 <= square < self.env.numsquares:
-            self.env.toggleBarrier(square)
+        if int(square) == square and 0 <= square < self.environment.numsquares:
+            self.environment.toggleBarrier(square)
         else:
             print("Square '{}' is not a legal square".format(square))
 
@@ -60,34 +59,34 @@ class GWDemoN:
         """Legal values for newlearn are 'onestepdyna', 'qlambdareplace',
                                          'onestepq' and 'sarsalambdatraces' """
         if newlearn == 'qlambdareplace':  # Q(lambda), replace traces
-            newagent = QlambdaGridAgent(self.env.numactions(),
-                                        self.env.numstates())
+            newagent = QlambdaGridAgent(self.environment.numactions(),
+                                        self.environment.numstates())
         elif newlearn == 'onestepq':  # one step Q learner
-            newagent = QonestepGridAgent(self.env.numactions(),
-                                         self.env.numstates())
+            newagent = QonestepGridAgent(self.environment.numactions(),
+                                         self.environment.numstates())
         elif newlearn == 'onestepdyna':  # one step dyna
-            newagent = DynaGridAgent(self.env.numactions(),
-                                     self.env.numstates())
+            newagent = DynaGridAgent(self.environment.numactions(),
+                                     self.environment.numstates())
         elif newlearn == 'sarsalambdatraces':  # Sarsa(lambda), replace traces
-            newagent = SarsaLambdaGridAgent(self.env.numactions(),
-                                            self.env.numstates())
+            newagent = SarsaLambdaGridAgent(self.environment.numactions(),
+                                            self.environment.numstates())
         elif newlearn == 'sarsa':  # Sarsa(lambda), replace traces
-            newagent = SarsaGridAgent(self.env.numactions(),
-                                      self.env.numstates())
+            newagent = SarsaGridAgent(self.environment.numactions(),
+                                      self.environment.numstates())
         else:
             newagent = None
 
         if newagent is not None:
-            self.rl_glue.agent = newagent
-            self.rl_glue.rl_init()
+            self.agent = newagent
+            self.rl_init()
 
     def read(self, file, alpha=0.5, gamma=0.9, epsilon=0.05, agentlambda=0.8, \
                explorationbonus=0, initialvalue=.1, verbose=False):
         if not os.path.isabs(file):
             file = gwFilename(file)
         lst = readGridworld(file)
-        self.genGridworldN(lst, alpha, gamma, epsilon, agentlambda,
-                           explorationbonus, initialvalue, verbose)
+        self.gen_gridworld_n(lst, alpha, gamma, epsilon, agentlambda,
+                             explorationbonus, initialvalue, verbose)
 
     def gen_gridworld_n(self, alist, alpha=0.5, gamma=0.9, epsilon=0.05,
                         agentlambda=0.8, explorationbonus=0, initialvalue=.1,
@@ -95,14 +94,16 @@ class GWDemoN:
         self.verboseV = verbose
         (width, height, startsquare, goalsquare,
          barrierp, wallp) = getgwinfo(alist)
-        self.env = Gridworld(width, height, startsquare, goalsquare)
+        env = Gridworld(width, height, startsquare, goalsquare)
         if barrierp is not None:
-            self.env.barrierp = barrierp
+            env.barrierp = barrierp
         if wallp is not None:
-            self.env.wallp = wallp
-        agent = agentclass(4, self.env.numstates(), epsilon, alpha, gamma,
-                           initialvalue, agentlambda)
-        self.rl_glue = RLGlue(self.env, agent)
+            env.wallp = wallp
+        self.agent = agentclass(4, self.environment.numstates(), epsilon,
+                                alpha, gamma, initialvalue, agentlambda)
+        self.environment = env
+        self.agent = agent
+        self.rl_init()
 
     def obj_read(self, file, alpha=0.5, gamma=0.9, epsilon=0.05,
                  agentlambda=0.8, explorationbonus=0, initialvalue=.1,
@@ -120,26 +121,28 @@ class GWDemoN:
         (width, height, startsquare, goalsquare,
          barrierp, wallp) = getgwinfo(alist)
         objects = alist.get('objects')
-        self.env = ObjectGridworld(width, height, startsquare, goalsquare)
+        self.environment = ObjectGridworld(width, height, startsquare,
+                                           goalsquare)
         if barrierp is not None:
-            self.env.barrierp = barrierp
+            self.environment.barrierp = barrierp
         if wallp is not None:
-            self.env.wallp = wallp
+            self.environment.wallp = wallp
         if objects is not None:
-            self.env.objects = objects
-        agent = DynaGridAgent(4, self.env.numstates(), epsilon, alpha, gamma,
-                              initialvalue, agentlambda)
-        self.rl_glue = RLGlue(self.env, agent)
+            self.environment.objects = objects
+
+        self.agent = DynaGridAgent(4, self.environment.numstates(), epsilon,
+                                   alpha, gamma, initialvalue, agentlambda)
+        self.rl_init()
 
     def display_par(self, agent=None):
         if agent is None:
-            agent = self.rl_glue.agent
+            agent = self.agent
         displayParameters(agent)
 
     def set_par(self, agent=None, alpha=None, gamma=None, epsilon=None,
                 agentlambda=None, explorationbonus=None, initialvalue=None):
         if agent is None:
-            agent = self.rl_glue.agent
+            agent = self.agent
         resetParameters(agent, alpha, gamma, epsilon, agentlambda,
                         explorationbonus, initialvalue)
 

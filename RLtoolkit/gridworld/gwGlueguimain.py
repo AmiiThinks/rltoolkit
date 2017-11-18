@@ -374,7 +374,7 @@ class GridworldWindow(SimulationWindow):
         self.showpolicyarrows.set(1)
         self.showvaluecolors = gIntVar()
         self.showvaluecolors.set(1)
-        self.gridworld_menu = self.addGridworldMenu()
+        self.addGridworldMenu()
         self.addAgentMenu()
         self.addModelMenu()
         self.readtitle = "Choose Gridworld to Open"
@@ -433,7 +433,8 @@ class GridworldWindow(SimulationWindow):
         olist = prepareWrite(self.gridview)
         writeGridworld(olist, filename)
 
-    def genGridworld(self, alist, agentclass=DynaGridAgent):
+    @staticmethod
+    def genGridworld(alist, agentclass=DynaGridAgent):
         width, height, startsquare, goalsquare, barrierp, wallp = getgwinfo(
             alist)
         squaresize = alist.get('squaresize')
@@ -642,7 +643,8 @@ class GridworldWindow(SimulationWindow):
                   ["16x16", lambda: GridworldWindow.makeNewSimulation(16, 16, 0, 255, 40)],
                   ["20x20", lambda: GridworldWindow.makeNewSimulation(20, 20, 0, 399, 30)],
                   ["40x40",
-                   lambda: GridworldWindow.makeNewSimulation(40, 40, 0, 1599, 20)]])
+                   lambda: GridworldWindow.makeNewSimulation(40, 40, 0, 1599,
+                                                             20)]])
 
     def addModelMenu(self):
         gAddMenu(self, "Model",
@@ -671,3 +673,4 @@ def makeGridworldSimulation(w=16, h=16, st=0, g=1, size=30,
     s.rl_init()
 
     return s
+
