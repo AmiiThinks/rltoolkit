@@ -74,9 +74,10 @@ class ObjectGridworldView(ObjectGridworld, GridworldView):
 
 class ObjectGridworldWindow(GridworldWindow):
     def __init__(self, width=None, height=None, startsquare=None,
-                 goalsquare=None, squaresize=None):
+                 goalsquare=None, squaresize=None,
+                 gridview_class=ObjectGridworldView):
         GridworldWindow.__init__(self, width, height, startsquare, goalsquare,
-                                 squaresize, ObjectGridworldView)
+                                 squaresize, gridview_class)
         x1, y1, x2, y2 = gdGetViewport(self)
         gdSetViewport(self, x1, y1, x2, y2 + 30)  # add enough for buttons
         buttony = self.wheight - 30
@@ -100,7 +101,7 @@ class ObjectGridworldWindow(GridworldWindow):
                              numactions=s.environment.numactions())
         s.gridview.agent = s.agent
         s.rl_init()
-        return s
+        s.whole_view()
 
     def readFile(self, filename):
         if filename is not None and filename != '':
@@ -137,11 +138,12 @@ class ObjectGridworldWindow(GridworldWindow):
             gridworld.gridview.objects = objects
             gridworld.gridview.updatedisplay = True
 
-        return gridworld
+        gridworld.whole_view()
 
     @staticmethod
     def new_gridworld_from_file(filename):
-        ObjectGridworldWindow.genGridworld(alist=readGridworld(gwFilename(filename)))
+        ObjectGridworldWindow.genGridworld(alist=readGridworld(
+            gwFilename(filename)))
 
     def setObject(self):
         """toggle between clicks meaning barriers and clicks meaning objects"""
@@ -255,4 +257,4 @@ def makeObjectGridworldSimulation(w=16, h=16, st=0, g=1, size=30,
                          numactions=s.environment.numactions())
     s.rl_init()
     s.gridview.agent = s.agent
-    # return s
+    s.whole_view()

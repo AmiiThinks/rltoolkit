@@ -32,12 +32,12 @@ class SimulationWindow(Gwindow, RLGlue):
                                          self.single_episode, 125, 0, self.goff)
         if wwidth < 350:  # make the window longer and add the buttons there
             gdSetViewportR(self.status, 0, wheight, wwidth, 60)
-            self.fastbutton = gdAddButton(self.status, "Faster ",
+            self.fastbutton = gdAddButton(self.status, "Faster",
                                           self.sim_faster, 5, 30, self.goff)
             gdAddButton(self.status, "Slower", self.sim_slower, 80, 30,
                         self.goff)
         else:  # add the buttons horizontally
-            self.fastbutton = gdAddButton(self.status, "Faster ",
+            self.fastbutton = gdAddButton(self.status, "Faster",
                                           self.sim_faster, 210, 0, self.goff)
             gdAddButton(self.status, "Slower", self.sim_slower, 285, 0,
                         self.goff)
@@ -50,13 +50,19 @@ class SimulationWindow(Gwindow, RLGlue):
         self.writetitle = "Save File As"
         self.initialdir = None
 
-        # self.whole_view = self.whole_view
-        # self.sim_stop_go = self.sim_stop_go
-        # self.single_step = self.single_step
-        # self.single_episode = self.single_episode
-        # self.sim_faster = self.sim_faster
-        # self.sim_slower = self.sim_slower
-        # self.sim_display = self.sim_display
+        # make the window longer and add the buttons there
+        gdSetViewportR(self.status, 0, wheight, wwidth, 60)
+        self.behaviour_agent = gdAddButton(self.status, "Behaviour Agent",
+                                           self.switch_agents, 5, 30, self.goff)
+        gButtonDisable(self.behaviour_agent)
+        self.task_agent = gdAddButton(self.status, "Task Agent",
+                                      self.switch_agents, 134, 30, self.goff)
+        self.pval_button = gdAddButton(self.status, "Policy Value",
+                             self.get_policy_value, 239, 30, self.goff)
+        self.nrmse_button = gdAddButton(self.status, "NRMSE", self.get_nrmse,
+                                        343, 30, self.goff)
+
+        self.old_agent = None
 
     def gDrawView(self):
         if self.updatedisplay:
@@ -97,24 +103,45 @@ class SimulationWindow(Gwindow, RLGlue):
             gButtonDisable(self.stepbutton)
             gButtonDisable(self.episodebutton)
             gSetTitle(self.gobutton, "Stop")
-            gMakeVisible(self)
-            self.rl_start()
+            if self.num_ep_steps == 0:  # start RL-Glue if it isn't already
+                self.rl_start()
+            self.whole_view()
             self.simstep()
 
     def single_step(self):
-        self.rl_step()
+        if not self.simulationrunning:
+            self.simulationrunning = True
+            self.rl_start()
+        _, _, _, term = self.rl_step()
         self.whole_view()
+        if term:
+            self.simulationrunning = False
 
     def epstep(self):
         if self.simulationrunning:
             # one step at a time - must check for episode termination
             _, _, _, terminal = self.rl_step()
+            # (reward, state, term) = self.environment.env_step(self.last_action)
+            #
+            # self.total_reward += reward
+            #
+            # if term:
+            #     self.num_episodes += 1
+            #     self.agent.agent_end(reward, True)
+            # else:
+            #     self.last_action = self.agent.agent_step(reward, state, True)
+            #
+            # self.num_ep_steps += 1
+            # self.t += 1
+            # terminal = term
+
             self.sim_display()
             if not terminal:  # end of episode
                 gCheckEvents(self, self.epstep)
                 # self.after(1, self.epstep)
                 # using tk method after to force it to check for stop event
             else:
+                self.rl_start()
                 self.sim_stop_go()  # reset buttons on display
 
     def single_episode(self):
@@ -125,6 +152,38 @@ class SimulationWindow(Gwindow, RLGlue):
             self.simulationrunning = True
             self.rl_start()  # force start of episode
             self.epstep()
+
+    def switch_agents(self):
+        if self.old_agent is None:
+            try:
+                assert self.agent.task_agent is not None
+                import copy
+                self.old_agent = copy.deepcopy(self.agent)
+                self.agent = self.agent.task_agent
+                gButtonDisable(self.task_agent)
+                gButtonEnable(self.behaviour_agent)
+            except AssertionError:
+                print("No task agent to switch to.")
+        else:
+            self.agent = self.old_agent
+            self.old_agent = None
+            gButtonDisable(self.behaviour_agent)
+            gButtonEnable(self.task_agent)
+        self.whole_view()
+
+    def get_nrmse(self):
+        try:
+            print(self.nrmse(self))
+        except AttributeError as e:
+            print("No NRMSE function found.")
+
+    def get_policy_value(self):
+        try:
+            gButtonDisable(self.pval_button)
+            print(self.pval(self))
+            gButtonEnable(self.pval_button)
+        except AttributeError:
+            print("No Policy Value function found.")
 
     def sim_faster(self):
         if self.displaypause == 0:

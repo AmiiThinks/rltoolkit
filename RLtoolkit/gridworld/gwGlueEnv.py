@@ -37,11 +37,11 @@ class Gridworld:
         self.barrierp = [False for _ in range(self.numsquares)]
         self.wallp = [[False for _ in range(4)] for _ in range(self.numsquares)]
         for v in range(self.height):  # setup walls at gridworld borders
-            self.toggleWall(self.squarefromhv(0, v), 3)
-            self.toggleWall(self.squarefromhv(self.width - 1, v), 1)
+            self.toggleWall(self.squarefromhv(0, v), 2)
+            self.toggleWall(self.squarefromhv(self.width - 1, v), 3)
         for h in range(self.width):
             self.toggleWall(self.squarefromhv(h, 0), 0)
-            self.toggleWall(self.squarefromhv(h, self.height - 1), 2)
+            self.toggleWall(self.squarefromhv(h, self.height - 1), 1)
 
     def env_start(self):
         self.state = self.startsquare
@@ -71,7 +71,7 @@ class Gridworld:
         return square % self.width
 
     def squarev(self, square):
-        return square // self.width
+        return int(square / self.width)
 
     def squarefromhv(self, h, v):
         s = v * self.width + h
@@ -84,16 +84,16 @@ class Gridworld:
         return sqs
 
     def neighboringSquare(self, square, action):
-        h = self.squareh(square)
-        v = self.squarev(square)
-        if action == 0:  # left
-            return self.squarefromhv(h, (v - 1) % self.height)
-        elif action == 1:  # up
-            return self.squarefromhv((h + 1) % self.width, v)
-        elif action == 2:  # right
-            return self.squarefromhv(h, (v + 1) % self.height)
-        else:  # down
-            return self.squarefromhv((h - 1) % self.width, v)
+        h = self.squareh(square)  # horizontal
+        v = self.squarev(square)  # vertical
+        if action == 0:
+            return self.squarefromhv(h, (v - 1) % self.height)  # up
+        elif action == 1:
+            return self.squarefromhv(h, (v + 1) % self.height)  # down
+        elif action == 2:
+            return self.squarefromhv((h - 1) % self.width, v)  # left
+        else:
+            return self.squarefromhv((h + 1) % self.width, v)  # right
 
     def gridworldnextstate(self, s, a):
         if self.wallp[s][a]:

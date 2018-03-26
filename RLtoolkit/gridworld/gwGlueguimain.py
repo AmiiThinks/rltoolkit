@@ -69,6 +69,8 @@ class GridworldView(Gridworld, Gview):
         self.wallDisplay()
 
         self.agent = None
+        self.task_agent_colors = False
+
 
     def gdClickEventHandler(self, dh, dv):  # GridworldView environment
         if self.dhdvInGridworldview(dh, dv):
@@ -86,13 +88,13 @@ class GridworldView(Gridworld, Gview):
                            (scaledrelativev > .15) and
                            (scaledrelativev < .85))
         if relativeh < 4:
-            action = 3  # left
+            action = 2  # left
         elif relativev < 4:
             action = 0  # up
         elif relativeh > (size - 4):
-            action = 1  # right
+            action = 3  # right
         elif relativev > (size - 4):
-            action = 2  # down
+            action = 1  # down
         else:
             action = None
 
@@ -187,6 +189,9 @@ class GridworldView(Gridworld, Gview):
     def squareDrawContents(self, agent, square):
         # figure out better way to see what changes - dont redraw all
         if self.update:
+            # if self.task_agent_colors:
+            #     self.squareDrawColor(agent.task_agent, square)
+            # else:
             self.squareDrawColor(agent, square)
             self.squareDrawMore(agent, square)
             self.squareDrawStartGoal(agent, square)
@@ -215,8 +220,46 @@ class GridworldView(Gridworld, Gview):
         elif square == self.goalsquare:
             i = 510
         else:
-            i = 255 + int(minmax(agent.statevalue(square), -1, 1) * 255)
-        return self.colors[i]
+            # value_range = np.max(agent.Q) - np.min(agent.Q)
+            # if value_range:
+            #     min_zero = agent.statevalue(square) - np.min(agent.Q)
+            #     normalized_value = min_zero / max(value_range, 0.000001)
+            #     min_neg_one = (normalized_value * 2) - 1
+            # else:
+            #     min_neg_one = 0
+
+            # val = agent.statevalue(square)
+            # if np.max(agent.Q) <= 0:
+            #     if val == 0:
+            #         val_adj = 0
+            #     else:
+            #         e_val = (val * 10 + 1) / (1 - (val * 10 + 1))
+            #         if e_val < 0:
+            #             val_adj = 0
+            #         else:
+            #             val_adj = np.log(e_val) / 7
+            #     # print(val_adj)
+            #
+            #     val_adj = max(min(val_adj, 1), -1)
+            # elif val <= 0:
+            #     val_adj = -np.sqrt(2 * -val)
+            # else:
+            #     val_adj = np.sqrt(val / 5)
+            #
+            # # print(val, val_adj)
+            # i = 255 + int(val_adj * 255)
+            # # i = 255 + int(agent.statevalue(square) / 6 * 255)
+            # i = max(0, i)
+
+            val = agent.statevalue(square)
+            i = int(val * 255/5) + 255
+            i = max(0, min(i, 510))
+
+        try:
+            return self.colors[i]
+        except IndexError:
+            print(i, val)
+            raise
 
     def drawWall(self, square, action):
         h = self.squaredh(square)
@@ -226,11 +269,12 @@ class GridworldView(Gridworld, Gview):
         if action == 0:
             return gdDrawLineR(self, h + 1, v + 1, size - 2, 0, color)
         elif action == 1:
-            return gdDrawLineR(self, h + size - 1, v + 1, 0, size - 2, color)
-        elif action == 2:
             return gdDrawLineR(self, h + 1, v + size - 1, size - 2, 0, color)
-        elif action == 3:
+        elif action == 2:
             return gdDrawLineR(self, h + 1, v + 1, 0, size - 2, color)
+        elif action == 3:
+            return gdDrawLineR(self, h + size - 1, v + 1, 0, size - 2, color)
+
 
     def setState(self, newstate):
         self.state = newstate
@@ -288,11 +332,11 @@ class GridworldView(Gridworld, Gview):
         if action == 0:
             return gdDrawArrow(self, x, y, x, y - length, self.arrowcolor)
         elif action == 1:
-            return gdDrawArrow(self, x, y, x + length, y, self.arrowcolor)
-        elif action == 2:
             return gdDrawArrow(self, x, y, x, y + length, self.arrowcolor)
-        elif action == 3:
+        elif action == 2:
             return gdDrawArrow(self, x, y, x - length, y, self.arrowcolor)
+        elif action == 3:
+            return gdDrawArrow(self, x, y, x + length, y, self.arrowcolor)
 
     def setArrowDisplay(self, newdisplayp):
         self.arrowdisplay = newdisplayp
@@ -309,36 +353,37 @@ class GridworldView(Gridworld, Gview):
         if direction == 0:
             return gdDrawLine(self, x, y, x, y - length, self.arrowcolor)
         elif direction == 1:
-            return gdDrawLine(self, x, y, x + length, y, self.arrowcolor)
-        elif direction == 2:
             return gdDrawLine(self, x, y, x, y + length, self.arrowcolor)
-        elif direction == 3:
+        elif direction == 2:
             return gdDrawLine(self, x, y, x - length, y, self.arrowcolor)
+        elif direction == 3:
+            return gdDrawLine(self, x, y, x + length, y, self.arrowcolor)
 
     def drawSquareArrowhead(self, square, direction, length):
         halfsquaresize = self.squaresize // 2
         x = self.squaredh(square) + halfsquaresize
         y = self.squaredv(square) + halfsquaresize
         if length < 0:
-            direction = direction + 2 // 4  # opposite direction
-        length = int(min(1, float(length) / self.maxarrowsize) * halfsquaresize)
+            direction = (1 - direction) % 4  # opposite direction
+        length = int(min(1.0, float(length) / self.maxarrowsize) *
+                     halfsquaresize)
         if direction == 0:
             return gdDrawArrowhead(self, x, y, x, y - length, 0, 0.25,
                                    self.arrowcolor)
         elif direction == 1:
-            return gdDrawArrowhead(self, x, y, x + length, y, 0, 0.25,
-                                   self.arrowcolor)
-        elif direction == 2:
             return gdDrawArrowhead(self, x, y, x, y + length, 0, 0.25,
                                    self.arrowcolor)
-        elif direction == 3:
+        elif direction == 2:
             return gdDrawArrowhead(self, x, y, x - length, y, 0, 0.25,
+                                   self.arrowcolor)
+        elif direction == 3:
+            return gdDrawArrowhead(self, x, y, x + length, y, 0, 0.25,
                                    self.arrowcolor)
 
     # Gridworld utilities
 
     def inverseaction(self, action):
-        return action + 2 % 4
+        return (1 - action) % 4
 
     def squaredv(self, square):
         return self.minv + (self.squaresize * self.squarev(square))
@@ -374,6 +419,9 @@ class GridworldWindow(SimulationWindow):
         self.showpolicyarrows.set(1)
         self.showvaluecolors = gIntVar()
         self.showvaluecolors.set(1)
+        # self.showtaskagentcolors = gIntVar()
+        # self.showtaskagentcolors.set(0)
+        # self.task_agent_colors = False
         self.addGridworldMenu()
         self.addAgentMenu()
         self.addModelMenu()
@@ -397,6 +445,7 @@ class GridworldWindow(SimulationWindow):
 
     def update_sim_display(self):
         if self.agent is not None:
+            # self.display(list(range(self.agent.numstates)))
             if self.num_ep_steps == 0:
                 self.display(list(range(self.agent.numstates)))
             else:
@@ -454,7 +503,7 @@ class GridworldWindow(SimulationWindow):
         gridworld.rl_init()
         gview.agent = gridworld.agent
 
-        return gridworld
+        gridworld.whole_view()
 
     def reset_simulation(self):
         self.rl_init()
@@ -471,14 +520,15 @@ class GridworldWindow(SimulationWindow):
         s.rl_init()
         s.gridview.agent = s.agent
 
-        return s
+        s.whole_view()
 
     # Agent stuff
 
     def changeagent(self, new_name):
         new_agent = changeAgentLearnMethod(self.environment, new_name)
         self.agent = new_agent
-        self.rl_init()
+        self.agent.agent_init()
+        self.rl_start()
         self.gridview.agent = self.agent
         self.whole_sim_display()
 
@@ -580,6 +630,10 @@ class GridworldWindow(SimulationWindow):
         self.gridview.colorsdisplay = not self.gridview.colorsdisplay
         self.whole_sim_display()
 
+    # def toggleTaskAgentColors(self):
+    #     self.task_agent_colors = not self.task_agent_colors
+    #     self.whole_sim_display()
+
     # model stuff
 
     def correctModel(self):
@@ -619,6 +673,10 @@ class GridworldWindow(SimulationWindow):
                          ['button', "Show Value Colors", self.showvaluecolors,
                           1, 0,
                           lambda: self.toggleShowColors()],
+                         # ['button', "Show Task Agent Colors",
+                         #  self.showtaskagentcolors,
+                         #  1, 0,
+                         #  lambda: self.toggleTaskAgentColors()],
                          "---",
                          ["6 x 8 gridworld",
                           lambda: self.read_file(gwFilename('gw8x6'))],

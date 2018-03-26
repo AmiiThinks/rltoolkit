@@ -4,6 +4,8 @@ from math import *
 import operator
 from functools import reduce
 
+import numpy as np
+
 
 def minmax(item, limit1, limit2=None):
     "Bounds item to between limit1 and limit2 (or -limit1)"
@@ -118,11 +120,13 @@ def randompolicy(numactions):
 
 
 def egreedy(epsilon, numactions, valuelist):
-    "Picks an action based on the epsilon greedy policy"
-    if random.random() < epsilon:
-        return randompolicy(numactions)
+    if np.random.random() < epsilon:
+        action = np.random.randint(numactions)
     else:
-        return argmaxrandom(valuelist)
+        shuf = np.random.permutation(numactions)
+        action = shuf[np.argmax(np.asarray(valuelist)[shuf])]
+
+    return action
 
 
 def argmax(list):
@@ -151,13 +155,14 @@ def argmin(list):
 
 def argmaxrandom(values):
     "Returns the index of the maximum entry in the list of values"
+    values = list(reversed(values))
     best_index = 0
     best_value = values[0]
     numties = 1
-    for i in range(len(values)):
+    for i in range(1, len(values)):
         val = values[i]
         if val < best_value:  # our older value is better
-            pass
+            continue
         elif val > best_value:  # the new value is better
             best_index = i
             best_value = val

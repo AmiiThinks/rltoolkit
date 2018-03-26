@@ -13,20 +13,21 @@ The barriers (squares you can't pass into) are overlaid on top of this.
 The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else.
 """
 
-from RLtoolkit.rl_glue import BaseAgent
 from RLtoolkit.utilities import egreedy
 
 from random import *
 from math import *
 
-changeDiff = 0.01  # difference in Q values needed to notice change
+import numpy as np
+
+changeDiff = 0.0001  # difference in Q values needed to notice change
 
 
 ###
 
 class GridAgent:
-    def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5,
-                 gamma=.9, initialvalue=0.1, agentlambda=0.8):
+    def __init__(self, numactions, numstates, epsilon=0, alpha=0.5,
+                 gamma=.9, initialvalue=0.1, agentlambda=0.8, *args, **kwargs):
         self.alpha = alpha
         self.initialvalue = initialvalue
         self.gamma = gamma
@@ -35,20 +36,21 @@ class GridAgent:
         self.numactions = numactions
         self.numstates = numstates
         self.Q = None
-        self.savedq = None
         self.changedstates = None
         self.recentsensations = None
         self.recentactions = None
+        self.z = None
+        self.v_old = None
 
     def agentchangestate(self, s):
         if s not in self.changedstates:
             self.changedstates.append(s)
 
     def agent_init(self):
-        self.Q = [[self.initialvalue for _ in range(self.numactions)]
-                  for _ in range(self.numstates)]
-        self.savedq = [[self.initialvalue for _ in range(self.numactions)]
-                       for _ in range(self.numstates)]
+        self.Q = (np.zeros((self.numstates, self.numactions))
+                  + self.initialvalue)
+        self.z = np.zeros((self.numstates, self.numactions))
+        self.v_old = 0
         self.changedstates = []
         self.recentsensations = []
         self.recentactions = []
@@ -81,23 +83,24 @@ class GridAgent:
             self.recentactions = [self.policy(sprime)] + self.recentactions
             return self.recentactions[0]
 
-    def agent_learn(self, s, a, r, sp=None):
+    def agent_learn(self, s, a, r, sp=None, verbose=False):
         next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
         self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
 
-    def agent_step(self, reward, sprime):  # default is one step q
+    def agent_step(self, reward, sprime, verbose=False):  # default is one
+        # step q
         s = self.recentsensations[0]
         a = self.recentactions[0]
 
-        self.agent_learn(s, a, reward, sprime)
+        self.agent_learn(s, a, reward, sprime, verbose)
 
         return self.agentChoose(sprime)
 
-    def agent_end(self, reward):
+    def agent_end(self, reward, verbose=False):
         s = self.recentsensations[0]
         a = self.recentactions[0]
 
-        self.agent_learn(s, a, reward)
+        self.agent_learn(s, a, reward, verbose=verbose)
 
 
 class SarsaGridAgent(GridAgent):
@@ -163,24 +166,35 @@ class SarsaLambdaGridAgent(SarsaGridAgent):
 
 
 class QlambdaGridAgent(GridAgent):
-    """replacing traces"""
-    def agent_learn(self, s, a, r, sp=None):
-        trace = 1
-        i = 0
+    """accumulating traces, greedy target policy"""
 
-        next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
-        alphadelta = self.alpha * (r + next_val - self.Q[s][a])
+    def agent_learn(self, s, a, r, sp=None, verbose=False):
+        phi = np.zeros_like(self.Q, dtype=np.bool)
+        phi[s][a] += True
 
-        while trace > 0.01 and i < len(self.recentactions):
-            s = self.recentsensations[i]
-            a = self.recentactions[i]
-            if s not in self.recentsensations[0:i]:
-                oldq = self.Q[s][a]
-                self.Q[s][a] += alphadelta * trace
-                if abs(self.Q[s][a] - oldq) > changeDiff:
-                    self.agentchangestate(s)
-            trace = trace * self.gamma * self.agentlambda
-            i += 1
+        if np.max(self.Q[s]) == self.Q[s][a]:  # use traces if action was greedy
+            self.z *= self.gamma * self.agentlambda
+        else:
+            self.z *= 0
+
+        self.z += phi
+
+        next_val = 0 if sp is None else self.gamma * np.max(self.Q[sp])
+        oldq = np.copy(self.Q)
+        self.Q += self.alpha * (r + next_val - self.Q[s][a]) * self.z
+
+        if verbose:
+            print(s, r, r + next_val - self.Q[s][a], self.actionvalues(s))
+            if sp is None:
+                print("Terminal Reward: {}".format(r))
+                try:
+                    print("Max Avg: {}".format(self.max_avg_reward))
+                    print("Current Avg: {}".format(self.task_agent.avg_reward))
+                except AttributeError:
+                    pass
+
+        changed_states = set(np.where(np.abs(self.Q - oldq) > changeDiff)[0])
+        self.changedstates = list(changed_states.union(set(self.changedstates)))
 
 
 class QonestepGridAgent(GridAgent):
@@ -192,6 +206,28 @@ class QonestepGridAgent(GridAgent):
         self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
         if abs(self.Q[s][a] - oldq) > changeDiff:
             self.agentchangestate(s)
+
+
+class ABQ(GridAgent):
+    def agent_learn(self, s, a, r, sp=None):
+        phi = np.zeros_like(self.Q)
+        phi[s][a] += 1
+        phi_prime = None
+        if sp is not None:
+            phi_prime = np.zeros_like(self.Q)
+            phi_prime[s][a] += 1
+
+        self.z *= self.gamma * self.agentlambda
+        self.z += phi
+
+        next_val = 0 if sp is None else self.gamma * np.max(self.Q[s])
+        oldq = np.copy(self.Q)
+        self.Q += self.alpha * (r + next_val - self.Q[s][a]) * self.z
+
+        changed_states = set(
+            np.where(np.abs(self.Q - oldq) > changeDiff)[0])
+        self.changedstates = list(
+            changed_states.union(set(self.changedstates)))
 
 
 ### Forward Models
@@ -413,7 +449,6 @@ class DynaGridAgent(DeterministicForwardModel, GridAgent):
                     if abs(self.Q[s][a] - oldq) >= changeDiff:
                         self.agentchangestate(s)
                     break
-
 
 class ReducedDynaGridAgent(DynaGridAgent):
     def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5, \

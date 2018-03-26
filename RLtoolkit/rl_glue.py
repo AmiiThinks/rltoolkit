@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Glues together an experiment, agent, and environment.
 """
 
@@ -9,11 +7,11 @@ from abc import ABCMeta, abstractmethod
 
 
 class RLGlue:
-    """RLGlue class
+    """RLGlue class.
 
     args:
-        env_name (string): the name of the module where the Environment class can be found
-        agent_name (string): the name of the module where the Agent class can be found
+        env_obj: an object that implements BaseEnvironment
+        agent_obj: an object that implements AgentEnvironment
     """
 
     def __init__(self, env_obj, agent_obj):
@@ -27,17 +25,17 @@ class RLGlue:
         self.num_ep_steps = None
 
     def rl_init(self):
-        """Initial method called when RLGlue experiment is created"""
-        self.environment.env_init()
-        self.agent.agent_init()
-
-        self.total_reward = 0.0
+        self.total_reward = 0
+        self.last_action = 0
         self.num_steps = 0
         self.num_episodes = 0
         self.num_ep_steps = 0
 
+        self.agent.agent_init()
+        self.environment.env_init()
+
     def rl_start(self):
-        """Starts RLGlue experiment
+        """Starts RLGlue experiment.
 
         Returns:
             tuple: (state, action)
@@ -51,42 +49,10 @@ class RLGlue:
 
         return observation
 
-    def rl_agent_start(self, observation):
-        """Starts the agent.
-
-        Args:
-            observation: The first observation from the environment
-
-        Returns:
-            The action taken by the agent.
-        """
-        return self.agent.agent_start(observation)
-
-    def rl_agent_step(self, reward, observation):
-        """Step taken by the agent
-        
-        Args:
-            reward (float): the last reward the agent received for taking the
-                last action.
-            observation : the state observation the agent receives from the
-                environment.
-
-        Returns:
-            The action taken by the agent.
-        """
-        return self.agent.agent_step(reward, observation)
-
-    def rl_agent_end(self, reward):
-        """Run when the agent terminates
-
-        Args:
-            reward (float): the reward the agent received when terminating
-        """
-        self.agent.agent_end(reward)
-
     def rl_env_start(self):
-        """Starts RL-Glue environment.
-        
+        """Useful when manually specifying agent actions (for debugging). Starts
+        RL-Glue environment.
+
         Returns:
             (float, state, Boolean): reward, state observation, boolean
                 indicating termination
@@ -99,11 +65,12 @@ class RLGlue:
         return this_observation
 
     def rl_env_step(self, action):
-        """Step taken by the environment based on action from agent
+        """Useful when manually specifying agent actions (for debugging).Takes a
+        step in the environment based on an action.
 
         Args:
             action: Action taken by agent.
-        
+
         Returns:
             (float, state, Boolean): reward, state observation, boolean
                 indicating termination.
@@ -123,8 +90,7 @@ class RLGlue:
         return ro
 
     def rl_step(self):
-        """Step taken by RLGlue, takes environment step and either step or
-            end by agent.
+        """Takes a step in the RLGlue experiment.
 
         Returns:
             (float, state, action, Boolean): reward, last state observation,
@@ -146,42 +112,14 @@ class RLGlue:
         self.num_steps += 1
         return roat
 
-    def rl_cleanup(self):
-        """Cleanup done at end of experiment."""
-        self.environment.env_cleanup()
-        self.agent.agent_cleanup()
-
-    def rl_agent_message(self, message):
-        """Message passed to communicate with agent during experiment
-        
-        Args:
-            message: the message (or question) to send to the agent
-
-        Returns:
-            The message back (or answer) from the agent
-
-        """
-
-        return self.agent.agent_message(message)
-
-    def rl_env_message(self, message):
-        """Message passed to communicate with environment during experiment
-        
-        Args:
-            message: the message (or question) to send to the environment
-
-        Returns:
-            The message back (or answer) from the environment
-
-        """
-        return self.environment.env_message(message)
-
     def rl_episode(self, max_steps_this_episode):
-        """Runs an RLGlue episode
-        
+        """Convenience function to run an episode.
+
         Args:
-            max_steps_this_episode (Int): max number of steps in this episode
-        
+            max_steps_this_episode (Int): Max number of steps in this episode.
+                A value of 0 will result in the episode running until
+                completion.
+
         Returns:
             Boolean: if the episode should terminate
         """
@@ -196,48 +134,23 @@ class RLGlue:
 
         return is_terminal
 
-    def rl_return(self):
-        """The total reward
-
-        Returns:
-            float: the total reward
-        """
-        return self.total_reward
-
-    def rl_num_steps(self):
-        """The total number of steps taken
-
-        Returns:
-            Int: the total number of steps taken
-        """
-        return self.num_steps
-
-    def rl_num_episodes(self):
-        """The number of episodes
-        
-        Returns
-            Int: the total number of episodes
-
-        """
-        return self.num_episodes
-
 
 class BaseAgent:
     """Implements the agent for an RL-Glue environment.
     Note:
-        agent_init, agent_start, agent_step, agent_end, agent_cleanup, and
-        agent_message are required methods.
+        agent_init, agent_start, agent_step, and agent_end are required methods.
     """
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def __init__(self):
+        """Declare agent variables."""
         pass
 
     @abstractmethod
     def agent_init(self):
-        """Setup for the agent called when the experiment first starts."""
+        """Initialize agent variables."""
 
     @abstractmethod
     def agent_start(self, observation):
@@ -270,32 +183,19 @@ class BaseAgent:
                 terminal state.
         """
 
-    @abstractmethod
-    def agent_cleanup(self):
-        """Cleanup done after the agent ends."""
-
-    @abstractmethod
-    def agent_message(self, message):
-        """A function used to pass information from the agent to the experiment.
-        Args:
-            message: The message passed to the agent.
-        Returns:
-            The response (or answer) to the message.
-        """
-
 
 class BaseEnvironment:
     """Implements the environment for an RLGlue environment
 
     Note:
-        env_init, env_start, env_step, env_cleanup, and env_message are required
-        methods.
+        agent_init, env_start, and env_step are required methods.
     """
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def __init__(self):
+        """Declare environment variables."""
         reward = None
         observation = None
         termination = None
@@ -303,11 +203,11 @@ class BaseEnvironment:
 
     @abstractmethod
     def env_init(self):
-        """Setup for the environment called when the experiment first starts.
+        """Initialize environment variables.
 
         Note:
-            Initialize a tuple with the reward, first state observation, boolean
-            indicating if it's terminal.
+            Initialize a tuple with the reward, first state observation,
+            and a boolean indicating whether the state is terminal.
         """
 
     @abstractmethod
@@ -329,19 +229,4 @@ class BaseEnvironment:
         Returns:
             (float, state, Boolean): a tuple of the reward, state observation,
                 and boolean indicating if it's terminal.
-        """
-
-    @abstractmethod
-    def env_cleanup(self):
-        """Cleanup done after the environment ends"""
-
-    @abstractmethod
-    def env_message(self, message):
-        """A message asking the environment for information
-
-        Args:
-            message: the message passed to the environment
-
-        Returns:
-            the response (or answer) to the message
         """

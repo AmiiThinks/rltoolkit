@@ -10,14 +10,10 @@ from .gwGlueEnv import *
 path = os.path.dirname(inspect.getfile(Gridworld))
 gridworldpath = os.path.join(path, "Gridworlds/")
 
-
 def gwPath():
-    global gridworldpath
     return gridworldpath
 
-
 def gwFilename(name):
-    global gridworldpath
     return os.path.join(gridworldpath, name)
 
 
@@ -81,4 +77,29 @@ def writeGridworld(dlist, filename):
         gridout.append("'file': '" + str(
             filename) + "'}")  # just so that the last , is ok :)
         output.writelines(gridout)
-        output.close
+        output.close()
+
+
+def convert(filename):
+    gwDict = readGridworld(gwFilename(filename))
+    # [up, right, down, left] to [up, down, left, right]
+
+    def fixit(lst):
+        a, b, c, d = lst
+        return [a, c, d, b]
+    gwDict['wallp'] = list(map(fixit, gwDict['wallp']))
+
+    for key in gwDict:
+        gwDict[key] = str(gwDict[key])
+
+    if 'file' in gwDict:
+        gwDict.pop('file')
+
+    head, tail = os.path.split(gwFilename(filename))
+    writeGridworld(gwDict, '{}/a{}'.format(head, tail))
+
+
+if __name__ == '__main__':
+    for fname in os.listdir(gridworldpath):
+        if 'gw' in fname:
+            convert(fname)

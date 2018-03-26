@@ -9,15 +9,15 @@ facilitate comparison of different agent designs and their application to differ
 problems (environments). See http://abee.cs.ualberta.ca:7777/rl-twiki/bin/view/RLAI/RLI5.
 
 Class: RLinterface
-     initialize with:   rli = RLinterface(agent, env)
-          where  agent and env have the following methods defined:
+     initialize with:   rli = RLinterface(agent, environment)
+          where  agent and environment have the following methods defined:
                  agent.agent_init(taskspec)
                  agent.agent_start(o) -> a   
                  agent.agent_step(r, o) -> a
                  agent.agent_end(r)
-                 env.env_init() -> taskspec
-                 env.env_start() -> o
-                 env.env_step(a) -> r, o
+                 environment.env_init() -> taskspec
+                 environment.env_start() -> o
+                 environment.env_step(a) -> r, o
                  env_state() -> state key
                  env_random_seed() -> random seed key
                  optionally env_step can take a state key and a random seed key
