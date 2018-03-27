@@ -27,7 +27,7 @@ changeDiff = 0.0001  # difference in Q values needed to notice change
 
 class GridAgent:
     def __init__(self, numactions, numstates, epsilon=0, alpha=0.5,
-                 gamma=.9, initialvalue=0.1, agentlambda=0.8, *args, **kwargs):
+                 gamma=.9, initialvalue=0.0, agentlambda=0.8, *args, **kwargs):
         self.alpha = alpha
         self.initialvalue = initialvalue
         self.gamma = gamma
