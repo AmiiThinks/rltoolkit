@@ -1,12 +1,15 @@
 """ This is gridworld code for use standalone, with or without display onto 
-an arbitrary gview, or in conjunction with the standard RL interface.  For standalone use with a display, a simple gridworldwindow is provided.
+an arbitrary gview, or in conjunction with the standard RL interface.  For
+standalone use with a display, a simple gridworldwindow is provided.
 
 There are three main objects:
    Gridworld          Just the environment with no graphics stuff
    Gridworldview     A gridworld with view (graphics related stuff)
    Gridworldwindow   A gridworldview that happens to be a window
 
-The walls are stateaction pairs which leave you in the same square rather than taking you to your neighboring square.  If there were no walls, wraparound would occur at the gridworld edges# we start with walls all around the edges.
+The walls are stateaction pairs which leave you in the same square rather than
+ taking you to your neighboring square.  If there were no walls, wraparound
+ would occur at the gridworld edges# we start with walls all around the edges.
 
 The barriers (squares you can't pass into) are overlaid on top of this.
 
@@ -105,7 +108,7 @@ class GridAgent:
 
 class SarsaGridAgent(GridAgent):
 
-    def agent_learn(self, s, a, r, sp=None):
+    def agent_learn(self, s, a, r, sp=None, verbose=False):
         oldq = self.Q[s][a]
 
         if sp is not None:
@@ -198,7 +201,7 @@ class QlambdaGridAgent(GridAgent):
 
 
 class QonestepGridAgent(GridAgent):
-    def agent_learn(self, s, a, r, sp=None):  # onestep qLearning
+    def agent_learn(self, s, a, r, sp=None, verbose=False):  # onestep qLearning
         oldq = self.Q[s][a]
 
         next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
@@ -206,28 +209,6 @@ class QonestepGridAgent(GridAgent):
         self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
         if abs(self.Q[s][a] - oldq) > changeDiff:
             self.agentchangestate(s)
-
-
-class ABQ(GridAgent):
-    def agent_learn(self, s, a, r, sp=None):
-        phi = np.zeros_like(self.Q)
-        phi[s][a] += 1
-        phi_prime = None
-        if sp is not None:
-            phi_prime = np.zeros_like(self.Q)
-            phi_prime[s][a] += 1
-
-        self.z *= self.gamma * self.agentlambda
-        self.z += phi
-
-        next_val = 0 if sp is None else self.gamma * np.max(self.Q[s])
-        oldq = np.copy(self.Q)
-        self.Q += self.alpha * (r + next_val - self.Q[s][a]) * self.z
-
-        changed_states = set(
-            np.where(np.abs(self.Q - oldq) > changeDiff)[0])
-        self.changedstates = list(
-            changed_states.union(set(self.changedstates)))
 
 
 ### Forward Models
@@ -450,6 +431,7 @@ class DynaGridAgent(DeterministicForwardModel, GridAgent):
                         self.agentchangestate(s)
                     break
 
+
 class ReducedDynaGridAgent(DynaGridAgent):
     def __init__(self, numactions, numstates, epsilon=0.05, alpha=0.5, \
                  gamma=.9, initialvalue=0.1, agentlambda=0.0, expbonus=0.0):
@@ -519,7 +501,7 @@ def avi(agent):
             keepon = False
 
 
-## Value Iteration
+# Value Iteration
 def vi1(agent):
     saveQ(agent)
     for s in range(agent.numstates):
