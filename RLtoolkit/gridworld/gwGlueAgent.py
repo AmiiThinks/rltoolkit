@@ -81,9 +81,9 @@ class GridAgent:
         return egreedy(self.epsilon, self.numactions, self.actionvalues(state))
 
     def agentChoose(self, sprime):  # epsilon greedy
-        self.recentsensations = [sprime] + self.recentsensations
+        self.recentsensations = [sprime]
         if sprime != 'terminal':
-            self.recentactions = [self.policy(sprime)] + self.recentactions
+            self.recentactions = [self.policy(sprime)]
             return self.recentactions[0]
 
     def agent_learn(self, s, a, r, sp=None, verbose=False):
@@ -166,6 +166,12 @@ class SarsaLambdaGridAgent(SarsaGridAgent):
             i += 1
 
         return ap
+
+    def agentChoose(self, sprime):  # epsilon greedy
+        self.recentsensations = [sprime] + self.recentsensations
+        if sprime != 'terminal':
+            self.recentactions = [self.policy(sprime)] + self.recentactions
+            return self.recentactions[0]
 
 
 class QlambdaGridAgent(GridAgent):
