@@ -80,24 +80,27 @@ class GridAgent:
     def policy(self, state):
         return egreedy(self.epsilon, self.numactions, self.actionvalues(state))
 
-    def agentChoose(self, sprime):  # epsilon greedy
+    def update_recent(self, sprime, aprime):
         self.recentsensations = [sprime]
         if type(sprime) is not str or sprime != 'terminal':
-            self.recentactions = [self.policy(sprime)]
+            self.recentactions = [aprime]
             return self.recentactions[0]
 
-    def agent_learn(self, s, a, r, sp=None, verbose=False):
+    def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
         next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
         self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
 
-    def agent_step(self, reward, sprime, verbose=False):  # default is one
-        # step q
+    def agent_step(self, reward, sprime, verbose=False):
         s = self.recentsensations[0]
         a = self.recentactions[0]
 
-        self.agent_learn(s, a, reward, sprime, verbose)
+        aprime = self.policy(sprime)
 
-        return self.agentChoose(sprime)
+        self.agent_learn(s, a, reward, sprime, aprime, verbose)
+
+        self.update_recent(sprime, aprime)
+
+        return aprime
 
     def agent_end(self, reward, verbose=False):
         s = self.recentsensations[0]
@@ -112,7 +115,7 @@ class SarsaGridAgent(GridAgent):
         oldq = self.Q[s][a]
 
         if sp is not None:
-            ap = self.agentChoose(sp)
+            ap = self.policy(sp)
             next_val = self.gamma * self.Q[sp][ap]
         else:
             next_val = 0
@@ -177,7 +180,8 @@ class SarsaLambdaGridAgent(SarsaGridAgent):
 class QlambdaGridAgent(GridAgent):
     """accumulating traces, greedy target policy"""
 
-    def agent_learn(self, s, a, r, sp=None, verbose=False):
+    def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
+
         phi = np.zeros_like(self.Q, dtype=np.bool)
         phi[s][a] = True
 
@@ -422,7 +426,7 @@ class DynaGridAgent(DeterministicForwardModel, GridAgent):
                         self.agentchangestate(s)
                     break
 
-        return self.agentChoose(sprime)
+        return self.policy(sprime)
 
     def agent_end(self, reward):
         s = self.recentsensations[0]
