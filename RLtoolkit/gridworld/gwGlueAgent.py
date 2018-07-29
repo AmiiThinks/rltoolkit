@@ -67,7 +67,7 @@ class GridAgent:
         return a
 
     def actionvalues(self, s):
-        return [self.Q[s][a] for a in range(self.numactions)]
+        return [self.Q[s][a].sum() for a in range(self.numactions)]
 
     def statevalue(self, s):
         if s is None:
@@ -82,7 +82,7 @@ class GridAgent:
 
     def agentChoose(self, sprime):  # epsilon greedy
         self.recentsensations = [sprime]
-        if sprime != 'terminal':
+        if type(sprime) is not str or sprime != 'terminal':
             self.recentactions = [self.policy(sprime)]
             return self.recentactions[0]
 
@@ -179,21 +179,31 @@ class QlambdaGridAgent(GridAgent):
 
     def agent_learn(self, s, a, r, sp=None, verbose=False):
         phi = np.zeros_like(self.Q, dtype=np.bool)
-        phi[s][a] += True
+        phi[s][a] = True
 
-        if np.max(self.Q[s]) == self.Q[s][a]:  # use traces if action was greedy
+        # check if s is feature vector or single integer
+        try:
+            assert self.Q[s].sum(0).size == self.numactions
+            max_s = self.Q[s].sum(0).max()
+            max_sp = 0 if sp is None else self.Q[sp].sum(0).max()
+        except AssertionError:
+            max_s = self.Q[s].max()
+            max_sp = 0 if sp is None else self.Q[sp].max()
+
+        # use traces if action was greedy
+        if max_s == self.Q[s][a].sum():
             self.z *= self.gamma * self.agentlambda
         else:
             self.z *= 0
 
-        self.z += phi
+        self.z[s][a] += 1
 
-        next_val = 0 if sp is None else self.gamma * np.max(self.Q[sp])
+        next_val = 0 if sp is None else self.gamma * max_sp
         oldq = np.copy(self.Q)
-        self.Q += self.alpha * (r + next_val - self.Q[s][a]) * self.z
+        self.Q += self.alpha * (r + next_val - self.Q[s][a].sum()) * self.z
 
         if verbose:
-            print(s, r, r + next_val - self.Q[s][a], self.actionvalues(s))
+            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
             if sp is None:
                 print("Terminal Reward: {}".format(r))
                 try:
