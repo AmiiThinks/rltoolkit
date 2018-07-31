@@ -67,15 +67,15 @@ class GridAgent:
         return a
 
     def actionvalues(self, s):
-        return [self.Q[s][a].sum() for a in range(self.numactions)]
+        try:
+            len(s)
+            return self.Q[s].sum(0)
+        except TypeError:
+            return self.Q[s]
 
     def statevalue(self, s):
-        if s is None:
-            return 0
-        elif s == 'terminal':
-            return 0
-        else:
-            return max(self.actionvalues(s))
+        invalid_state = s is None or (type(s) is str and s == 'terminal')
+        return 0 if invalid_state else self.actionvalues(s).max()
 
     def policy(self, state):
         return egreedy(self.epsilon, self.numactions, self.actionvalues(state))
@@ -111,79 +111,44 @@ class GridAgent:
 
 class SarsaGridAgent(GridAgent):
 
-    def agent_learn(self, s, a, r, sp=None, verbose=False):
-        oldq = self.Q[s][a]
+    def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
+        oldq = np.copy(self.Q)
 
-        if sp is not None:
-            ap = self.policy(sp)
-            next_val = self.gamma * self.Q[sp][ap]
-        else:
-            next_val = 0
-            ap = None
+        next_val = 0 if sp is None else self.gamma * self.Q[sp][ap].sum()
+        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a].sum())
 
-        self.Q[s][a] += self.alpha * (r + next_val - oldq)
+        if verbose:
+            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
+            if sp is None:
+                print("Terminal Reward: {}".format(r))
 
-        if abs(self.Q[s][a] - oldq) > changeDiff:
-            self.agentchangestate(s)
-
-        return ap
-
-    def agent_step(self, reward, sprime):
-        s = self.recentsensations[0]
-        a = self.recentactions[0]
-
-        return self.agent_learn(s, a, reward, sprime)
-
-    def agent_end(self, reward):
-        s = self.recentsensations[0]
-        a = self.recentactions[0]
-
-        self.agent_learn(s, a, reward)
+        changed_states = set(np.where(np.abs(self.Q - oldq) > changeDiff)[0])
+        self.changedstates = list(changed_states.union(set(self.changedstates)))
 
 
-class SarsaLambdaGridAgent(SarsaGridAgent):
+class SarsaLambdaGridAgent(GridAgent):
     """Replacing traces"""
+    def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
 
-    def agent_learn(self, s, a, r, sp=None):
-        if sp is not None:
-            ap = self.agentChoose(sp)
-            next_val = self.gamma * self.Q[sp][ap]
-        else:
-            next_val = 0
-            ap = None
+        self.z *= self.gamma * self.agentlambda
+        self.z[s][a] = 1
 
-        alpha_delta = self.alpha * (r + next_val - self.Q[s][a])
+        next_val = 0 if sp is None else self.gamma * self.Q[sp][ap].sum()
+        oldq = np.copy(self.Q)
+        self.Q += self.alpha * (r + next_val - self.Q[s][a].sum()) * self.z
 
-        trace = 1
-        i = 0
-        while trace > 0.01 and i < len(self.recentactions):
-            s = self.recentsensations[i]
-            a = self.recentactions[i]
-            if s not in self.recentsensations[0:i]:
-                oldq = self.Q[s][a]
-                self.Q[s][a] += alpha_delta * trace
+        if verbose:
+            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
+            if sp is None:
+                print("Terminal Reward: {}".format(r))
 
-                if abs(self.Q[s][a] - oldq) > changeDiff:
-                    self.agentchangestate(s)
-            trace = trace * self.gamma * self.agentlambda
-            i += 1
-
-        return ap
-
-    def agentChoose(self, sprime):  # epsilon greedy
-        self.recentsensations = [sprime] + self.recentsensations
-        if sprime != 'terminal':
-            self.recentactions = [self.policy(sprime)] + self.recentactions
-            return self.recentactions[0]
+        changed_states = set(np.where(np.abs(self.Q - oldq) > changeDiff)[0])
+        self.changedstates = list(changed_states.union(set(self.changedstates)))
 
 
 class QlambdaGridAgent(GridAgent):
-    """accumulating traces, greedy target policy"""
-
+    """accumulating traces"""
     def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
-
-        phi = np.zeros_like(self.Q, dtype=np.bool)
-        phi[s][a] = True
 
         # check if s is feature vector or single integer
         try:
@@ -220,15 +185,13 @@ class QlambdaGridAgent(GridAgent):
         self.changedstates = list(changed_states.union(set(self.changedstates)))
 
 
-class QonestepGridAgent(GridAgent):
-    def agent_learn(self, s, a, r, sp=None, verbose=False):  # onestep qLearning
-        oldq = self.Q[s][a]
+class QonestepGridAgent(QlambdaGridAgent):
+    pass
 
-        next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
 
-        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
-        if abs(self.Q[s][a] - oldq) > changeDiff:
-            self.agentchangestate(s)
+################################################################################
+################## The following code is no longer maintained ##################
+################################################################################
 
 
 ### Forward Models
