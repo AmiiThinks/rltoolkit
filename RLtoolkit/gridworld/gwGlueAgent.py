@@ -88,7 +88,7 @@ class GridAgent:
 
     def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
         next_val = 0 if sp is None else self.gamma * self.statevalue(sp)
-        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a])
+        self.Q[s, a] += self.alpha * (r + next_val - self.Q[s, a])
 
     def agent_step(self, reward, sprime, verbose=False):
         s = self.recentsensations[0]
@@ -114,11 +114,11 @@ class SarsaGridAgent(GridAgent):
     def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
         oldq = np.copy(self.Q)
 
-        next_val = 0 if sp is None else self.gamma * self.Q[sp][ap].sum()
-        self.Q[s][a] += self.alpha * (r + next_val - self.Q[s][a].sum())
+        next_val = 0 if sp is None else self.gamma * self.Q[sp, ap].sum()
+        self.Q[s, a] += self.alpha * (r + next_val - self.Q[s, a].sum())
 
         if verbose:
-            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
+            print(s, r, r + next_val - self.Q[s, a].sum(), self.actionvalues(s))
             if sp is None:
                 print("Terminal Reward: {}".format(r))
 
@@ -131,14 +131,14 @@ class SarsaLambdaGridAgent(GridAgent):
     def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
 
         self.z *= self.gamma * self.agentlambda
-        self.z[s][a] = 1
+        self.z[s, a] = 1
 
-        next_val = 0 if sp is None else self.gamma * self.Q[sp][ap].sum()
+        next_val = 0 if sp is None else self.gamma * self.Q[sp, ap].sum()
         oldq = np.copy(self.Q)
-        self.Q += self.alpha * (r + next_val - self.Q[s][a].sum()) * self.z
+        self.Q += self.alpha * (r + next_val - self.Q[s, a].sum()) * self.z
 
         if verbose:
-            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
+            print(s, r, r + next_val - self.Q[s, a].sum(), self.actionvalues(s))
             if sp is None:
                 print("Terminal Reward: {}".format(r))
 
@@ -160,19 +160,19 @@ class QlambdaGridAgent(GridAgent):
             max_sp = 0 if sp is None else self.Q[sp].max()
 
         # use traces if action was greedy
-        if max_s == self.Q[s][a].sum():
+        if max_s == self.Q[s, a].sum():
             self.z *= self.gamma * self.agentlambda
         else:
             self.z *= 0
 
-        self.z[s][a] += 1
+        self.z[s, a] += 1
 
         next_val = 0 if sp is None else self.gamma * max_sp
         oldq = np.copy(self.Q)
-        self.Q += self.alpha * (r + next_val - self.Q[s][a].sum()) * self.z
+        self.Q += self.alpha * (r + next_val - self.Q[s, a].sum()) * self.z
 
         if verbose:
-            print(s, r, r + next_val - self.Q[s][a].sum(), self.actionvalues(s))
+            print(s, r, r + next_val - self.Q[s, a].sum(), self.actionvalues(s))
             if sp is None:
                 print("Terminal Reward: {}".format(r))
                 try:
