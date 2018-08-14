@@ -252,8 +252,8 @@ class GridworldView(Gridworld, Gview):
             # i = max(0, i)
 
             val = agent.statevalue(square)
-            i = int(val * 255/5) + 255
-            i = max(0, min(i, 510))
+            # print(val)
+            i = max(0, int(min(510, val * 255/5 + 255)))
 
         try:
             return self.colors[i]
@@ -504,10 +504,6 @@ class GridworldWindow(SimulationWindow):
         gview.agent = gridworld.agent
 
         gridworld.whole_view()
-
-    def reset_simulation(self):
-        self.rl_init()
-        self.whole_sim_display()
 
     @staticmethod
     def makeNewSimulation(w=16, h=16, st=0, g=1, size=30,

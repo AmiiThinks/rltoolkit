@@ -5,7 +5,7 @@ from RLtoolkit.rl_glue import RLGlue
 
 
 class SimulationWindow(Gwindow, RLGlue):
-    def __init__(self, wwidth=500, wheight=600):
+    def __init__(self, wwidth=500, wheight=600, extra_buttons=False):
         if sys.platform in ['mac', 'darwin']:
             # account for menu being added to window in Windows and Linux
             extrah = 30
@@ -21,25 +21,30 @@ class SimulationWindow(Gwindow, RLGlue):
         self.countsx = self.countsy = 0  # xcoord and ycoord of time displays
         self.lastcount = None
         self.dcount = 0  # display counter
-        self.status = Gview(self)
         self.goff = gColorOff(self)
-        gdSetViewportR(self.status, 0, wheight, wwidth, 30)
-        self.gobutton = gdAddButton(self.status, "Go  ", self.sim_stop_go, 5, 0,
+
+        buttony = self.wheight - 30
+        self.gobutton = gdAddButton(self, "Go  ", self.sim_stop_go, 5, buttony,
                                     self.goff)
-        self.stepbutton = gdAddButton(self.status, "Step", self.single_step, 65,
-                                      0, self.goff)
-        self.episodebutton = gdAddButton(self.status, "Episode",
-                                         self.single_episode, 125, 0, self.goff)
-        if wwidth < 350:  # make the window longer and add the buttons there
-            gdSetViewportR(self.status, 0, wheight, wwidth, 60)
-            self.fastbutton = gdAddButton(self.status, "Faster",
-                                          self.sim_faster, 5, 30, self.goff)
-            gdAddButton(self.status, "Slower", self.sim_slower, 80, 30,
-                        self.goff)
+        self.stepbutton = gdAddButton(self, "Step", self.single_step, 65,
+                                      buttony, self.goff)
+        self.episodebutton = gdAddButton(self, "Episode", self.single_episode,
+                                         125, buttony, self.goff)
+
+        if wwidth < 350:  # make the window longer and add the buttons
+            # there
+            x1, y1, x2, y2 = gdGetViewport(self)
+            gdSetViewport(self, x1, y1, x2, y2 + 30)  # add enough for buttons
+            buttony = self.wheight - 30
+            self.fastbutton = gdAddButton(self, "Faster",
+                                          self.sim_faster, 5, buttony,
+                                          self.goff)
+            gdAddButton(self, "Slower", self.sim_slower, 80, buttony, self.goff)
         else:  # add the buttons horizontally
-            self.fastbutton = gdAddButton(self.status, "Faster",
-                                          self.sim_faster, 210, 0, self.goff)
-            gdAddButton(self.status, "Slower", self.sim_slower, 285, 0,
+            self.fastbutton = gdAddButton(self, "Faster",
+                                          self.sim_faster, 210, buttony,
+                                          self.goff)
+            gdAddButton(self, "Slower", self.sim_slower, 285, buttony,
                         self.goff)
         self.debug = gIntVar()
         self.debug.set(0)
@@ -50,17 +55,21 @@ class SimulationWindow(Gwindow, RLGlue):
         self.writetitle = "Save File As"
         self.initialdir = None
 
-        # make the window longer and add the buttons there
-        gdSetViewportR(self.status, 0, wheight, wwidth, 60)
-        self.behaviour_agent = gdAddButton(self.status, "Behaviour Agent",
-                                           self.switch_agents, 5, 30, self.goff)
-        gButtonDisable(self.behaviour_agent)
-        self.task_agent = gdAddButton(self.status, "Task Agent",
-                                      self.switch_agents, 134, 30, self.goff)
-        self.pval_button = gdAddButton(self.status, "Policy Value",
-                             self.get_policy_value, 239, 30, self.goff)
-        self.nrmse_button = gdAddButton(self.status, "NRMSE", self.get_nrmse,
-                                        343, 30, self.goff)
+        if extra_buttons:
+            x1, y1, x2, y2 = gdGetViewport(self)
+            gdSetViewport(self, x1, y1, x2, y2 + 30)  # add enough for buttons
+            buttony = self.wheight - 30
+            self.behaviour_agent = gdAddButton(self, "Behaviour Agent",
+                                               self.switch_agents, 5, buttony,
+                                               self.goff)
+            gButtonDisable(self.behaviour_agent)
+            self.task_agent = gdAddButton(self, "Task Agent",
+                                          self.switch_agents, 134, buttony,
+                                          self.goff)
+            self.pval_button = gdAddButton(self, "Policy Value",
+                                 self.get_policy_value, 239, buttony, self.goff)
+            self.nrmse_button = gdAddButton(self, "NRMSE", self.get_nrmse,
+                                            343, buttony, self.goff)
 
         self.old_agent = None
 
@@ -229,7 +238,7 @@ class SimulationWindow(Gwindow, RLGlue):
         gQuit()
 
     def setup_time_display(self):
-        oldx1, oldy1, oldx2, oldy2, oldcorner = gGetCS(self.status)
+        oldx1, oldy1, oldx2, oldy2, oldcorner = gGetCS(self)
         self.countsy = 10
         self.countsx = self.wwidth - 60
 
@@ -238,11 +247,11 @@ class SimulationWindow(Gwindow, RLGlue):
         # and episodestepnum !!!
         if self.countsx is not None:
             if self.lastcount is not None:
-                gDelete(self.status, self.lastcount)
+                gDelete(self, self.lastcount)
             countstr = ("{}|{}|{}".format(self.num_steps,
                                           self.num_episodes,
                                           self.num_ep_steps))
-            self.lastcount = gdDrawTextCentered(self.status, countstr,
+            self.lastcount = gdDrawTextCentered(self, countstr,
                                                 ("Chicago", 12, "normal"),
                                                 self.countsx, self.countsy, gOn)
 

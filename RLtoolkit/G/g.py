@@ -5,10 +5,10 @@
 
 # This package is based on Tkinter (python's version of tk)
 
+import sys
 import tkinter
 import tkinter.colorchooser
 import tkinter.filedialog
-import sys
 
 
 # The color chooser currently starts up its own python application and will not appear until
@@ -79,7 +79,7 @@ class Gview(CSinfo,
         self.parent = newparent
         if newparent != GDEVICE and not isinstance(self,
                                                    Gwindow) and not isinstance(
-                newparent, tkinter.Toplevel):
+            newparent, tkinter.Toplevel):
             newparent.childviews = newparent.childviews + [self]
 
     def setViewContainer(self):
@@ -271,7 +271,7 @@ class Gwindow(Gview):
         new.config(width=200, height=200)  # tk default for new windows
         Gview.__init__(self, new, 200, 200, **kwargs)
         self.title = kwargs.get(windowTitle)  # Check for window attributes
-        if self.title == None:  # window title
+        if self.title is None:  # window title
             self.title = 'Gwindow'
         if self.title != None:  # make the title show up on the Toplevel
             new.title(self.title)
@@ -298,7 +298,7 @@ class Gwindow(Gview):
 
     def setViewSize(self, h, v=None, changegeom=True):
         "Change the size of the window to new values"
-        if v == None:
+        if v is None:
             v = h
         Gview.setViewSize(self, h, v, changegeom)
         if changegeom:  # window needs to be resized, not just new values saved
@@ -424,7 +424,7 @@ def gdSetViewport(view, dx1, dy1, dx2,
     width = 1 + abs(dx1 - dx2)
     height = 1 + abs(dy1 - dy2)
     view.setViewPosition(posx, posy)
-    if view.gGetChildren() != []:  # check to see if it can handle its children
+    if view.gGetChildren():  # check to see if it can handle its children
         view.setViewContainer()
         width = max(width, view.wwidth)
         height = max(height, view.wheight)
@@ -449,13 +449,13 @@ def gSetViewport(view, vpx1, vpy1, vpx2,
 
 def gdSetViewportR(view, dx, dy, deltax=None, deltay=None):
     "Sets the device viewport values for a view to the given values"
-    if dx == None:
+    if dx is None:
         dx = gdGetViewport(view)[0]
-    if dy == None:
+    if dy is None:
         dy = gdGetViewport(view)[1]
-    if deltax == None:
+    if deltax is None:
         deltax = gdGetViewportR(view)[2]
-    if deltay == None:
+    if deltay is None:
         deltay = gdGetViewportR(view)[3]
     gdSetViewport(view, dx, dy, dx + deltax - 1, dy + deltay - 1)
 
@@ -464,22 +464,22 @@ def gSetViewportR(view, x, y, deltax=None,
                   deltay=None):  # <a name="gSetViewportR"</a>[<a href="g.html#gSetViewportR">Doc</a>]
     "Sets the normal viewport values for a view to the given values"
     oldv = gGetViewport(view)
-    if x == None:
+    if x is None:
         x = oldv[0]
-    if y == None:
+    if y is None:
         y = oldv[1]
-    if deltax == None:
+    if deltax is None:
         deltax = oldv[2]
-    if deltay == None:
+    if deltay is None:
         deltay = oldv[3]
     if isinstance(view, Gwindow):
         parent = GDEVICE
     else:
         parent = view.gGetParent()
-    gdSetViewportR(view, \
-                   gdCoordx(parent, x), \
-                   gdCoordy(parent, y), \
-                   gdOffsetx(parent, deltax), \
+    gdSetViewportR(view,
+                   gdCoordx(parent, x),
+                   gdCoordy(parent, y),
+                   gdOffsetx(parent, deltax),
                    gdOffsety(parent, deltay))
     # gSetViewport(view, x, y, x + deltax,  y + deltay)
 
@@ -608,7 +608,7 @@ Scales = {'inches': 72, 'centimeters': 28.35, 'pixels': 1, 'points': 1}
 def gSetCoordinateSystemScale(view, x, y, xScale, yScale=None,
                               corner='lowerLeft'):
     """Sets the coordinate system scale for a view to the given values"""
-    if yScale == None:
+    if yScale is None:
         yScale = xScale
     if not isinstance(xScale, (int, float)):
         xScale = _Scales.get(xScale, 1)
@@ -742,7 +742,7 @@ def gColorPen(view, color='black', pattern=None, mode=None, xsize=None,
        pattern may be 'gray12', 'gray25', 'gray50', 'gray75', or '' although it doesn't seem
           to be used on the mac
        mode currently is ignored"""
-    if ysize == None:
+    if ysize is None:
         ysize = xsize
     usecolor, pat, md, (xs, ys) = useColor(color)
     if pattern != None:  # update if necessary
@@ -767,8 +767,8 @@ def gFont(fontname="Times", fontsize=12, fontface='normal'):
 
 def getColor(view, colorcode=None):
     "gets color to use for current drawing"
-    if colorcode == None:  # use view default if there is one, or regular default
-        if view.color == None:
+    if colorcode is None:  # use view default if there is one, or regular default
+        if view.color is None:
             return useColor()
         else:
             return useColor(view.color)
@@ -785,7 +785,7 @@ def useColor(colorcode='black', pattern="", mode='copy', xsize=1, ysize=None):
         xsize, ysize = colorcode[3]
     else:  # integer or string color
         color = colorcode
-    if ysize == None:
+    if ysize is None:
         ysize = xsize
     return color, pattern, mode, (xsize, ysize)
 
@@ -829,7 +829,7 @@ def gColorRGB(view, red, green,
     green = int(255 * green)
     blue = int(255 * blue)
     return "#%02x%02x%02x" % (
-    red, green, blue)  # format colors into something tk likes
+        red, green, blue)  # format colors into something tk likes
 
 
 def gColorRGB255(view, red, green,
@@ -840,7 +840,7 @@ def gColorRGB255(view, red, green,
     green = int(min(255, max(0, green)))
     blue = int(min(255, max(0, blue)))
     return "#%02x%02x%02x" % (
-    red, green, blue)  # format colors into something tk likes
+        red, green, blue)  # format colors into something tk likes
     # <a name="Selecting Colors by Name"</a>[<a href="g.html#Selecting Colors by Name">Doc</a>]
 
 
@@ -942,7 +942,7 @@ def gColorBW(view,
              intensity):  # <a name="gColorBW"</a>[<a href="g.html#gColorBW">Doc</a>]
     "returns a shade of grey corresponding to intensity"
     intensity = (
-    1 - intensity)  # white is most intense for tk, but not for people
+        1 - intensity)  # white is most intense for tk, but not for people
     return gColorRGB(view, intensity, intensity, intensity)
 
 
@@ -967,7 +967,7 @@ def gOpenFileUserPick(view,
                       **args):  # <a name="gOpenFileUserPick"</a>[<a href="g.html#gOpenFileUserPick">Doc</a>]
     "call up tk's file open dialog - args are title=, initialdir=, and initialfile="
     global GDEVICE
-    if view == None:
+    if view is None:
         view = GDEVICE
     return tkinter.filedialog.Open(view).show(**args)
 
@@ -976,7 +976,7 @@ def gSaveFileUserPick(view,
                       **args):  # <a name="gSaveFileUserPick"</a>[<a href="g.html#gSaveFileUserPick">Doc</a>]
     "call up tk's file save dialog - args are title=, initialdir=, and initialfile="
     global GDEVICE
-    if view == None:
+    if view is None:
         view = GDEVICE
     return tkinter.filedialog.SaveAs(view).show(**args)
 
@@ -1115,7 +1115,7 @@ def gdDrawText(view, string, font, dx, dy, colorcode=None):
     """Draws text on view, using device coordinates. font eg ("Geneva", 12, 'italic bold') """
     dx, dy = canvasPoint(view, dx, dy)
     color, pattern, mode, (xsize, ysize) = getColor(view, colorcode)
-    if font == None:
+    if font is None:
         return view.create_text(dx, dy, text=string, anchor=tkinter.W,
                                 fill=color)  # use default font
     else:
@@ -1130,7 +1130,7 @@ def gdDrawTextCentered(view, string, font, dx, dy, colorcode=None):
     """Draws text centered at the point specified on view, using device coordinates"""
     dx, dy = canvasPoint(view, dx, dy)
     color, pattern, mode, (xsize, ysize) = getColor(view, colorcode)
-    if font == None:
+    if font is None:
         return view.create_text(dx, dy, text=string, anchor=tkinter.CENTER,
                                 fill=color)  # use default font
     else:
@@ -1166,14 +1166,14 @@ def gdGetCursorPosition(view):
     else:
         return None
 
-    ### gGRAPHICS
+        ### gGRAPHICS
 
-    # <a name="gClear"</a>[<a href="g.html#gClear">Doc</a>]
+        # <a name="gClear"</a>[<a href="g.html#gClear">Doc</a>]
 
 
 def gClear(view, color=None):
     "Draws a solid rectangle in color that covers the whole view"
-    if color == None:
+    if color is None:
         if view.backcolor != None:
             color = view.backcolor
         else:
@@ -1327,9 +1327,9 @@ def gGetCursorPosition(view):
     else:
         return None
 
-    ### ADDITIONAL
+        ### ADDITIONAL
 
-    # <a name="gdDrawArrow"</a>[<a href="g.html#gdDrawArrow">Doc</a>]
+        # <a name="gdDrawArrow"</a>[<a href="g.html#gdDrawArrow">Doc</a>]
 
 
 def gdDrawArrow(view, dx1, dy1, dx2, dy2, colorcode=None):
@@ -1495,7 +1495,7 @@ def gdAddButton(view, btext, bcommand, xpos, ypos, background=None):
     """Adds a button to view with text btext, command bcommand, 
         at position xpos, ypos, background of view is background
         e.g. gAddButton(w, "run", runcommand, .5, .5, 'blue')"""
-    if background == None:
+    if background is None:
         b = tkinter.Button(view, text=btext, command=bcommand)
     else:
         b = tkinter.Button(view, text=btext, command=bcommand,
@@ -1549,7 +1549,7 @@ def gAddMenu(parent, menuname,
         print("Cannot add menu to anything except a Gwindow or another menu")
     else:
         if isinstance(parent, Gwindow):
-            if parent.menu == None:
+            if parent.menu is None:
                 mm = tkinter.Menu(parent)
                 parent.parent.config(menu=mm)
                 parent.menu = mm
