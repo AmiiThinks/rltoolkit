@@ -1,0 +1,8 @@
+{'width':4, 
+'height':1, 
+'squaresize':80, 
+'startsquare':0, 
+'goalsquare':3, 
+'barrierp':[False, False, False, False], 
+'wallp':[[True, True, True, False], [True, True, False, False], [True, True, False, False], [True, True, False, True]], 
+'file': '/Users/nikoyasui/github/rltoolkit/RLtoolkit/gridworld/Gridworlds/gw1x4'}

@@ -13,7 +13,7 @@ import os.path
 
 from RLtoolkit.rl_glue import RLGlue
 from .gwAgent import *
-from .gwio import *
+from .gwGlueio import *
 
 
 class GWDemoN(RLGlue):

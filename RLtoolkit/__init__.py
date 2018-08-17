@@ -1,2 +1,2 @@
-__all__ = ["tiles", "traces", "g", "graph", "graph3d", "RLinterface",
-           "utilities", "demo"]
+__all__ = ['examples', 'G', 'gridworld', 'Quickgraph', 'glue_guiwindow',
+           'rl_glue', 'tiles3', 'utilities']

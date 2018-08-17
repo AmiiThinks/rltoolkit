@@ -1,6 +1,6 @@
 import time
 
-from RLtoolkit.g import *
+from RLtoolkit.G.g import *
 from RLtoolkit.rl_glue import RLGlue
 
 
