@@ -20,7 +20,7 @@ Version 2.0 b0 August 17, 2018
     ```
     From the command line:
     ```pythonstub
-    python -m RLtoolkit.examples.mountain_demo.py
+    python -m RLtoolkit.examples.mountain_car_gui.py
     ```
         
 
@@ -28,7 +28,9 @@ Version 2.0 b0 August 17, 2018
 
 - **examples** - a folder of demos to run, using the toolkit
   - mountain car (GUI)
-  - random walk (non-GUI)
+  - random walk (text-based)
+  - gridworld (GUI)
+  - gridworld (text-based)
 - **gridworld** - gridworld code, including a demo
 - **G** - a general low level graphics drawing package
 - **Quickgraph** - a simple graphing package (uses g) for 2 and 3d graphs

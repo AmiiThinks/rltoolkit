@@ -11,9 +11,9 @@ The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else
 """
 import os.path
 
+from RLtoolkit.gridworld.gwGlueAgent import *
+from RLtoolkit.gridworld.gwGlueio import *
 from RLtoolkit.rl_glue import RLGlue
-from .gwAgent import *
-from .gwGlueio import *
 
 
 class GWDemoN(RLGlue):
@@ -30,10 +30,11 @@ class GWDemoN(RLGlue):
                  verbose=False):
         self.verboseV = verbose
         env = Gridworld(width, height, start, goal)
-        agent = DynaGridAgent(4, self.environment.numstates(), epsilon, alpha, gamma,
+        agent = DynaGridAgent(4, self.environment.numstates(), epsilon, alpha,
+                              gamma,
                               initialvalue,
                               agentlambda)
-        RLGlue.__init__(env, agent)
+        RLGlue.__init__(self, env, agent)
         self.rl_init()
 
     def episode(self, max_steps):

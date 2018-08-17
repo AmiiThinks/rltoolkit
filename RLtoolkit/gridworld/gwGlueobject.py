@@ -5,7 +5,8 @@ Note: negative consumable rewards may not disappear when they are consumed until
 the square is redrawn for some other reason.
 """
 
-from RLtoolkit.utilities  import strlist
+from RLtoolkit.utilities import strlist
+
 from .gwGlueguimain import *
 
 

@@ -19,7 +19,8 @@ The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else
 
 ###
 
-from .gwGlueobject import *
+from RLtoolkit.gridworld.gwGlueobject import gMainloop, \
+    makeGridworldSimulation, makeObjectGridworldSimulation
 
 
 def runDemo():

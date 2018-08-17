@@ -16,12 +16,11 @@ The barriers (squares you can't pass into) are overlaid on top of this.
 The goal square is a terminal state.  Reward is +1 for reaching the goal, 0 else.
 """
 
-from RLtoolkit.utilities import egreedy
-
-from random import *
 from math import *
+from random import *
 
 import numpy as np
+from RLtoolkit.utilities import egreedy
 
 changeDiff = 0.0001  # difference in Q values needed to notice change
 
@@ -75,7 +74,7 @@ class GridAgent:
 
     def statevalue(self, s):
         invalid_state = s is None or (type(s) is str and s == 'terminal')
-        return 0 if invalid_state else self.actionvalues(s).max()
+        return 0 if invalid_state else np.max(self.actionvalues(s))
 
     def policy(self, state):
         return egreedy(self.epsilon, self.numactions, self.actionvalues(state))

@@ -11,7 +11,3 @@ GUI components:
 gwGlueguimain.py - main gui stuff for gridworld
 gwGlueobject.py - gridworld with extra rewards (objects, cookies, whatever)
 
-Demos:
-gwGlueDemoN.py - nonGUI gridworld simulation demo
-gwGlueDemoG.py - GUI gridworld simulation demo 
-
