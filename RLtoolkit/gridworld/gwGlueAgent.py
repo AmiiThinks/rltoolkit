@@ -126,11 +126,12 @@ class SarsaGridAgent(GridAgent):
 
 
 class SarsaLambdaGridAgent(GridAgent):
-    """Replacing traces"""
+    """accumulating traces"""
     def agent_learn(self, s, a, r, sp=None, ap=None, verbose=False):
 
         self.z *= self.gamma * self.agentlambda
-        self.z[s, a] = 1
+        self.z[s, a] += 1
+        # self.z[s, a] = 1  # replacing traces
 
         next_val = 0 if sp is None else self.gamma * self.Q[sp, ap].sum()
         oldq = np.copy(self.Q)
