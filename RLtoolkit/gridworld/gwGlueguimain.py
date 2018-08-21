@@ -71,7 +71,6 @@ class GridworldView(Gridworld, Gview):
         self.agent = None
         self.task_agent_colors = False
 
-
     def gdClickEventHandler(self, dh, dv):  # GridworldView environment
         if self.dhdvInGridworldview(dh, dv):
             self.handleEventInEnvironment(dh, dv)
@@ -275,7 +274,6 @@ class GridworldView(Gridworld, Gview):
         elif action == 3:
             return gdDrawLineR(self, h + size - 1, v + 1, 0, size - 2, color)
 
-
     def setState(self, newstate):
         self.state = newstate
         if self.update:
@@ -381,7 +379,6 @@ class GridworldView(Gridworld, Gview):
                                    self.arrowcolor)
 
     # Gridworld utilities
-
     def inverseaction(self, action):
         return (1 - action) % 4
 

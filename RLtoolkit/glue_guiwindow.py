@@ -238,8 +238,7 @@ class SimulationWindow(Gwindow, RLGlue):
         gQuit()
 
     def setup_time_display(self):
-        oldx1, oldy1, oldx2, oldy2, oldcorner = gGetCS(self)
-        self.countsy = 10
+        self.countsy = self.wheight - 17
         self.countsx = self.wwidth - 60
 
     def sim_display_counts(self):
