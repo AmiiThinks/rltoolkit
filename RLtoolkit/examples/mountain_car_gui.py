@@ -163,7 +163,10 @@ class Visualizer:
                 if pos >= 0.5:
                     d = 0.0
                 else:
-                    phi = self.mc_window.environment.get_phi((vel, pos))
+                    try:
+                        phi = self.mc_window.environment.get_phi((vel, pos))
+                    except AttributeError:
+                        phi = self.mc_window.agent.get_phi(np.array([vel, pos]))
                     d = self.mc_window.agent.statevalue(phi)
                 self.g3d_graph.data[i][j] = d
         self.g3d_graph.gDrawView()
