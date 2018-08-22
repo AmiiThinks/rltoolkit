@@ -77,7 +77,7 @@ class GridAgent:
         return 0 if invalid_state else np.max(self.actionvalues(s))
 
     def policy(self, state):
-        return egreedy(self.epsilon, self.numactions, self.actionvalues(state))
+        return egreedy(self.epsilon, self.actionvalues(state))
 
     def update_recent(self, sprime, aprime):
         self.recentsensations = [sprime]
@@ -106,6 +106,10 @@ class GridAgent:
         a = self.recentactions[0]
 
         self.agent_learn(s, a, reward, verbose=verbose)
+
+    def enable_target_policy(self):
+        self.policy = lambda s: egreedy(0, self.actionvalues(s))
+        self.agent_learn = lambda s, a, r, sp=None, ap=None, verbose=None: None
 
 
 class SarsaGridAgent(GridAgent):

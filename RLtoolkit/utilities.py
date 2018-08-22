@@ -122,11 +122,11 @@ def randompolicy(numactions):
     return random.randrange(numactions)
 
 
-def egreedy(epsilon, numactions, valuelist):
+def egreedy(epsilon, valuelist):
     if np.random.random() < epsilon:
-        action = np.random.randint(numactions)
+        action = np.random.randint(len(valuelist))
     else:
-        shuf = np.random.permutation(numactions)
+        shuf = np.random.permutation(len(valuelist))
         action = shuf[np.argmax(np.asarray(valuelist)[shuf])]
 
     return action
