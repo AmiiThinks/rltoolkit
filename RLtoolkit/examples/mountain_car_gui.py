@@ -15,7 +15,7 @@ import numpy as np
 from RLtoolkit.Quickgraph.graph3d import *
 from RLtoolkit.glue_guiwindow import SimulationWindow
 from RLtoolkit.gridworld.gwGlueAgent import QlambdaGridAgent
-from RLtoolkit.tiles3 import IHT, tiles
+from RLtoolkit.tilecoding import TileCoder
 
 
 class MCWindow(SimulationWindow):
@@ -178,17 +178,21 @@ class MCEnvironment:
         self.pos = None
         self.actions = [-1, 0, 1]
 
+        # tilecoding stuff
+        self.num_tiles = num_tiles
         self.num_tilings = num_tilings
-        self.size = (num_tiles + 1).prod() * self.num_tilings
-        self.scale = num_tiles / np.array([0.14, 1.7])
-        self.iht = None
+        self.limits = [[-0.07, 0.087], [-1.2, 0.5]]
+        self.tiler = TileCoder(dims=self.num_tiles,
+                               limits=self.limits,
+                               tilings=self.num_tilings)
 
     def env_init(self):
-        self.iht = IHT(self.size)
+        self.tiler = TileCoder(dims=self.num_tiles,
+                               limits=self.limits,
+                               tilings=self.num_tilings)
 
     def get_phi(self, state):
-        floats = ((np.asarray(state) + [0.07, 1.2]) * self.scale).tolist()
-        return tiles(self.iht, self.num_tilings, floats)
+        return self.tiler[state]
 
     def env_start(self):
         self.vel = 0
@@ -218,7 +222,7 @@ class MCEnvironment:
 
     def numstates(self):
         # number of cells
-        return self.size
+        return self.tiler.n_tiles
 
 
 def rundemo():
