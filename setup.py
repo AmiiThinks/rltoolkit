@@ -17,19 +17,22 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.0',
+    version='2.0.0',
 
-    description='A toolkit to facilitate use of reinforcement learning',
+    description='A toolkit to facilitate the use of reinforcement learning',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/UARLAI/rltoolkit',
+    url='https://github.com/AmiiThinks/rltoolkit',
 
     packages=find_packages(),
 
     # Author details
     author='Richard Stuart Sutton',
     author_email='rsutton@ualberta.ca',
+
+    maintainer = 'Niko Yasui',
+    maintainer_email = 'yasui@ualberta.ca',
 
     # Choose your license
     license='MIT',
@@ -54,4 +57,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
     ],
+
+    install_requires=['numpy']
 )

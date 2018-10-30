@@ -4,10 +4,12 @@ from math import *
 import operator
 from functools import reduce
 
+import numpy as np
+
 
 def minmax(item, limit1, limit2=None):
-    "Bounds item to between limit1 and limit2 (or -limit1)"
-    if limit2 == None:  # Bound item between - limit1 and + limit1
+    """Bounds item to between limit1 and limit2 (or -limit1)"""
+    if limit2 is None:  # Bound item between - limit1 and + limit1
         return max(-limit1, min(limit1, item))
     else:  # Bound item between limit1 and limit2
         return max(limit1, min(limit2, item))
@@ -16,16 +18,17 @@ def minmax(item, limit1, limit2=None):
 def frange(start, stop=None, step=1.0):
     """floating point version of range. Returns a list of real numbers starting
     at start, stepping by step, and stopping less than stop.
-    If only one number is given, start is assumed to be 0.0, and step to be 1.0"""
-    if stop == None:
+    If only one number is given, start is assumed to be 0.0, and step to be 1.0
+    """
+    if stop is None:
         stop = start
         start = 0.0
-    l = []
+    list_ = []
     i = float(start)
     while i < stop:
-        l.append(i)
+        list_.append(i)
         i += step
-    return l
+    return list_
 
 
 def nlist(start, stop=None, step=1):
@@ -36,7 +39,7 @@ def nlist(start, stop=None, step=1):
 
 
 def nwithoutm(n, m):
-    "Returns a list of 0 to n-1 numbers, with m removed"
+    """Returns a list of 0 to n-1 numbers, with m removed"""
     alist = list(range(n))
     alist.remove(m)
     return alist
@@ -56,13 +59,13 @@ def square(x):  # is this needed?
         return x * x
 
 
-def powerOf2(n):
+def power_of_2(n):
     lgn = log(n, 2)
     return (lgn - floor(lgn)) == 0
 
 
 def mod(num, by):
-    "mod that works for negative and positive numbers"
+    """mod that works for negative and positive numbers"""
     if num >= 0:
         return num % by
     else:
@@ -101,32 +104,38 @@ def flatten(l):
 
 
 def firstn(n, l):
-    "Returns a list of the first n elements of l"
+    """Returns a list of the first n elements of l"""
     return l[0:n]
 
 
 def reorderListOfLists(lofl):
-    "Makes new list - 1st element is list of all the first elements, 2nd is all the second elements, etc"
+    """Makes new list - 1st element is list of all the first elements,
+    2nd is all the second elements, etc
+    """
     return list(zip(*lofl))
 
 
 # Policies for an agent to use to choose an action
 
 def randompolicy(numactions):
-    "Picks an action based on the random policy"
+    """Picks an action based on the random policy"""
     return random.randrange(numactions)
 
 
-def egreedy(epsilon, numactions, valuelist):
-    "Picks an action based on the epsilon greedy policy"
-    if random.random() < epsilon:
-        return randompolicy(numactions)
+def egreedy(epsilon, valuelist):
+    if np.random.random() < epsilon:
+        action = np.random.randint(len(valuelist))
     else:
-        return argmaxrandom(valuelist)
+        shuf = np.random.permutation(len(valuelist))
+        action = shuf[np.argmax(np.asarray(valuelist)[shuf])]
+
+    return action
 
 
 def argmax(list):
-    "Returns an index to the first largest element of the nonnull list; also returns max"
+    """Returns an index to the first largest element of the nonnull list;
+    also returns max
+    """
     best_index = 0
     best_value = values[0]
     for i in range(len(values)):
@@ -151,13 +160,14 @@ def argmin(list):
 
 def argmaxrandom(values):
     "Returns the index of the maximum entry in the list of values"
+    values = list(reversed(values))
     best_index = 0
     best_value = values[0]
     numties = 1
-    for i in range(len(values)):
+    for i in range(1, len(values)):
         val = values[i]
         if val < best_value:  # our older value is better
-            pass
+            continue
         elif val > best_value:  # the new value is better
             best_index = i
             best_value = val
@@ -212,7 +222,7 @@ def randomNormal(randomstate=None):
 
 
 def standardizeRandomState(randomstate=None):
-    if randomstate == None:
+    if randomstate is None:
         random.seed(64497)
     else:
         random.setstate(randomstate)
